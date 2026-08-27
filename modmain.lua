@@ -346,7 +346,13 @@ AddComponentPostInit("container", function(self, inst)
                 side_align_tip = self.side_align_tip or self.widgetsidealigntip or (p.widget and p.widget.side_align_tip) or 100,
                 type = self.widgettype or self.type or (p.widget and p.widget.type) or "chest",
             }
-            self.widget = widget_tbl
+            if type(self.widget) == "table" then
+                for k, v in pairs(widget_tbl) do
+                    self.widget[k] = v
+                end
+            else
+                pcall(function() self.widget = widget_tbl end)
+            end
             p.widget = widget_tbl
             p.acceptsstacks = self.acceptsstacks ~= false
             p.type = widget_tbl.type
