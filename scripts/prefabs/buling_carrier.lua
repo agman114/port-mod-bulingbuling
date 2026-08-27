@@ -655,30 +655,25 @@ local function OnClose(inst, doer)
 		print("[BULING CARRIER] Free craft mode target fallback to buling_rocky")
 	end
 
+	if inst._transforming then
+		return
+	end
+
 	if matched_target then
+		inst._transforming = true
 		print("[BULING CARRIER] Executing transformation to:", matched_target)
 		if inst.bulingdrop then
 			inst.bulingdrop(inst, doer or inst)
 		end
 
-		if not is_free then
-			if matched_target == "buling_plane" then
-				container:ConsumeByName("gears", 25)
-			elseif matched_target == "buling_glomling" then
-				container:ConsumeByName("buling_glass", 25)
-			elseif matched_target == "buling_rocky" then
-				if not container:ConsumeByName("buling_puleidi", 16) then
-					container:ConsumeByName("buling_puleidi_plank", 16)
-				end
-				if not container:ConsumeByName("buling_glass", 8) then
-					container:ConsumeByName("moonglass", 8)
-				end
-				container:ConsumeByName("gears", 1)
+		for i = 1, container:GetNumSlots() do
+			local item = container:GetItemInSlot(i)
+			if item then
+				item:Remove()
 			end
 		end
 
 		local x, y, z = inst.Transform:GetWorldPosition()
-		container:DropEverything()
 		local spawned = SpawnPrefab(matched_target)
 		if spawned then
 			spawned.Transform:SetPosition(x, y, z)
@@ -704,12 +699,13 @@ local function planefn()
 	local anim = inst.entity:AddAnimState()
 	anim:SetBloomEffectHandle("shaders/anim.ksh")
 	inst.Transform:SetFourFaced()
-	MakeCharacterPhysics(inst, 10, .5)
+	MakeCharacterPhysics(inst, 1, .5)
 	inst.DynamicShadow:SetSize(1.5, 0.8)
 
 	anim:SetBank("buling_plane")
 	anim:SetBuild("buling_plane")
 	anim:PlayAnimation("idle", true)
+	inst:SetStateGraph("SGbuling_car")
 
 	inst:AddComponent("locomotor")
 	inst.components.locomotor:SetSlowMultiplier(0.6)
