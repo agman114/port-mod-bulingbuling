@@ -790,6 +790,9 @@ end
 local function buling_car_logitemfn(inst, doer)
     local inst = boxitem(inst)
 	inst.boxname = "buling_car_log"
+	inst.AnimState:SetBank("buling_car")
+	inst.AnimState:SetBuild("buling_car")
+	inst.AnimState:PlayAnimation("idle")
 	inst.components.inventoryitem.imagename = "buling_car_log"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_car_log.xml"
     return inst

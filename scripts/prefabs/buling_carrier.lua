@@ -1,3 +1,4 @@
+local carfn_onclose
 require "stategraphs/SGbuling_glomling"
 require "stategraphs/SGbuling_car"
 local assets=
@@ -226,8 +227,7 @@ local function carfn()
 			"moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,",
 		}, 
 	}
-	local carfn_onclose
-local function OnClose(inst, doer)
+	local function OnClose(inst, doer)
 	carfn_onclose = OnClose
 		print("[BULING CARRIER] OnClose triggered on vehicle inst:", inst, "by doer:", doer)
 		local container = inst.components.container
@@ -463,10 +463,10 @@ local function gdfn()
 	inst.entity:AddDynamicShadow()
 	inst.Transform:SetFourFaced(inst)
 	MakeCharacterPhysics(inst, 1, .5)
-	anim:SetBank("rocky")
-	inst.DynamicShadow:SetSize(3, 3 )
-	anim:SetBuild("buling_rocky")
-	anim:PlayAnimation("idle_loop", true)
+	anim:SetBank("buling_car")
+	inst.DynamicShadow:SetSize(2, 1.5)
+	anim:SetBuild("buling_car")
+	anim:PlayAnimation("idle", true)
 	inst:AddComponent("lootdropper")
 	inst:AddComponent("locomotor")
     inst.components.locomotor:SetSlowMultiplier( 0.6 )
@@ -574,6 +574,117 @@ local function dcfn()
 	end
 	return inst
 end
+
+local function OnClose(inst, doer)
+	print("[BULING CARRIER] OnClose triggered on vehicle inst:", inst, "by doer:", doer)
+	local container = inst.components.container
+	if container == nil then
+		print("[BULING CARRIER] Container component is nil!")
+		return
+	end
+
+	local peifang = ""
+	for i = 1, container:GetNumSlots() do
+		local item = container:GetItemInSlot(i)
+		if item == nil then
+			item = "nil"
+		else
+			item = item.prefab
+		end
+		peifang = peifang..item..","
+	end
+
+	print("[BULING CARRIER] Current peifang string:", peifang)
+
+	local is_free = BULING_FREE_CRAFT 
+		or (doer and doer.components and doer.components.builder and (doer.components.builder.freebuildmode or (doer.components.builder.IsFreeBuildMode and doer.components.builder:IsFreeBuildMode())))
+
+	local hechengbiao = {
+		["buling_plane"]={
+			"gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,",
+		},
+		["buling_rocky"]={
+			"buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_glass,buling_glass,buling_glass,buling_puleidi,buling_puleidi,buling_glass,gears,buling_glass,buling_puleidi,buling_puleidi,buling_glass,buling_glass,buling_glass,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,",
+			"buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,moonglass,moonglass,moonglass,buling_puleidi,buling_puleidi,moonglass,gears,moonglass,buling_puleidi,buling_puleidi,moonglass,moonglass,moonglass,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,",
+		}, 
+		["buling_glomling"]={
+			"buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,",
+			"moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,",
+		}, 
+	}
+
+	local matched_target = nil
+	for k,recipes in pairs(hechengbiao) do
+		for _, rec_str in ipairs(recipes) do
+			if rec_str == peifang then
+				matched_target = k
+				print("[BULING CARRIER] String matched recipe for:", k)
+				break
+			end
+		end
+		if matched_target then break end
+	end
+
+	-- Smart Count Fallback matching for Airplane (buling_plane) & Mechanical Stone Lobster (buling_rocky)
+	if matched_target == nil then
+		if container:Has("gears", 25) then
+			matched_target = "buling_plane"
+			print("[BULING CARRIER] Smart item count matched buling_plane!")
+		else
+			local has_puleidi = container:Has("buling_puleidi", 16) or container:Has("buling_puleidi_plank", 16)
+			local has_glass = container:Has("buling_glass", 8) or container:Has("moonglass", 8)
+			local has_gears = container:Has("gears", 1)
+			if has_puleidi and has_glass and has_gears then
+				matched_target = "buling_rocky"
+				print("[BULING CARRIER] Smart item count matched buling_rocky!")
+			end
+		end
+	end
+
+	if matched_target == nil and is_free then
+		matched_target = "buling_rocky"
+		print("[BULING CARRIER] Free craft mode target fallback to buling_rocky")
+	end
+
+	if matched_target then
+		print("[BULING CARRIER] Executing transformation to:", matched_target)
+		if inst.bulingdrop then
+			inst.bulingdrop(inst, doer or inst)
+		end
+
+		if not is_free then
+			if matched_target == "buling_plane" then
+				container:ConsumeByName("gears", 25)
+			elseif matched_target == "buling_glomling" then
+				container:ConsumeByName("buling_glass", 25)
+			elseif matched_target == "buling_rocky" then
+				if not container:ConsumeByName("buling_puleidi", 16) then
+					container:ConsumeByName("buling_puleidi_plank", 16)
+				end
+				if not container:ConsumeByName("buling_glass", 8) then
+					container:ConsumeByName("moonglass", 8)
+				end
+				container:ConsumeByName("gears", 1)
+			end
+		end
+
+		local x, y, z = inst.Transform:GetWorldPosition()
+		container:DropEverything()
+		local spawned = SpawnPrefab(matched_target)
+		if spawned then
+			spawned.Transform:SetPosition(x, y, z)
+			print("[BULING CARRIER] Successfully spawned:", matched_target, "at:", x, y, z)
+			local smoke = SpawnPrefab("maxwell_smoke")
+			if smoke then
+				smoke.Transform:SetPosition(x, y, z)
+			end
+		end
+		inst:Remove()
+	else
+		print("[BULING CARRIER] No recipe match found for peifang string")
+	end
+end
+carfn_onclose = OnClose
 
 local function planefn()
 	local inst = CreateEntity()
