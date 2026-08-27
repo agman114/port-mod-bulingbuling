@@ -773,7 +773,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 	local was_moving = false
 
 	self.inst:DoPeriodicTask(0.05, function()
-		if not self.inst or not self.inst:HasTag("buling_driving") then
+		if not self.inst or (not self.inst:HasTag("buling_driving") and not self.inst:HasTag("kamen_rider") and not self.inst:HasTag("pigroyalty")) then
 			if was_moving then
 				was_moving = false
 				last_angle = nil
@@ -782,7 +782,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 		end
 
 		local driver_comp = self.inst.components.driver
-		local vehicle = driver_comp and driver_comp.vehicle
+		local vehicle = (driver_comp and driver_comp.vehicle) or self.inst
 		if not vehicle or not vehicle:IsValid() then return end
 
 		local vx, vy, vz = vehicle.Transform:GetWorldPosition()
