@@ -585,6 +585,9 @@ local function dcfn()
 end
 
 local function OnClose(inst, doer)
+	if inst == nil or not inst:IsValid() or inst._transforming then
+		return
+	end
 	print("[BULING CARRIER] OnClose triggered on vehicle inst:", inst, "by doer:", doer)
 	local container = inst.components.container
 	if container == nil then
@@ -666,8 +669,9 @@ local function OnClose(inst, doer)
 			inst.bulingdrop(inst, doer or inst)
 		end
 
+		container.canbeopened = false
 		for i = 1, container:GetNumSlots() do
-			local item = container:GetItemInSlot(i)
+			local item = container:RemoveItemBySlot(i)
 			if item then
 				item:Remove()
 			end
@@ -699,8 +703,8 @@ local function planefn()
 	local anim = inst.entity:AddAnimState()
 	anim:SetBloomEffectHandle("shaders/anim.ksh")
 	inst.Transform:SetFourFaced()
-	MakeCharacterPhysics(inst, 1, .5)
-	inst.DynamicShadow:SetSize(1.5, 0.8)
+	ChangeToFlyingCharacterPhysics(inst, 1, .5)
+	inst.DynamicShadow:SetSize(2.2, 1.2)
 
 	anim:SetBank("buling_plane")
 	anim:SetBuild("buling_plane")
@@ -709,11 +713,15 @@ local function planefn()
 
 	inst:AddComponent("locomotor")
 	inst.components.locomotor:SetSlowMultiplier(0.6)
-	inst.components.locomotor.walkspeed = 12
-	inst.components.locomotor.runspeed = 14
+	inst.components.locomotor.walkspeed = 14
+	inst.components.locomotor.runspeed = 16
+	if inst.components.locomotor.SetAllowFlyThrough then
+		inst.components.locomotor:SetAllowFlyThrough(true)
+	end
+	inst.components.locomotor.pathcaps = { allowwater = true, hover = true, ignorecrate = true }
 
 	inst:AddComponent("inspectable")
-	inst.Transform:SetScale(2, 2, 2)
+	inst.Transform:SetScale(3.2, 3.2, 3.2)
 
 	inst:AddComponent("health")
 	inst.components.health:SetMaxHealth(1500)
