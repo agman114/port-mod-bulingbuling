@@ -619,6 +619,92 @@ AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.BULING_ENZYME,
 
 -- Global Free Crafting Command and RPC Handlers
 GLOBAL.BULING_FREE_CRAFT = false
+
+AddModRPCHandler("bulingbuling", "dir_car", function(player, car_guid, angle, is_moving)
+	if car_guid then
+		local car = GLOBAL.Ents[car_guid]
+		if car and car:IsValid() then
+			if is_moving then
+				if car.components.locomotor then
+					car.components.locomotor:WalkInDirection(angle)
+				end
+				if car.sg and not car.sg:HasStateTag("moving") and not car.sg:HasStateTag("busy") then
+					if car.sg:HasState("run") then
+						car.sg:GoToState("run")
+					elseif car.sg:HasState("walk") then
+						car.sg:GoToState("walk")
+					end
+				end
+			else
+				if car.components.locomotor then
+					car.components.locomotor:Stop()
+					car.components.locomotor:StopMoving()
+					car.components.locomotor:ResetPath()
+				end
+				if car.Physics then
+					car.Physics:Stop()
+					car.Physics:SetMotorVel(0, 0, 0)
+				end
+				if car.sg and not car.sg:HasStateTag("busy") then
+					car.sg:GoToState("idle")
+				end
+			end
+		end
+	end
+end)
+
+AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, target_guid)
+	local inst_caster = (vehicle_guid and GLOBAL.Ents[vehicle_guid]) or player
+	if inst_caster and inst_caster:IsValid() then
+		if player and player.components.locomotor then
+			player.components.locomotor:Stop()
+			player.components.locomotor:StopMoving()
+		end
+		player:ClearBufferedAction()
+
+		local target = (target_guid and GLOBAL.Ents[target_guid]) or (player and player.components.combat and player.components.combat.target)
+		local targetpos = nil
+		local x, y, z = player.Transform:GetWorldPosition()
+
+		if target and target:IsValid() then
+			targetpos = target:GetPosition()
+		else
+			local rad = (player.Transform:GetRotation() or 0) * GLOBAL.DEGREES
+			targetpos = GLOBAL.Vector3(x + 14 * GLOBAL.math.cos(rad), 0, z - 14 * GLOBAL.math.sin(rad))
+		end
+
+		if player and player.SoundEmitter then
+			player.SoundEmitter:PlaySound("dontstarve_DLC003/creatures/boss/hulk_metal_robot/mine_shot")
+		end
+
+		for i = -2, 2 do
+			local proj = GLOBAL.SpawnPrefab("ancient_hulk_mine")
+			if proj then
+				proj.primed = false
+				proj.AnimState:PlayAnimation("spin_loop", true)
+				proj.Transform:SetPosition(x, 1.8, z)
+				local spread_pos = GLOBAL.Vector3(targetpos.x + i * 3, 0, targetpos.z + (i % 2) * 3)
+				if proj.components.complexprojectile then
+					proj.components.complexprojectile:SetHorizontalSpeed(25)
+					proj.components.complexprojectile:SetGravity(-25)
+					proj.components.complexprojectile:Launch(spread_pos, player, player)
+				end
+				proj.owner = player
+			end
+		end
+
+		if inst_caster ~= player and inst_caster.sg then
+			if inst_caster.sg:HasState("mine_shoot") then
+				inst_caster.sg:GoToState("mine_shoot")
+			elseif inst_caster.sg:HasState("lob") then
+				inst_caster.lobtarget = targetpos
+				inst_caster.sg:GoToState("lob")
+			else
+				inst_caster.sg:GoToState("attack")
+			end
+		end
+	end
+end)
 GLOBAL.c_bulingfreecraft = function(val)
 	if val == nil then
 		GLOBAL.BULING_FREE_CRAFT = not GLOBAL.BULING_FREE_CRAFT
