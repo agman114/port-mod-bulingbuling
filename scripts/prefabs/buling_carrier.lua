@@ -214,6 +214,9 @@ local function fn()
 end
 local function carfn()
 	local hechengbiao = {
+		["buling_plane"]={
+			"gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,gears,",
+		},
 		["buling_rocky"]={
 			"buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_glass,buling_glass,buling_glass,buling_puleidi,buling_puleidi,buling_glass,gears,buling_glass,buling_puleidi,buling_puleidi,buling_glass,buling_glass,buling_glass,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,",
 			"buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,moonglass,moonglass,moonglass,buling_puleidi,buling_puleidi,moonglass,gears,moonglass,buling_puleidi,buling_puleidi,moonglass,moonglass,moonglass,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,",
@@ -223,7 +226,9 @@ local function carfn()
 			"moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,",
 		}, 
 	}
-	local function OnClose(inst, doer)
+	local carfn_onclose
+local function OnClose(inst, doer)
+	carfn_onclose = OnClose
 		print("[BULING CARRIER] OnClose triggered on vehicle inst:", inst, "by doer:", doer)
 		local container = inst.components.container
 		if container == nil then
@@ -259,14 +264,19 @@ local function carfn()
 			if matched_target then break end
 		end
 
-		-- Smart Count Fallback matching for Mechanical Stone Lobster (buling_rocky)
+		-- Smart Count Fallback matching for Airplane (buling_plane) & Mechanical Stone Lobster (buling_rocky)
 		if matched_target == nil then
-			local has_puleidi = container:Has("buling_puleidi", 16) or container:Has("buling_puleidi_plank", 16)
-			local has_glass = container:Has("buling_glass", 8) or container:Has("moonglass", 8)
-			local has_gears = container:Has("gears", 1)
-			if has_puleidi and has_glass and has_gears then
-				matched_target = "buling_rocky"
-				print("[BULING CARRIER] Smart item count matched buling_rocky!")
+			if container:Has("gears", 25) then
+				matched_target = "buling_plane"
+				print("[BULING CARRIER] Smart item count matched buling_plane!")
+			else
+				local has_puleidi = container:Has("buling_puleidi", 16) or container:Has("buling_puleidi_plank", 16)
+				local has_glass = container:Has("buling_glass", 8) or container:Has("moonglass", 8)
+				local has_gears = container:Has("gears", 1)
+				if has_puleidi and has_glass and has_gears then
+					matched_target = "buling_rocky"
+					print("[BULING CARRIER] Smart item count matched buling_rocky!")
+				end
 			end
 		end
 
@@ -282,7 +292,9 @@ local function carfn()
 			end
 
 			if not is_free then
-				if matched_target == "buling_glomling" then
+				if matched_target == "buling_plane" then
+					container:ConsumeByName("gears", 25)
+				elseif matched_target == "buling_glomling" then
 					container:ConsumeByName("buling_glass", 25)
 				elseif matched_target == "buling_rocky" then
 					if not container:ConsumeByName("buling_puleidi", 16) then
@@ -562,7 +574,76 @@ local function dcfn()
 	end
 	return inst
 end
+
+local function planefn()
+	local inst = CreateEntity()
+	local trans = inst.entity:AddTransform()
+	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddDynamicShadow()
+	inst.entity:AddPhysics()
+	local anim = inst.entity:AddAnimState()
+	anim:SetBloomEffectHandle("shaders/anim.ksh")
+	inst.Transform:SetFourFaced()
+	MakeCharacterPhysics(inst, 10, .5)
+	inst.DynamicShadow:SetSize(1.5, 0.8)
+
+	anim:SetBank("buling_plane")
+	anim:SetBuild("buling_plane")
+	anim:PlayAnimation("idle", true)
+
+	inst:AddComponent("locomotor")
+	inst.components.locomotor:SetSlowMultiplier(0.6)
+	inst.components.locomotor.walkspeed = 12
+	inst.components.locomotor.runspeed = 14
+
+	inst:AddComponent("inspectable")
+	inst.Transform:SetScale(2, 2, 2)
+
+	inst:AddComponent("health")
+	inst.components.health:SetMaxHealth(1500)
+
+	inst:AddComponent("combat")
+	inst.components.combat:SetDefaultDamage(80)
+
+	inst:AddComponent("container")
+	inst.components.container:WidgetSetup("buling_chest_5x5")
+	inst.components.container.onclosefn = carfn_onclose
+	inst.components.container.onopenfn = function(inst, doer)
+		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_open")
+	end
+
+	inst.bulingdrop = drop
+	inst.LaunchProjectile = LaunchProjectile
+	inst:AddTag("buling_carrier")
+	inst:AddTag("boat")
+	inst:AddTag("flying")
+
+	inst.components.combat.canbeattackedfn = function(inst, attacker)
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button2", inst.GUID)
+			return
+		end
+		local can_be_attacked = true
+		if attacker == (doer or inst) then
+			can_be_attacked = false
+		end
+		return can_be_attacked
+	end
+
+	inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_howl_LP", "howl")
+
+	inst:AddComponent("drivable")
+	inst.components.drivable.sanitydrain = 0
+	inst.components.drivable.runspeed = 14
+	inst.components.drivable.OnMounted = function(self, doer)
+		upcar(doer, inst)
+	end
+
+	return inst
+end
+
 return Prefab("buling_glomling", fn, assets),
+    Prefab("buling_plane", planefn, assets),
     Prefab("buling_rocky", gdfn, assets),
     Prefab("buling_car_log", carfn, assets),
     Prefab("buling_deerclops", dcfn, assets)
