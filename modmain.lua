@@ -1,3 +1,12 @@
+
+local function SendBulingRPC(rpc_name, ...)
+	local rpc = (GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name)) 
+		or (GLOBAL.MOD_RPC and GLOBAL.MOD_RPC["bulingbuling"] and GLOBAL.MOD_RPC["bulingbuling"][rpc_name])
+	if rpc then
+		GLOBAL.SendModRPCToServer(rpc, ...)
+	end
+end
+
 local env = (GLOBAL.getfenv and GLOBAL.getfenv(1)) or _ENV
 if env then
     local env_meta = GLOBAL.getmetatable(env) or {}
@@ -775,7 +784,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 
 				if not self.inst._last_car_atk_time or (GLOBAL.GetTime() - self.inst._last_car_atk_time) > 0.4 then
 					self.inst._last_car_atk_time = GLOBAL.GetTime()
-					SendModRPCToServer(MOD_RPC["bulingbuling"]["attack_car"], vehicle.GUID, target_guid)
+					SendBulingRPC("attack_car", vehicle.GUID, target_guid)
 				end
 				return true
 			end
@@ -842,7 +851,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				self.inst._last_car_atk_time = GLOBAL.GetTime()
 				local target_guid = atk_target and atk_target:IsValid() and atk_target.GUID or nil
 				if not GLOBAL.TheWorld.ismastersim then
-					SendModRPCToServer(MOD_RPC["bulingbuling"]["attack_car"], vehicle.GUID, target_guid)
+					SendBulingRPC("attack_car", vehicle.GUID, target_guid)
 				else
 					local x, y, z = vehicle.Transform:GetWorldPosition()
 					local rad = (vehicle.Transform:GetRotation() or 0) * GLOBAL.DEGREES
@@ -869,7 +878,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				was_moving = true
 				last_angle = angle
 				if not GLOBAL.TheWorld.ismastersim then
-					SendModRPCToServer(MOD_RPC["bulingbuling"]["dir_car"], vehicle.GUID, angle, true)
+					SendBulingRPC("dir_car", vehicle.GUID, angle, true)
 				else
 					if vehicle.components.locomotor then
 						vehicle.components.locomotor:WalkInDirection(angle)
@@ -881,7 +890,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				was_moving = false
 				last_angle = nil
 				if not GLOBAL.TheWorld.ismastersim then
-					SendModRPCToServer(MOD_RPC["bulingbuling"]["dir_car"], vehicle.GUID, 0, false)
+					SendBulingRPC("dir_car", vehicle.GUID, 0, false)
 				else
 					if vehicle.components.locomotor then
 						vehicle.components.locomotor:Stop()
