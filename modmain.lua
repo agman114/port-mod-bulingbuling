@@ -813,7 +813,15 @@ AddClassPostConstruct("components/playercontroller", function(self)
 			dir_angle = 90
 		end
 
-		local is_attacking = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_F) or GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL)
+		local is_attacking = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_F) 
+			or GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL) 
+			or GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_SPACE)
+			or GLOBAL.TheInput:IsMouseDown(GLOBAL.MOUSEBUTTON_LEFT)
+			or GLOBAL.TheInput:IsMouseDown(GLOBAL.MOUSEBUTTON_RIGHT)
+			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_ATTACK)
+			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_PRIMARY)
+			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_SECONDARY)
+			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_ACTION)
 		local atk_target = self:GetAttackTarget() or (self.inst.components.combat and self.inst.components.combat.target)
 
 		if is_attacking then
