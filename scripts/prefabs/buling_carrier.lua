@@ -81,12 +81,23 @@ local function upcar(doer,inst)
 					doer.Physics:SetActive(false)
 				end
 			end
-			if inst.components.locomotor then inst.components.locomotor:Stop() end
-			if inst.Physics then inst.Physics:Stop() end
+			if inst.brain then inst.brain:Stop() end
+			if inst.StopBrain then inst:StopBrain() end
+			if inst.components.locomotor then
+				inst.components.locomotor:Stop()
+				inst.components.locomotor:StopMoving()
+				inst.components.locomotor:ResetPath()
+			end
+			if inst.Physics then
+				inst.Physics:Stop()
+				inst.Physics:SetMotorVel(0, 0, 0)
+			end
 		end
 	end)
 end
 local function drop(inst, doer, viewer)
+	if inst.brain then inst.brain:Start() end
+	if inst.RestartBrain then inst:RestartBrain() end
 	viewer = viewer or doer or (inst.components.drivable and inst.components.drivable.driver)
 	if viewer == nil or not viewer:IsValid() then
 		return
