@@ -823,17 +823,17 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				if not GLOBAL.TheWorld.ismastersim then
 					SendModRPCToServer(MOD_RPC["bulingbuling"]["attack_car"], vehicle.GUID, target_guid)
 				else
-					if vehicle.prefab == "buling_hulk" or vehicle:HasTag("buling_hulk") or vehicle.LaunchProjectile then
-						local x, y, z = vehicle.Transform:GetWorldPosition()
-						local targetpos = atk_target and atk_target:IsValid() and atk_target:GetPosition() or GLOBAL.Vector3(x, 0, z)
-						if vehicle.LaunchProjectile then pcall(vehicle.LaunchProjectile, vehicle, self.inst, targetpos) end
-						if vehicle.sg and vehicle.sg:HasState("mine_shoot") then vehicle.sg:GoToState("mine_shoot") end
-					else
-						if vehicle.components.combat then
-							if atk_target then vehicle.components.combat.target = atk_target end
-							vehicle.components.combat:DoAttack(atk_target)
+					local x, y, z = vehicle.Transform:GetWorldPosition()
+					local targetpos = atk_target and atk_target:IsValid() and atk_target:GetPosition() or GLOBAL.Vector3(x + 10, 0, z)
+					if vehicle.LaunchProjectile then
+						pcall(vehicle.LaunchProjectile, vehicle, self.inst, targetpos)
+					end
+					if vehicle.sg then
+						if vehicle.sg:HasState("mine_shoot") then
+							vehicle.sg:GoToState("mine_shoot")
+						else
+							vehicle.sg:GoToState("attack")
 						end
-						if vehicle.sg then vehicle.sg:GoToState("attack") end
 					end
 				end
 			end

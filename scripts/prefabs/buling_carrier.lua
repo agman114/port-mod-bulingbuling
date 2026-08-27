@@ -6,6 +6,27 @@ local assets=
 	Asset("ANIM", "anim/ui_buling_chest_5x5.zip"),
 	Asset("ANIM", "anim/buling_car.zip"),
 }
+
+local function LaunchProjectile(inst, doer, targetpos)
+	local x, y, z = inst.Transform:GetWorldPosition()
+	targetpos = targetpos or Vector3(x + 10, 0, z)
+	for i = -1, 1 do
+		local projectile = SpawnPrefab("ancient_hulk_mine")
+		if projectile then
+			projectile.primed = false
+			projectile.AnimState:PlayAnimation("spin_loop", true)
+			projectile.Transform:SetPosition(x, 1.5, z)
+			local spread_pos = Vector3(targetpos.x + i * 2, 0, targetpos.z + (i % 2) * 2)
+			if projectile.components.complexprojectile then
+				projectile.components.complexprojectile:SetHorizontalSpeed(22)
+				projectile.components.complexprojectile:SetGravity(-25)
+				projectile.components.complexprojectile:Launch(spread_pos, inst, inst)
+			end
+			projectile.owner = inst
+		end
+	end
+end
+
 local function upcar(doer,inst)
 	doer:DoTaskInTime(0.1,function()
 		inst:DoPeriodicTask(0.1,function()
@@ -147,6 +168,7 @@ local function fn()
     inst:AddComponent("combat")
 	inst:SetStateGraph("SGbuling_glomling")
 	inst.bulingdrop = drop
+	inst.LaunchProjectile = LaunchProjectile
 	inst:AddTag("buling_carrier")
 	inst:AddTag("boat")
 	inst.components.combat.canbeattackedfn = function(inst,attacker)
@@ -309,6 +331,7 @@ local function carfn()
 	end
 	inst:SetStateGraph("SGbuling_car")
 	inst.bulingdrop = drop
+	inst.LaunchProjectile = LaunchProjectile
 	inst:AddTag("buling_carrier")
     ------------------    
     inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_howl_LP", "howl")
@@ -434,6 +457,7 @@ local function gdfn()
 	inst.Transform:SetScale(3, 3, 3)
 	inst.components.combat:SetAreaDamage(6, 0.8)
 	inst.bulingdrop = drop
+	inst.LaunchProjectile = LaunchProjectile
 	inst:AddTag("buling_carrier")
 	inst:AddTag("atk")
 	inst:AddComponent("trader")
@@ -495,6 +519,7 @@ local function dcfn()
 	inst.Transform:SetScale(1.7, 1.7, 1.7)
 	inst.components.combat:SetAreaDamage(6, 0.8)
 	inst.bulingdrop = drop
+	inst.LaunchProjectile = LaunchProjectile
 	inst.components.combat.canbeattackedfn = function (inst,attacker)
 		local can_be_attacked = true
 		if attacker == (doer or inst) then
