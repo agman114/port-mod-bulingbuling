@@ -385,11 +385,11 @@ local function gongzuotaiitemfn(Sim)
 	inst:AddTag("eyeturret")
         inst:AddComponent("deployable")
     inst.components.deployable.ondeploy = ondeploy
-    if GLOBAL.DEPLOYMODE and GLOBAL.DEPLOYMODE.ANY then
-        inst.components.deployable:SetDeployMode(GLOBAL.DEPLOYMODE.ANY)
+    if DEPLOYMODE and DEPLOYMODE.ANY then
+        inst.components.deployable:SetDeployMode(DEPLOYMODE.ANY)
     end
-    if GLOBAL.DEPLOYSPACING and GLOBAL.DEPLOYSPACING.LESS then
-        inst.components.deployable:SetDeploySpacing(GLOBAL.DEPLOYSPACING.LESS)
+    if DEPLOYSPACING and DEPLOYSPACING.LESS then
+        inst.components.deployable:SetDeploySpacing(DEPLOYSPACING.LESS)
     end
     return inst
 end
@@ -763,11 +763,11 @@ local function boxitem(Sim)
 	inst:AddComponent("stackable")
         inst:AddComponent("deployable")
     inst.components.deployable.ondeploy = ondeploy
-    if GLOBAL.DEPLOYMODE and GLOBAL.DEPLOYMODE.ANY then
-        inst.components.deployable:SetDeployMode(GLOBAL.DEPLOYMODE.ANY)
+    if DEPLOYMODE and DEPLOYMODE.ANY then
+        inst.components.deployable:SetDeployMode(DEPLOYMODE.ANY)
     end
-    if GLOBAL.DEPLOYSPACING and GLOBAL.DEPLOYSPACING.LESS then
-        inst.components.deployable:SetDeploySpacing(GLOBAL.DEPLOYSPACING.LESS)
+    if DEPLOYSPACING and DEPLOYSPACING.LESS then
+        inst.components.deployable:SetDeploySpacing(DEPLOYSPACING.LESS)
     end
 	inst.Transform:SetScale(.5, .5, .5)
     return inst
