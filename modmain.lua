@@ -874,8 +874,8 @@ AddClassPostConstruct("components/playercontroller", function(self)
 			local heading = GLOBAL.TheCamera and GLOBAL.TheCamera:GetHeadingTarget() or 0
 			local angle = (dir_angle + heading + 90) % 360
 
-			if not was_moving or last_angle ~= angle then
-				was_moving = true
+			if not self.inst._car_is_moving or last_angle ~= angle then
+				self.inst._car_is_moving = true
 				last_angle = angle
 				if not GLOBAL.TheWorld.ismastersim then
 					SendBulingRPC("dir_car", vehicle.GUID, angle, true)
@@ -886,8 +886,8 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				end
 			end
 		else
-			if was_moving or (vehicle.components.locomotor and vehicle.components.locomotor:WantsToMoveForward()) then
-				was_moving = false
+			if self.inst._car_is_moving then
+				self.inst._car_is_moving = false
 				last_angle = nil
 				if not GLOBAL.TheWorld.ismastersim then
 					SendBulingRPC("dir_car", vehicle.GUID, 0, false)
