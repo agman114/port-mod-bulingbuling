@@ -1,3 +1,12 @@
+local function SendBulingRPC(rpc_name, ...)
+	local rpc = (TheSim and TheSim.GetModRPC and TheSim:GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.MOD_RPC and GLOBAL.MOD_RPC["bulingbuling"] and GLOBAL.MOD_RPC["bulingbuling"][rpc_name])
+	if rpc then
+		SendModRPCToServer(rpc, ...)
+	end
+end
+
 local assets ={
 	Asset("ANIM", "anim/buling_manual.zip"),
 	Asset("ANIM", "anim/buling_box.zip"),
@@ -250,7 +259,7 @@ local function buling_manual(inst, doer)
 		print("[BULING DEBUG] fn called on inst:", inst, "GUID:", inst and inst.GUID, "ismastersim:", TheWorld and TheWorld.ismastersim)
 		if not TheWorld.ismastersim then
 			print("[BULING DEBUG CLIENT] Sending SendModRPCToServer to server for GUID:", inst and inst.GUID)
-			SendModRPCToServer(MOD_RPC["bulingbuling"]["do_widget_button"], inst and inst.GUID)
+			SendBulingRPC("do_widget_button", inst and inst.GUID)
 			return
 		end
 		local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst

@@ -1,3 +1,12 @@
+local function SendBulingRPC(rpc_name, ...)
+	local rpc = (TheSim and TheSim.GetModRPC and TheSim:GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.MOD_RPC and GLOBAL.MOD_RPC["bulingbuling"] and GLOBAL.MOD_RPC["bulingbuling"][rpc_name])
+	if rpc then
+		SendModRPCToServer(rpc, ...)
+	end
+end
+
 local assets ={
 	Asset("ANIM", "anim/buling_food.zip"),
 	Asset("ATLAS", "images/inventoryimages/buling_cooktable.xml"),
@@ -151,7 +160,7 @@ local function cooktable(inst, doer)
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
 		if not TheWorld.ismastersim then
-			SendModRPCToServer(MOD_RPC["bulingbuling"]["do_widget_button"], inst.GUID)
+			SendBulingRPC("do_widget_button", inst.GUID)
 			return
 		end
 		local peifang = ""

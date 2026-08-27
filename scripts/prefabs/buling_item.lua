@@ -1,3 +1,12 @@
+local function SendBulingRPC(rpc_name, ...)
+	local rpc = (TheSim and TheSim.GetModRPC and TheSim:GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.MOD_RPC and GLOBAL.MOD_RPC["bulingbuling"] and GLOBAL.MOD_RPC["bulingbuling"][rpc_name])
+	if rpc then
+		SendModRPCToServer(rpc, ...)
+	end
+end
+
 local cooking = require("cooking")
 local assets ={
 	Asset("ANIM", "anim/buling_yifu/body_willow_dragonfly.zip"),
@@ -1224,7 +1233,7 @@ local function buling_gun_jiguang_yaoshou(inst, doer)
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_jiguang_yaoshou.xml"
 	inst.gunfn = function(inst,gun,target)
 		if not TheWorld.ismastersim then
-			SendModRPCToServer(MOD_RPC["bulingbuling"]["do_widget_button"], inst.GUID)
+			SendBulingRPC("do_widget_button", inst.GUID)
 			return
 		end
 		if target.components.health and target.components.health:GetPercent() >= 0.8 then

@@ -1,3 +1,12 @@
+local function SendBulingRPC(rpc_name, ...)
+	local rpc = (TheSim and TheSim.GetModRPC and TheSim:GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name))
+		or (GLOBAL and GLOBAL.MOD_RPC and GLOBAL.MOD_RPC["bulingbuling"] and GLOBAL.MOD_RPC["bulingbuling"][rpc_name])
+	if rpc then
+		SendModRPCToServer(rpc, ...)
+	end
+end
+
 local carfn_onclose
 require "stategraphs/SGbuling_glomling"
 require "stategraphs/SGbuling_car"
@@ -191,7 +200,7 @@ local function fn()
 	inst:AddTag("boat")
 	inst.components.combat.canbeattackedfn = function(inst,attacker)
 		if not TheWorld.ismastersim then
-			SendModRPCToServer(MOD_RPC["bulingbuling"]["do_widget_button2"], inst.GUID)
+			SendBulingRPC("do_widget_button2", inst.GUID)
 			return
 		end
 		--print(attacker)
@@ -379,7 +388,7 @@ local function carfn()
 		position = Vector3(0, -220, 0),
 		fn = function(inst, doer)
 			if not TheWorld.ismastersim then
-				SendModRPCToServer(MOD_RPC["bulingbuling"]["do_widget_button"], inst.GUID)
+				SendBulingRPC("do_widget_button", inst.GUID)
 				return
 			end
 			OnClose(inst, doer)
