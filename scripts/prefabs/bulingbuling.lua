@@ -47,6 +47,9 @@ local function dorainsparks(inst, dt)
 end
 
 local function OnAttack(inst, doer, data)
+	if data == nil then
+		return
+	end
 	local damage = 50
 	if data.weapon == nil then
 		if data.target and data.target.components.health and inst:HasTag("bulingCQC") then
