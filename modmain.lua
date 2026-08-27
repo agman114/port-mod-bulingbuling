@@ -859,6 +859,12 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				return true
 			end
 
+			-- Dismount on Right Click (CONTROL_SECONDARY) when driving
+			if down and control == GLOBAL.CONTROL_SECONDARY and self.inst:HasTag("buling_driving") then
+				SendBulingRPC("dismount_car")
+				return true
+			end
+
 			local atk_target = self:GetAttackTarget() or (self.inst.components.combat and self.inst.components.combat.target)
 			local is_f_attack = (control == GLOBAL.CONTROL_ATTACK)
 			local is_targeted_click = (control == GLOBAL.CONTROL_PRIMARY) and (atk_target ~= nil and atk_target:IsValid())
