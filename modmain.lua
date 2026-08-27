@@ -764,17 +764,20 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				return true
 			end
 
-			if down and (control == GLOBAL.CONTROL_ATTACK or control == GLOBAL.CONTROL_PRIMARY) then
+			local atk_target = self:GetAttackTarget() or (self.inst.components.combat and self.inst.components.combat.target)
+			local is_f_attack = (control == GLOBAL.CONTROL_ATTACK)
+			local is_targeted_click = (control == GLOBAL.CONTROL_PRIMARY) and (atk_target ~= nil and atk_target:IsValid())
+
+			if down and (is_f_attack or is_targeted_click) then
 				local driver_comp = self.inst.components.driver
 				local vehicle = (driver_comp and driver_comp.vehicle) or self.inst
-				local atk_target = self:GetAttackTarget() or (self.inst.components.combat and self.inst.components.combat.target)
 				local target_guid = atk_target and atk_target:IsValid() and atk_target.GUID or nil
 
 				if not self.inst._last_car_atk_time or (GLOBAL.GetTime() - self.inst._last_car_atk_time) > 0.4 then
 					self.inst._last_car_atk_time = GLOBAL.GetTime()
 					SendModRPCToServer(MOD_RPC["bulingbuling"]["attack_car"], vehicle.GUID, target_guid)
 				end
-				return true -- SWALLOW native melee attack control completely!
+				return true
 			end
 		end
 		if oldOnControl then
