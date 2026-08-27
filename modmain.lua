@@ -813,16 +813,13 @@ AddClassPostConstruct("components/playercontroller", function(self)
 			dir_angle = 90
 		end
 
-		local is_attacking = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_F) 
-			or GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL) 
-			or GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_SPACE)
-			or GLOBAL.TheInput:IsMouseDown(GLOBAL.MOUSEBUTTON_LEFT)
-			or GLOBAL.TheInput:IsMouseDown(GLOBAL.MOUSEBUTTON_RIGHT)
-			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_ATTACK)
-			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_PRIMARY)
-			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_SECONDARY)
-			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_ACTION)
 		local atk_target = self:GetAttackTarget() or (self.inst.components.combat and self.inst.components.combat.target)
+		local is_key_attack = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_F) 
+			or GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL) 
+			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_ATTACK)
+		local is_mouse_attack = (GLOBAL.TheInput:IsMouseDown(GLOBAL.MOUSEBUTTON_LEFT) or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_PRIMARY)) and (atk_target ~= nil)
+
+		local is_attacking = is_key_attack or is_mouse_attack
 
 		if is_attacking then
 			if not self.inst._last_car_atk_time or (GLOBAL.GetTime() - self.inst._last_car_atk_time) > 0.5 then
@@ -832,7 +829,8 @@ AddClassPostConstruct("components/playercontroller", function(self)
 					SendModRPCToServer(MOD_RPC["bulingbuling"]["attack_car"], vehicle.GUID, target_guid)
 				else
 					local x, y, z = vehicle.Transform:GetWorldPosition()
-					local targetpos = atk_target and atk_target:IsValid() and atk_target:GetPosition() or GLOBAL.Vector3(x + 10, 0, z)
+					local rad = (vehicle.Transform:GetRotation() or 0) * GLOBAL.DEGREES
+					local targetpos = (atk_target and atk_target:IsValid() and atk_target:GetPosition()) or GLOBAL.Vector3(x + 10 * GLOBAL.math.cos(rad), 0, z - 10 * GLOBAL.math.sin(rad))
 					if vehicle.LaunchProjectile then
 						pcall(vehicle.LaunchProjectile, vehicle, self.inst, targetpos)
 					end
