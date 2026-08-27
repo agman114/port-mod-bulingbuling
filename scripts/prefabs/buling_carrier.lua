@@ -79,6 +79,8 @@ local function upcar(doer,inst)
 				if doer.Physics then
 					doer.Physics:Stop()
 					doer.Physics:SetActive(false)
+					doer.Physics:ClearCollisionMask()
+					RemovePhysicsColliders(doer)
 				end
 			end
 			if inst.brain then inst.brain:Stop() end
@@ -134,13 +136,17 @@ local function drop(inst, doer, viewer)
 	_target.Transform:SetPosition(x,2,z)
 	local _target = doer or inst
 	if _target and _target.PushEvent then _target:PushEvent("buling_getoff") end
+	ChangeToCharacterPhysics(viewer)
+	viewer.Physics:SetMass(75)
 	viewer.Physics:SetActive(true)
 	local staff = viewer.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
 	if staff and staff.prefab == "buling_rocky_staff" then
 		staff:Remove()
 	end
 	viewer:DoTaskInTime(1,function()
-		viewer.Physics:SetActive(true)
+		ChangeToCharacterPhysics(viewer)
+	viewer.Physics:SetMass(75)
+	viewer.Physics:SetActive(true)
 	end)
 end
 local function deathset(inst, doer)
