@@ -97,6 +97,7 @@ local default_mod_widget = {
 }
 
 local mod_container_prefabs = {
+    "buling_car_log", "buling_rocky", "buling_glomling", "buling_plane", "buling_carrier", "buling_chest_5x5",
     "buling_boat",
     "buling_box",
     "buling_box2",
@@ -171,6 +172,9 @@ if containers then
                 end
                 if tbl.type == nil then
                     tbl.type = "chest"
+                end
+                if tbl.itemtestfn == nil then
+                    tbl.itemtestfn = function(container, item, slot) return true end
                 end
             end
             return tbl

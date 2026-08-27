@@ -383,9 +383,14 @@ local function gongzuotaiitemfn(Sim)
     inst.components.inventoryitem.imagename = "buling_manual"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_manual.xml"
 	inst:AddTag("eyeturret")
-    inst:AddComponent("deployable")
+        inst:AddComponent("deployable")
     inst.components.deployable.ondeploy = ondeploy
-    inst.components.deployable.placer = "buling_manual_placer"
+    if GLOBAL.DEPLOYMODE and GLOBAL.DEPLOYMODE.ANY then
+        inst.components.deployable:SetDeployMode(GLOBAL.DEPLOYMODE.ANY)
+    end
+    if GLOBAL.DEPLOYSPACING and GLOBAL.DEPLOYSPACING.LESS then
+        inst.components.deployable:SetDeploySpacing(GLOBAL.DEPLOYSPACING.LESS)
+    end
     return inst
 end
 --测试
@@ -756,9 +761,14 @@ local function boxitem(Sim)
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhuangzhi.xml"
 	inst:AddTag("eyeturret")
 	inst:AddComponent("stackable")
-    inst:AddComponent("deployable")
+        inst:AddComponent("deployable")
     inst.components.deployable.ondeploy = ondeploy
-    inst.components.deployable.placer = "firesuppressor_placer"
+    if GLOBAL.DEPLOYMODE and GLOBAL.DEPLOYMODE.ANY then
+        inst.components.deployable:SetDeployMode(GLOBAL.DEPLOYMODE.ANY)
+    end
+    if GLOBAL.DEPLOYSPACING and GLOBAL.DEPLOYSPACING.LESS then
+        inst.components.deployable:SetDeploySpacing(GLOBAL.DEPLOYSPACING.LESS)
+    end
 	inst.Transform:SetScale(.5, .5, .5)
     return inst
 end
