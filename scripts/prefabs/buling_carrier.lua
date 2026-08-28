@@ -661,9 +661,9 @@ local function OnClose(inst, doer)
 		end
 	end
 
-	if matched_target == nil and is_free then
-		matched_target = "buling_rocky"
-		print("[BULING CARRIER] Free craft mode target fallback to buling_rocky")
+	if matched_target == nil then
+		print("[BULING CARRIER] No recipe match found for container contents.")
+		return
 	end
 
 	if inst._transforming then
