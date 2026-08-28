@@ -395,7 +395,7 @@ local function carfn()
 				SendBulingRPC("do_widget_button", inst.GUID)
 				return
 			end
-			OnClose(inst, doer)
+			DoTransform(inst, doer)
 		end
 	}
 

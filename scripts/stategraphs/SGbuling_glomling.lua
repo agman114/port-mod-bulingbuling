@@ -54,7 +54,15 @@ local states =
         tags = {"idle", "canrotate"},
 
         onenter = function(inst)
-            inst.Physics:Stop()
+            if inst.components.locomotor then
+                inst.components.locomotor:Stop()
+                inst.components.locomotor.wantstomoveforward = false
+                inst.components.locomotor.wantstoreachdestination = false
+            end
+            if inst.Physics then
+                inst.Physics:Stop()
+                inst.Physics:SetMotorVel(0, 0, 0)
+            end
             inst.AnimState:PlayAnimation("idle_loop", true)
         end,
     },
