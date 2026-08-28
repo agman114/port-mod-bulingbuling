@@ -209,8 +209,8 @@ local function fn()
 
 	inst:AddComponent("locomotor")
 	inst.components.locomotor:SetSlowMultiplier(0.6)
-	inst.components.locomotor.walkspeed = 8
-	inst.components.locomotor.runspeed = 10
+	inst.components.locomotor.walkspeed = 4
+	inst.components.locomotor.runspeed = 5
 	if inst.components.locomotor.SetAllowFlyThrough then
 		inst.components.locomotor:SetAllowFlyThrough(true)
 	end
@@ -255,7 +255,7 @@ local function fn()
 
 	inst:AddComponent("drivable")
 	inst.components.drivable.sanitydrain = TUNING.ROWBOAT_SANITY_DRAIN
-	inst.components.drivable.runspeed = 10
+	inst.components.drivable.runspeed = 5
 	inst.components.drivable.OnMounted = function(self, doer)
 		upcar(doer, inst)
 	end
