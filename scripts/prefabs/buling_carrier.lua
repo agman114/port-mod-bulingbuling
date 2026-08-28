@@ -760,7 +760,7 @@ local function planefn()
 	inst.components.locomotor.pathcaps = { allowwater = true, hover = true, ignorecrate = true, ignorewalls = true }
 	if inst.Physics then
 		inst.Physics:ClearCollisionMask()
-		inst.Physics:CollidesWith(GLOBAL.COLLISION.WORLD)
+		inst.Physics:CollidesWith(COLLISION.WORLD)
 	end
 
 	inst:AddComponent("inspectable")
