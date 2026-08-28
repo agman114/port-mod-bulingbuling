@@ -40,12 +40,25 @@ local function LaunchProjectile(inst, doer, targetpos)
 end
 
 local function upcar(doer,inst)
+	if inst and inst:IsValid() then
+		if inst.components.combat then
+			inst.components.combat:SetTarget(nil)
+		end
+		if inst.components.locomotor then
+			inst.components.locomotor:Stop()
+			inst.components.locomotor:ResetPath()
+			inst.components.locomotor.wantstomoveforward = false
+			inst.components.locomotor.wantstoreachdestination = false
+		end
+		if inst.Physics then
+			inst.Physics:Stop()
+			inst.Physics:SetMotorVel(0, 0, 0)
+		end
+		if inst.sg and inst.sg:HasState("idle") then
+			inst.sg:GoToState("idle")
+		end
+	end
 	doer:DoTaskInTime(0.1,function()
-		inst:DoPeriodicTask(0.1,function()
-			if (doer or inst).components.combat.target ~= nil then
-				inst.target = (doer or inst).components.combat.target
-			end
-		end)
 		if not doer.components.health:IsDead() and not inst.components.health:IsDead() then
 			
 			doer.components.temperature:SetTemp(25)
