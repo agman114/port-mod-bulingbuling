@@ -718,6 +718,10 @@ DoTransform = function(inst, doer)
 		end
 
 		local x, y, z = inst.Transform:GetWorldPosition()
+		local driver = doer or (inst.components.drivable and inst.components.drivable.driver)
+		if driver and driver.components and driver.components.driver then
+			driver.components.driver:OnDismount(true)
+		end
 		local spawned = SpawnPrefab(matched_target)
 		if spawned then
 			spawned.Transform:SetPosition(x, y, z)
@@ -725,6 +729,9 @@ DoTransform = function(inst, doer)
 			local smoke = SpawnPrefab("maxwell_smoke")
 			if smoke then
 				smoke.Transform:SetPosition(x, y, z)
+			end
+			if driver and driver:IsValid() and spawned.components and spawned.components.drivable then
+				spawned.components.drivable:OnMounted(driver)
 			end
 		end
 		inst:Remove()
