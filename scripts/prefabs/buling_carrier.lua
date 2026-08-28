@@ -21,7 +21,7 @@ local function LaunchProjectile(inst, doer, targetpos)
 	local x, y, z = inst.Transform:GetWorldPosition()
 	targetpos = targetpos or Vector3(x + 10, 0, z)
 	for i = -1, 1 do
-		local projectile = SpawnPrefab("ancient_hulk_mine")
+		local projectile = SpawnPrefab("ancient_hulk_mine") or SpawnPrefab("blowdart_pipe") or SpawnPrefab("fireball_projectile")
 		if projectile then
 			projectile.primed = false
 			projectile.AnimState:PlayAnimation("spin_loop", true)
@@ -190,7 +190,9 @@ local function fn()
     inst:AddComponent("inspectable")
     inst.Transform:SetScale(3, 3, 3)
 	inst:AddComponent("health")
-	inst.components.health:SetMaxHealth(100)
+	inst.components.health:SetMaxHealth(10000)
+	inst.components.health:SetCurrentHealth(10000)
+	inst.components.health.indestructible = true
     inst:AddComponent("knownlocations")
     inst:AddComponent("combat")
 	inst:SetStateGraph("SGbuling_glomling")
@@ -357,7 +359,9 @@ local function carfn()
     inst:AddComponent("inspectable")
 	--inst.Transform:SetScale(3, 3, 3)
 	inst:AddComponent("health")
-	inst.components.health:SetMaxHealth(100)
+	inst.components.health:SetMaxHealth(10000)
+	inst.components.health:SetCurrentHealth(10000)
+	inst.components.health.indestructible = true
     inst:AddComponent("knownlocations")
     inst:AddComponent("combat")
 	inst.components.combat.canbeattackedfn = function (inst,attacker)
@@ -502,7 +506,9 @@ local function gdfn()
     inst.components.trader:SetAcceptTest(ShouldAcceptItem)
     inst.components.trader.onaccept = OnGetItemFromPlayer
     inst:AddComponent("health")
-    inst.components.health:SetMaxHealth(2000)
+	inst.components.health:SetMaxHealth(10000)
+	inst.components.health:SetCurrentHealth(10000)
+	inst.components.health.indestructible = true
 	inst:AddComponent("inventory")
     inst.components.inventory.dropondeath = false
 	inst:SetStateGraph("SGbuling_rocky")
@@ -567,7 +573,9 @@ local function dcfn()
 	end
 	inst:AddTag("buling_carrier")
     inst:AddComponent("health")
-    inst.components.health:SetMaxHealth(2000)
+	inst.components.health:SetMaxHealth(10000)
+	inst.components.health:SetCurrentHealth(10000)
+	inst.components.health.indestructible = true
 	inst:AddComponent("inventory")
     inst.components.inventory.dropondeath = false
 	inst:SetStateGraph("SGbuling_deerclops")
@@ -724,7 +732,9 @@ local function planefn()
 	inst.Transform:SetScale(3.2, 3.2, 3.2)
 
 	inst:AddComponent("health")
-	inst.components.health:SetMaxHealth(1500)
+	inst.components.health:SetMaxHealth(10000)
+	inst.components.health:SetCurrentHealth(10000)
+	inst.components.health.indestructible = true
 
 	inst:AddComponent("combat")
 	inst.components.combat:SetDefaultDamage(80)
