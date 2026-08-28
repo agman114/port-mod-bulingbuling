@@ -757,11 +757,7 @@ local function planefn()
 	if inst.components.locomotor.SetAllowFlyThrough then
 		inst.components.locomotor:SetAllowFlyThrough(true)
 	end
-	inst.components.locomotor.pathcaps = { allowwater = true, hover = true, ignorecrate = true, ignorewalls = true }
-	if inst.Physics then
-		inst.Physics:ClearCollisionMask()
-		inst.Physics:CollidesWith(COLLISION.WORLD)
-	end
+	inst.components.locomotor.pathcaps = { allowwater = true, hover = true, ignorecrate = true }
 
 	inst:AddComponent("inspectable")
 	inst.Transform:SetScale(3.2, 3.2, 3.2)
