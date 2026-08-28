@@ -85,13 +85,14 @@ local function upcar(doer,inst)
 			doer.HUD.controls.crafttabs:Hide()
 			local x, y, z = inst.Transform:GetWorldPosition()
 			doer.Transform:SetPosition(x, y, z)
-			inst:DoPeriodicTask(0, function()
+			if inst._sync_task then
+				inst._sync_task:Cancel()
+				inst._sync_task = nil
+			end
+			inst._sync_task = inst:DoPeriodicTask(0, function()
 				if doer and doer:IsValid() and inst and inst:IsValid() and doer.components.driver and doer.components.driver.driving then
 					local vx, vy, vz = inst.Transform:GetWorldPosition()
 					doer.Transform:SetPosition(vx, vy, vz)
-					if doer.PlayerController then
-						-- Keep player area loader active ahead of fast vehicle flight
-					end
 				end
 			end)
 			doer:Hide()
@@ -126,6 +127,10 @@ local function upcar(doer,inst)
 	end)
 end
 local function drop(inst, doer, viewer)
+	if inst._sync_task then
+		inst._sync_task:Cancel()
+		inst._sync_task = nil
+	end
 	if inst.brain then inst.brain:Start() end
 	if inst.RestartBrain then inst:RestartBrain() end
 	viewer = viewer or doer or (inst.components.drivable and inst.components.drivable.driver)
@@ -758,10 +763,6 @@ local function planefn()
 		inst.components.locomotor:SetAllowFlyThrough(true)
 	end
 	inst.components.locomotor.pathcaps = { allowwater = true, hover = true, ignorecrate = true, ignorewalls = true }
-	if inst.Physics then
-		inst.Physics:ClearCollisionMask()
-		inst.Physics:CollidesWith(COLLISION.WORLD)
-	end
 
 	inst:AddComponent("inspectable")
 	inst.Transform:SetScale(3.2, 3.2, 3.2)
