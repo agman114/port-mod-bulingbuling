@@ -585,7 +585,7 @@ local function dcfn()
 end
 
 local function OnClose(inst, doer)
-	if inst == nil or not inst:IsValid() or inst._transforming then
+	if inst == nil or not inst:IsValid() or inst._transforming or inst.prefab ~= "buling_car_log" then
 		return
 	end
 	print("[BULING CARRIER] OnClose triggered on vehicle inst:", inst, "by doer:", doer)
@@ -731,7 +731,7 @@ local function planefn()
 
 	inst:AddComponent("container")
 	inst.components.container:WidgetSetup("buling_chest_5x5")
-	inst.components.container.onclosefn = carfn_onclose
+	-- inst.components.container.onclosefn = nil
 	inst.components.container.onopenfn = function(inst, doer)
 		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_open")
 	end
