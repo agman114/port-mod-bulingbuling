@@ -989,7 +989,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				end
 			end
 		else
-			if self.inst._car_is_moving then
+			if self.inst._car_is_moving or (vehicle.components.locomotor and vehicle.components.locomotor:WantsToMoveForward()) then
 				self.inst._car_is_moving = false
 				last_angle = nil
 				if not GLOBAL.TheWorld.ismastersim then
