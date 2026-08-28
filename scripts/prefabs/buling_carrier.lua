@@ -7,6 +7,7 @@ local function SendBulingRPC(rpc_name, ...)
 	end
 end
 
+local DoTransform
 local carfn_onclose
 require "stategraphs/SGbuling_glomling"
 require "stategraphs/SGbuling_car"
@@ -238,8 +239,13 @@ local function carfn()
 			"moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,",
 		}, 
 	}
+	DoTransform = function(inst, doer)
 	local function OnClose(inst, doer)
-	carfn_onclose = OnClose
+	if inst and inst.SoundEmitter then
+		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_close")
+	end
+end
+carfn_onclose = OnClose
 		print("[BULING CARRIER] OnClose triggered on vehicle inst:", inst, "by doer:", doer)
 		local container = inst.components.container
 		if container == nil then
@@ -592,7 +598,7 @@ local function dcfn()
 	return inst
 end
 
-local function OnClose(inst, doer)
+DoTransform = function(inst, doer)
 	if inst == nil or not inst:IsValid() or inst._transforming or inst.prefab ~= "buling_car_log" then
 		return
 	end
@@ -710,6 +716,11 @@ local function OnClose(inst, doer)
 		inst:Remove()
 	else
 		print("[BULING CARRIER] No recipe match found for peifang string")
+	end
+end
+local function OnClose(inst, doer)
+	if inst and inst.SoundEmitter then
+		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_close")
 	end
 end
 carfn_onclose = OnClose
