@@ -8,6 +8,7 @@ local function SendBulingRPC(rpc_name, ...)
 end
 
 local DoTransform
+local OnClose
 local carfn_onclose
 require "stategraphs/SGbuling_glomling"
 require "stategraphs/SGbuling_car"
@@ -240,7 +241,7 @@ local function carfn()
 		}, 
 	}
 	DoTransform = function(inst, doer)
-	local function OnClose(inst, doer)
+	OnClose = function(inst, doer)
 	if inst and inst.SoundEmitter then
 		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_close")
 	end
@@ -718,7 +719,7 @@ DoTransform = function(inst, doer)
 		print("[BULING CARRIER] No recipe match found for peifang string")
 	end
 end
-local function OnClose(inst, doer)
+OnClose = function(inst, doer)
 	if inst and inst.SoundEmitter then
 		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_close")
 	end
