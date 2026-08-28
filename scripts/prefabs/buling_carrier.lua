@@ -388,7 +388,7 @@ local function carfn()
 		if _target and _target.PushEvent then _target:PushEvent("buling_drive_car") end
 	end
 	local widgetbuttoninfo = {
-		text = "Evolve / Улучшить",
+		text = "Transform / Превратить",
 		position = Vector3(0, -220, 0),
 		fn = function(inst, doer)
 			if not TheWorld.ismastersim then
@@ -596,6 +596,7 @@ local function OnClose(inst, doer)
 	if inst == nil or not inst:IsValid() or inst._transforming or inst.prefab ~= "buling_car_log" then
 		return
 	end
+	inst._transforming = true
 	print("[BULING CARRIER] OnClose triggered on vehicle inst:", inst, "by doer:", doer)
 	local container = inst.components.container
 	if container == nil then
@@ -678,10 +679,21 @@ local function OnClose(inst, doer)
 		end
 
 		container.canbeopened = false
+		if container.RemoveAllItems then
+			local items = container:RemoveAllItems()
+			for _, item in ipairs(items) do
+				if item and item:IsValid() then
+					item:Remove()
+				end
+			end
+		end
 		for i = 1, container:GetNumSlots() do
-			local item = container:RemoveItemBySlot(i)
-			if item then
-				item:Remove()
+			if container.slots and container.slots[i] then
+				local item = container.slots[i]
+				container.slots[i] = nil
+				if item and item:IsValid() then
+					item:Remove()
+				end
 			end
 		end
 

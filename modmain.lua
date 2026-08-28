@@ -258,6 +258,7 @@ local prefab_open_events = {
 	["buling_ronglu2"] = { open = "OpenBuling_cuiqu", close = "CloseBuling_cuiqu" },
 
 	-- Machinery / Communication / Weapon / Vehicle Tables
+	["buling_car_log"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
 	["buling_tongxuntai"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
 	["tongxuntai"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
 	["buling_weaponchest"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
@@ -630,36 +631,44 @@ AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.BULING_ENZYME,
 -- Global Free Crafting Command and RPC Handlers
 GLOBAL.BULING_FREE_CRAFT = false
 
+local function DoDirCar(car, angle, is_moving)
+	if car and car:IsValid() then
+		if is_moving then
+			if car.components.locomotor then
+				car.components.locomotor:WalkInDirection(angle)
+			end
+			if car.sg and not car.sg:HasStateTag("moving") and not car.sg:HasStateTag("busy") then
+				if car.sg:HasState("run") then
+					car.sg:GoToState("run")
+				elseif car.sg:HasState("walk") then
+					car.sg:GoToState("walk")
+				elseif car.sg:HasState("walk_start") then
+					car.sg:GoToState("walk_start")
+				end
+			end
+		else
+			if car.components.locomotor then
+				car.components.locomotor.wantstomoveforward = false
+				car.components.locomotor.wantstoreachdestination = false
+				car.components.locomotor:Stop()
+				car.components.locomotor:StopMoving()
+				car.components.locomotor:ResetPath()
+			end
+			if car.Physics then
+				car.Physics:Stop()
+				car.Physics:SetMotorVel(0, 0, 0)
+			end
+			if car.sg and not car.sg:HasStateTag("busy") then
+				car.sg:GoToState("idle")
+			end
+		end
+	end
+end
+
 AddModRPCHandler("bulingbuling", "dir_car", function(player, car_guid, angle, is_moving)
 	if car_guid then
 		local car = GLOBAL.Ents[car_guid]
-		if car and car:IsValid() then
-			if is_moving then
-				if car.components.locomotor then
-					car.components.locomotor:WalkInDirection(angle)
-				end
-				if car.sg and not car.sg:HasStateTag("moving") and not car.sg:HasStateTag("busy") then
-					if car.sg:HasState("run") then
-						car.sg:GoToState("run")
-					elseif car.sg:HasState("walk") then
-						car.sg:GoToState("walk")
-					end
-				end
-			else
-				if car.components.locomotor then
-					car.components.locomotor:Stop()
-					car.components.locomotor:StopMoving()
-					car.components.locomotor:ResetPath()
-				end
-				if car.Physics then
-					car.Physics:Stop()
-					car.Physics:SetMotorVel(0, 0, 0)
-				end
-				if car.sg and not car.sg:HasStateTag("busy") then
-					car.sg:GoToState("idle")
-				end
-			end
-		end
+		DoDirCar(car, angle, is_moving)
 	end
 end)
 
@@ -851,12 +860,6 @@ end)
 AddClassPostConstruct("components/playercontroller", function(self)
 	local oldDoCameraControl = self.DoCameraControl
 	self.DoCameraControl = function(self, ...)
-		if self.inst and self.inst:HasTag("buling_driving") then
-			if GLOBAL.TheCamera then
-				GLOBAL.TheCamera:SetHeadingTarget(45)
-			end
-			return
-		end
 		if oldDoCameraControl then
 			return oldDoCameraControl(self, ...)
 		end
@@ -982,9 +985,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				if not GLOBAL.TheWorld.ismastersim then
 					SendBulingRPC("dir_car", vehicle.GUID, angle, true)
 				else
-					if vehicle.components.locomotor then
-						vehicle.components.locomotor:WalkInDirection(angle)
-					end
+					DoDirCar(vehicle, angle, true)
 				end
 			end
 		else
@@ -994,14 +995,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 				if not GLOBAL.TheWorld.ismastersim then
 					SendBulingRPC("dir_car", vehicle.GUID, 0, false)
 				else
-					if vehicle.components.locomotor then
-						vehicle.components.locomotor:Stop()
-						vehicle.components.locomotor:StopMoving()
-					end
-					if vehicle.Physics then
-						vehicle.Physics:Stop()
-						vehicle.Physics:SetMotorVel(0, 0, 0)
-					end
+					DoDirCar(vehicle, 0, false)
 				end
 			end
 		end
