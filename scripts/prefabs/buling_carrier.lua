@@ -666,24 +666,8 @@ DoTransform = function(inst, doer)
 		if matched_target then break end
 	end
 
-	-- Smart Count Fallback matching for Airplane (buling_plane) & Mechanical Stone Lobster (buling_rocky)
 	if matched_target == nil then
-		if container:Has("gears", 25) then
-			matched_target = "buling_plane"
-			print("[BULING CARRIER] Smart item count matched buling_plane!")
-		else
-			local has_puleidi = container:Has("buling_puleidi", 16) or container:Has("buling_puleidi_plank", 16)
-			local has_glass = container:Has("buling_glass", 8) or container:Has("moonglass", 8)
-			local has_gears = container:Has("gears", 1)
-			if has_puleidi and has_glass and has_gears then
-				matched_target = "buling_rocky"
-				print("[BULING CARRIER] Smart item count matched buling_rocky!")
-			end
-		end
-	end
-
-	if matched_target == nil then
-		print("[BULING CARRIER] No recipe match found for container contents.")
+		print("[BULING CARRIER] No exact 5x5 recipe grid match found for container contents.")
 		return
 	end
 

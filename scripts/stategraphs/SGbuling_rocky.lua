@@ -438,4 +438,25 @@ CommonStates.AddIdle(states, "idle_tendril", nil ,
     TimeEvent(30*FRAMES, function(inst) PlayLobSound(inst,"dontstarve/creatures/rocklobster/foley") end),                    
 })
 
+for _, st in ipairs(states) do
+	if st.name == "idle" then
+		local orig_onenter = st.onenter
+		st.onenter = function(inst, ...)
+			if inst.components.locomotor then
+				inst.components.locomotor:Stop()
+				inst.components.locomotor.wantstomoveforward = false
+				inst.components.locomotor.wantstoreachdestination = false
+			end
+			if inst.Physics then
+				inst.Physics:Stop()
+				inst.Physics:SetMotorVel(0, 0, 0)
+			end
+			if orig_onenter then
+				return orig_onenter(inst, ...)
+			end
+		end
+		break
+	end
+end
+
 return StateGraph("rocky", states, events, "idle", actionhandlers)
