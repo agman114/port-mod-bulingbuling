@@ -197,55 +197,69 @@ local function fn()
 	local trans = inst.entity:AddTransform()
 	local sound = inst.entity:AddSoundEmitter()
 	inst.entity:AddDynamicShadow()
-    inst.entity:AddPhysics()
-    inst.entity:AddAnimState():SetBloomEffectHandle( "shaders/anim.ksh" )
-    inst.Transform:SetSixFaced(inst)
-    --MakeCharacterPhysics(inst, 1, .5)
-	MakeCharacterPhysics(inst, 10, .5)
-    inst.DynamicShadow:SetSize( .8, .5 )
-    inst.entity:AddAnimState():SetBank("buling_glomling")
-    inst.entity:AddAnimState():SetBuild("buling_glomling")
-    inst.entity:AddAnimState():PlayAnimation("idle_loop", true)
-    inst:AddComponent("locomotor")
-    inst.components.locomotor:SetSlowMultiplier( 0.6 )
-    inst.components.locomotor.walkspeed = 4
-    inst.components.locomotor.runspeed =  4
-    inst:AddComponent("inspectable")
-    inst.Transform:SetScale(3, 3, 3)
+	inst.entity:AddPhysics()
+	inst.entity:AddAnimState():SetBloomEffectHandle("shaders/anim.ksh")
+	inst.Transform:SetSixFaced(inst)
+	ChangeToFlyingCharacterPhysics(inst, 1, .5)
+	inst.DynamicShadow:SetSize(.8, .5)
+	inst.entity:AddAnimState():SetBank("buling_glomling")
+	inst.entity:AddAnimState():SetBuild("buling_glomling")
+	inst.entity:AddAnimState():PlayAnimation("idle_loop", true)
+	inst:SetStateGraph("SGbuling_glomling")
+
+	inst:AddComponent("locomotor")
+	inst.components.locomotor:SetSlowMultiplier(0.6)
+	inst.components.locomotor.walkspeed = 8
+	inst.components.locomotor.runspeed = 10
+	if inst.components.locomotor.SetAllowFlyThrough then
+		inst.components.locomotor:SetAllowFlyThrough(true)
+	end
+	inst.components.locomotor.pathcaps = { allowwater = true, hover = true, ignorecrate = true, ignorewalls = true }
+
+	inst:AddComponent("inspectable")
+	inst.Transform:SetScale(3, 3, 3)
+
 	inst:AddComponent("health")
 	inst.components.health:SetMaxHealth(10000)
 	inst.components.health:SetCurrentHealth(10000)
 	inst.components.health.indestructible = true
-    inst:AddComponent("knownlocations")
-    inst:AddComponent("combat")
-	inst:SetStateGraph("SGbuling_glomling")
+
+	inst:AddComponent("combat")
+	inst.components.combat:SetDefaultDamage(100)
+
+	inst:AddComponent("container")
+	inst.components.container:WidgetSetup("buling_chest_5x5")
+	inst.components.container.onopenfn = function(inst, doer)
+		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_open")
+	end
+
 	inst.bulingdrop = drop
 	inst.LaunchProjectile = LaunchProjectile
 	inst:AddTag("buling_carrier")
 	inst:AddTag("boat")
-	inst.components.combat.canbeattackedfn = function(inst,attacker)
+	inst:AddTag("flying")
+
+	inst.components.combat.canbeattackedfn = function(inst, attacker)
 		if not TheWorld.ismastersim then
 			SendBulingRPC("do_widget_button2", inst.GUID)
 			return
 		end
-		--print(attacker)
-		--print("别打我")
 		local can_be_attacked = true
 		if attacker == (doer or inst) then
 			can_be_attacked = false
 		end
 		return can_be_attacked
 	end
-    ------------------    
-    inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_howl_LP", "howl")
-	inst:AddComponent("inspectable")
+
+	inst.SoundEmitter:PlaySound("dontstarve/ghost/ghost_howl_LP", "howl")
+
 	inst:AddComponent("drivable")
 	inst.components.drivable.sanitydrain = TUNING.ROWBOAT_SANITY_DRAIN
 	inst.components.drivable.runspeed = 10
-	inst.components.drivable.OnMounted = function(self,doer)
-		upcar(doer,inst)
+	inst.components.drivable.OnMounted = function(self, doer)
+		upcar(doer, inst)
 	end
-    return inst
+	return inst
 end
 local function carfn()
 	local hechengbiao = {

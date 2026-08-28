@@ -259,6 +259,9 @@ local prefab_open_events = {
 
 	-- Machinery / Communication / Weapon / Vehicle Tables
 	["buling_car_log"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
+	["buling_rocky"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
+	["buling_glomling"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
+	["buling_plane"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
 	["buling_tongxuntai"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
 	["tongxuntai"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
 	["buling_weaponchest"] = { open = "OpenBuling_jixiejiaognglu", close = "CloseBuling_jixiejiaognglu" },
