@@ -1334,24 +1334,32 @@ local function planttable(inst, doer)
 			end
 			peifang = peifang..item..","
 		end
+		local matched_key = nil
 		for k,v in pairs(seedhechengbiao) do
 			if v[1] == peifang then
-				local _crafted = SpawnPrefab(k)
-				if _crafted then
-					if opener and opener.components and opener.components.inventory then
-						opener.components.inventory:GiveItem(_crafted, nil, inst:GetPosition())
-					else
-						_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
-					end
+				matched_key = k
+				break
+			end
+		end
+
+		if matched_key then
+			local _crafted = SpawnPrefab(matched_key)
+			if _crafted then
+				local player_doer = (doer and doer.components and doer.components.inventory and doer) or (opener and opener.components and opener.components.inventory and opener)
+				if player_doer then
+					player_doer.components.inventory:GiveItem(_crafted, nil, inst:GetPosition())
+				else
+					local x, y, z = inst.Transform:GetWorldPosition()
+					_crafted.Transform:SetPosition(x, y, z)
 				end
-				for k=1,9 do
-					local item = inst.components.container:GetItemInSlot(k)
-					if item ~= nil then
-						if item.components.stackable and item.components.stackable.stacksize > 1 then
-							item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
-						else
-							item:Remove()
-						end
+			end
+			for slot_i=1,9 do
+				local item = inst.components.container:GetItemInSlot(slot_i)
+				if item ~= nil then
+					if item.components.stackable and item.components.stackable.stacksize > 1 then
+						item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
+					else
+						item:Remove()
 					end
 				end
 			end

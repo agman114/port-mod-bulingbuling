@@ -272,6 +272,8 @@ local prefab_open_events = {
 
 	-- Plant / Hydroponic / Alcohol Tables
 	["buling_shuipei"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
+		["buling_planttable"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
+	["buling_seedbox"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
 	["planttable"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
 	["buling_alcoholtable"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
 		["buling_seedbox"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
