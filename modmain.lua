@@ -274,8 +274,7 @@ local prefab_open_events = {
 	["buling_shuipei"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
 	["planttable"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
 	["buling_alcoholtable"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
-	["buling_cropbox"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
-	["buling_seedbox"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
+		["buling_seedbox"] = { open = "OpenBuling_planttable", close = "CloseBuling_planttable" },
 }
 
 local ContainerWidget = GLOBAL.require("widgets/containerwidget")

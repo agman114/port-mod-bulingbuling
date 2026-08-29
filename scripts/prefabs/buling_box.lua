@@ -672,29 +672,58 @@ local function buling_weaponchest(inst, doer)
 end
 --电动收割机
 local function shouhuo(inst, doer)
+	local function give_to_storage(inst, item)
+		if item and item:IsValid() then
+			if inst.components.container and not inst.components.container:IsFull() then
+				inst.components.container:GiveItem(item)
+			else
+				local x, y, z = inst.Transform:GetWorldPosition()
+				if item.Physics then
+					item.Physics:Teleport(x, y, z)
+				else
+					item.Transform:SetPosition(x, y, z)
+				end
+			end
+		end
+	end
+
 	local function shouhuotime(inst, doer)
 		if inst.components.beerpower and inst.components.beerpower.power >= 50 then
 			local pos = Vector3(inst.Transform:GetWorldPosition())
 			local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, 20, nil, { "INLIMBO", "NOCLICK", "DECK" })
-			local harvester_user = doer or inst
 			local count = 0
 			for _, v in ipairs(ents) do
 				if v:IsValid() and v ~= inst then
-					-- Pickable plants (berries, grass, saplings, etc.)
 					if v.components.pickable and v.components.pickable:CanBePicked() and v.prefab ~= "flower" then
-						local success, loot = v.components.pickable:Pick(harvester_user)
+						local success, loot = v.components.pickable:Pick(inst)
+						if success and loot then
+							if type(loot) == "table" then
+								for _, item in ipairs(loot) do give_to_storage(inst, item) end
+							else
+								give_to_storage(inst, loot)
+							end
+						end
 						count = count + 1
-					-- Crops & Farm plants
 					elseif v.components.crop and v.components.crop:IsReadyForHarvest() then
-						v.components.crop:Harvest(harvester_user)
+						local product = v.components.crop.product
+						v.components.crop:Harvest(inst)
 						count = count + 1
-					-- Harvestable structures (Beeboxes, etc.)
 					elseif v.components.harvestable and v.components.harvestable:CanBeHarvested() then
-						v.components.harvestable:Harvest(harvester_user)
+						v.components.harvestable:Harvest(inst)
 						count = count + 1
 					end
 				end
 			end
+			-- Collect any loose items in radius into harvester container storage
+			local loose_items = TheSim:FindEntities(pos.x, pos.y, pos.z, 15, { "_inventoryitem" }, { "INLIMBO", "NOCLICK" })
+			for _, item in ipairs(loose_items) do
+				if item:IsValid() and item.components.inventoryitem and not item.components.inventoryitem:IsHeld() then
+					if inst.components.container and not inst.components.container:IsFull() then
+						inst.components.container:GiveItem(item)
+					end
+				end
+			end
+
 			if count > 0 then
 				inst.components.beerpower:UpBeer(50)
 			end
