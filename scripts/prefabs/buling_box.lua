@@ -7,6 +7,18 @@ local function SendBulingRPC(rpc_name, ...)
 	end
 end
 
+local function OnOpen(inst)
+	if inst and inst.SoundEmitter then
+		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_open")
+	end
+end
+
+local function OnClose(inst)
+	if inst and inst.SoundEmitter then
+		inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_close")
+	end
+end
+
 local assets ={
 	Asset("ANIM", "anim/buling_manual.zip"),
 	Asset("ANIM", "anim/buling_box.zip"),
