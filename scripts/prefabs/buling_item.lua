@@ -542,59 +542,90 @@ local function dianlifu()--电动斧
 	return inst
 end
 local function banshou()--扳手
-	local function canbanshou(staff, caster, target, pos)
-		return target and target.beeritem~= nil
+	local function canbanshou(staff, target, pos, doer)
+		if target and target:IsValid() then
+			return target.beeritem ~= nil or (target.prefab and string.find(target.prefab, "buling_") ~= nil and PrefabExists(target.prefab.."_item"))
+		end
+		return false
 	end
-	local function spawnbanshou(staff, target, pos)
-		local item = target.beeritem
-		local tornado = SpawnPrefab(item)
-		tornado.Transform:SetPosition(target.Transform:GetWorldPosition())
-		SpawnPrefab("statue_transition").Transform:SetPosition(target:GetPosition():Get())
-        SpawnPrefab("statue_transition_2").Transform:SetPosition(target:GetPosition():Get())
-		if target.components.container then target.components.container:DropEverything() end
-		target:DoTaskInTime(0.1,function() target:Remove() end)
+
+	local function spawnbanshou(staff, target, pos, doer)
+		if target and target:IsValid() then
+			local item_prefab = target.beeritem or (target.prefab and target.prefab.."_item")
+			if item_prefab and PrefabExists(item_prefab) then
+				local item = SpawnPrefab(item_prefab)
+				if item then
+					local x, y, z = target.Transform:GetWorldPosition()
+					if item.Physics then
+						item.Physics:Teleport(x, y, z)
+					else
+						item.Transform:SetPosition(x, y, z)
+					end
+				end
+			end
+			if target.components.container then
+				target.components.container:DropEverything()
+			end
+			local x, y, z = target.Transform:GetWorldPosition()
+			local fx1 = SpawnPrefab("statue_transition")
+			if fx1 then fx1.Transform:SetPosition(x, y, z) end
+			local fx2 = SpawnPrefab("statue_transition_2")
+			if fx2 then fx2.Transform:SetPosition(x, y, z) end
+			target:DoTaskInTime(0.1, function() if target:IsValid() then target:Remove() end end)
+		end
 	end
-    local function onequip(inst, owner, from_inventory)
-	local doer = owner
-		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_banshou", "swap_buling_banshou")
-		owner.AnimState:Show("ARM_carry")
-		owner.AnimState:Hide("ARM_normal")
+
+	local function onequip(inst, owner, from_inventory)
+		local doer = owner
+		if owner and owner.AnimState then
+			owner.AnimState:OverrideSymbol("swap_object", "swap_buling_banshou", "swap_buling_banshou")
+			owner.AnimState:Show("ARM_carry")
+			owner.AnimState:Hide("ARM_normal")
+		end
 	end
+
 	local function onunequip(inst, owner)
-	local doer = owner
-		owner.AnimState:Hide("ARM_carry")
-		owner.AnimState:Show("ARM_normal")
+		local doer = owner
+		if owner and owner.AnimState then
+			owner.AnimState:Hide("ARM_carry")
+			owner.AnimState:Show("ARM_normal")
+		end
 	end
+
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
-    inst.entity:AddSoundEmitter()
-    MakeInventoryPhysics(inst)
-	
-    inst.AnimState:SetBank("buling_banshou")
-    inst.AnimState:SetBuild("buling_banshou")
+	inst.entity:AddSoundEmitter()
+	MakeInventoryPhysics(inst)
+
+	inst.AnimState:SetBank("buling_banshou")
+	inst.AnimState:SetBuild("buling_banshou")
 	inst.AnimState:PlayAnimation("idle")
-	
-    inst:AddComponent("inventoryitem")
+
+	inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_banshou"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_banshou.xml"
-    inst:AddComponent("equippable")
-	inst.components.equippable:SetOnEquip( onequip )
-	inst.components.equippable:SetOnUnequip( onunequip )
-    inst:AddComponent("inspectable")
+	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_banshou.xml"
+
+	inst:AddComponent("equippable")
+	inst.components.equippable:SetOnEquip(onequip)
+	inst.components.equippable:SetOnUnequip(onunequip)
+
+	inst:AddComponent("inspectable")
+
 	inst:AddComponent("spellcaster")
-    inst.components.spellcaster.canuseontargets = true
-    inst.components.spellcaster.canusefrominventory = false
-if inst.components.spellcaster.SetSpellTestFn then
-        inst.components.spellcaster:SetSpellTestFn(candestroy)
-    elseif inst.components.spellcaster.SetCanCastFn then
-        inst.components.spellcaster:SetCanCastFn(candestroy)
-    else
-        inst.components.spellcaster.canCastFn = candestroy
-    end
-    inst.components.spellcaster:SetSpellFn(spawnbanshou)
-    inst.components.spellcaster.castingstate = "castspell_tornado"
-    inst.components.spellcaster.actiontype = "SCIENCE"
+	inst.components.spellcaster.canuseontargets = true
+	inst.components.spellcaster.canusefrominventory = false
+
+	if inst.components.spellcaster.SetSpellTestFn then
+		inst.components.spellcaster:SetSpellTestFn(canbanshou)
+	elseif inst.components.spellcaster.SetCanCastFn then
+		inst.components.spellcaster:SetCanCastFn(canbanshou)
+	else
+		inst.components.spellcaster.canCastFn = canbanshou
+	end
+	inst.components.spellcaster:SetSpellFn(spawnbanshou)
+	inst.components.spellcaster.castingstate = "castspell_tornado"
+	inst.components.spellcaster.actiontype = "SCIENCE"
 	return inst
 end
 local function forcefield()--防水立场
