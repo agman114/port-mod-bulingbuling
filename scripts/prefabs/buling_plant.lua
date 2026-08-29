@@ -377,7 +377,8 @@ local function seedsfn()
     return inst
 end
 local function zhongzidingseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_zhongziding").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -394,7 +395,8 @@ local function zhongzidingseedfn(inst, doer)
 	return inst
 end
 local function rockseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_rock").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -406,7 +408,8 @@ local function rockseedfn(inst, doer)
 	return inst
 end
 local function flintseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_flint").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -418,7 +421,8 @@ local function flintseedfn(inst, doer)
 	return inst
 end
 local function nitreseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_nitre").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -430,7 +434,8 @@ local function nitreseedfn(inst, doer)
 	return inst
 end
 local function goldseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_gold").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -442,7 +447,8 @@ local function goldseedfn(inst, doer)
 	return inst
 end
 local function obsidianseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_obsidian").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -454,7 +460,8 @@ local function obsidianseedfn(inst, doer)
 	return inst
 end
 local function thuleciteseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_thulecite").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -466,7 +473,8 @@ local function thuleciteseedfn(inst, doer)
 	return inst
 end
 local function ironseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_iron").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -478,7 +486,8 @@ local function ironseedfn(inst, doer)
 	return inst
 end
 local function marbleseedfn(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_marble").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -490,7 +499,8 @@ local function marbleseedfn(inst, doer)
 	return inst
 end
 local function ceshiseedfn(inst, doer)--测试
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_rock").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -502,7 +512,8 @@ local function ceshiseedfn(inst, doer)--测试
 	return inst
 end
 local function wheatseedfn(inst, doer)--小麦
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_plant_wheat").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -526,7 +537,8 @@ local function wheatseedfn(inst, doer)--小麦
 	return inst
 end
 local function buling_seed_duofeng(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_caiyuan_duofeng").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -538,7 +550,8 @@ local function buling_seed_duofeng(inst, doer)
 	return inst
 end
 local function buling_seed_redai(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_caiyuan_redai").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -550,7 +563,8 @@ local function buling_seed_redai(inst, doer)
 	return inst
 end
 local function buling_seed_shirun(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_caiyuan_shirun").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -562,7 +576,8 @@ local function buling_seed_shirun(inst, doer)
 	return inst
 end
 local function buling_seed_yinbi(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_caiyuan_yinbi").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
@@ -574,7 +589,8 @@ local function buling_seed_yinbi(inst, doer)
 	return inst
 end
 local function buling_seed_pinji(inst, doer)
-	local function OnDeploy (inst, doer, pt)
+	local function OnDeploy (inst, pt, deployer)
+		local doer = deployer
 		SpawnPrefab("buling_caiyuan_pinji").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
