@@ -661,43 +661,72 @@ end
 --电动收割机
 local function shouhuo(inst, doer)
 	local function shouhuotime(inst, doer)
-		if inst.components.beerpower.power >= 60 then
+		if inst.components.beerpower and inst.components.beerpower.power >= 50 then
 			local pos = Vector3(inst.Transform:GetWorldPosition())
-			local ents = TheSim:FindEntities(pos.x,pos.y,pos.z, 15)
-			for k,v in pairs(ents) do
-				if v.components.pickable and v.prefab ~= "flower" then
-					v.components.pickable:Pick((doer or inst))
+			local ents = TheSim:FindEntities(pos.x, pos.y, pos.z, 20, nil, { "INLIMBO", "NOCLICK", "DECK" })
+			local harvester_user = doer or inst
+			local count = 0
+			for _, v in ipairs(ents) do
+				if v:IsValid() and v ~= inst then
+					-- Pickable plants (berries, grass, saplings, etc.)
+					if v.components.pickable and v.components.pickable:CanBePicked() and v.prefab ~= "flower" then
+						local success, loot = v.components.pickable:Pick(harvester_user)
+						count = count + 1
+					-- Crops & Farm plants
+					elseif v.components.crop and v.components.crop:IsReadyForHarvest() then
+						v.components.crop:Harvest(harvester_user)
+						count = count + 1
+					-- Harvestable structures (Beeboxes, etc.)
+					elseif v.components.harvestable and v.components.harvestable:CanBeHarvested() then
+						v.components.harvestable:Harvest(harvester_user)
+						count = count + 1
+					end
 				end
-				if v.components.crop then
-					v.components.crop:Harvest((doer or inst))
-				end
+			end
+			if count > 0 then
+				inst.components.beerpower:UpBeer(50)
 			end
 		end
 	end
+
 	local inst = CreateEntity()
-    inst.entity:AddTransform()
+	inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
-    inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+	inst.entity:AddAnimState()
+	MakeObstaclePhysics(inst, .5)
+	inst:AddComponent("inspectable")
+
 	inst.AnimState:SetBank("buling_box")
-    inst.AnimState:SetBuild("buling_box")
+	inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("shouhuo")
+
+	inst:AddComponent("container")
+	inst.components.container:SetNumSlots(#slotpos)
+	inst.components.container.widgetslotpos = slotpos
+	inst.components.container.widget = { slotpos = slotpos, animbank = 'ui_chest_3x3', animbuild = 'ui_chest_3x3', pos = Vector3(0, 200, 0), side_align_tip = 100 }
+	inst.components.container.widgetanimbank = "ui_chest_3x3"
+	inst.components.container.widgetanimbuild = "ui_chest_3x3"
+	inst.components.container.widgetpos = Vector3(0, 200, 0)
+	inst.components.container.side_align_tip = 100
+	inst.components.container.onopenfn = OnOpen
+	inst.components.container.onclosefn = OnClose
+
 	local function turnon(inst, doer)
 		inst.components.machine.ison = true
-		shouhuotime(inst)
-		inst:DoTaskInTime(0,function()
+		shouhuotime(inst, doer)
+		inst:DoTaskInTime(0, function()
 			inst.components.machine:TurnOff()
-			inst.components.beerpower:UpBeer(60)
 		end)
 	end
+
 	local function turnoff(inst, doer)
 		inst.components.machine.ison = false
-		inst.components.machine.caninteractfn = function() return  inst.components.beerpower and inst.components.beerpower.power >= 60 end
+		inst.components.machine.caninteractfn = function() return inst.components.beerpower and inst.components.beerpower.power >= 50 end
 	end
+
 	inst:AddComponent("machine")
-    inst.components.machine.turnonfn = turnon
-    inst.components.machine.turnofffn = turnoff
+	inst.components.machine.turnonfn = turnon
+	inst.components.machine.turnofffn = turnoff
 	inst:AddComponent("beerpower")
 	inst.components.beerpower:SetNumber(100)
 	inst.components.machine.cooldowntime = 0
