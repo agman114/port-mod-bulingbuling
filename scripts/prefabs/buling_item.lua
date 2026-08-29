@@ -7,6 +7,14 @@ local function SendBulingRPC(rpc_name, ...)
 	end
 end
 
+local function candestroy(staff, caster, target)
+	if not target then return false end
+	if caster and caster.components and caster.components.combat then
+		return caster.components.combat:CanTarget(target)
+	end
+	return true
+end
+
 local cooking = require("cooking")
 local assets ={
 	Asset("ANIM", "anim/buling_yifu/body_willow_dragonfly.zip"),
