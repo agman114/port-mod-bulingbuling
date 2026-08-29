@@ -613,27 +613,36 @@ AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.BULING_STSTEM,
 
 local BULING_ENZYME = GLOBAL.Action({mount_enabled=true})
 BULING_ENZYME.id = "BULING_ENZYME"
-BULING_ENZYME.str = STRINGS.BULING_ENZYME or "Enzyme"
+BULING_ENZYME.str = STRINGS.BULING_ENZYME or "Extract Enzyme"
 BULING_ENZYME.fn = function(act) 
-	if act.target and act.target.components.crop and act.target.components.crop.matured then
-        if act.invobject and act.invobject.components.buling_getenzyme and act.doer then
-			if act.invobject.components.finiteuses then
-				act.invobject.components.finiteuses:Use(1)
+	if act.target and act.invobject and act.invobject.components.buling_getenzyme and act.doer then
+		if act.invobject.components.finiteuses then
+			act.invobject.components.finiteuses:Use(1)
+		end
+		if act.doer.components.inventory then
+			if act.target.enzyme and act.target.enzyme == "beta" then
+				act.doer.components.inventory:GiveItem(SpawnPrefab("buling_juhemei_beta"))
+			else
+				act.doer.components.inventory:GiveItem(SpawnPrefab("buling_juhemei_alpha"))
 			end
-			if act.doer.components.inventory then
-				if act.target.enzyme and act.target.enzyme == "beta" then
-					act.doer.components.inventory:GiveItem(SpawnPrefab("buling_juhemei_beta"))
-				else
-					act.doer.components.inventory:GiveItem(SpawnPrefab("buling_juhemei_alpha"))
-				end
-			end
-        end
-    end
-    return true
+		end
+		return true
+	end
+    return false
 end
 AddAction(BULING_ENZYME)
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.BULING_ENZYME, "dolongaction"))
 AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.BULING_ENZYME, "dolongaction"))
+
+AddComponentAction("USEITEM", "buling_getenzyme", function(inst, doer, target, actions, right)
+	if right and target then
+		if (target.components.crop and target.components.crop.matured) 
+		   or target:HasTag("buling_plant") 
+		   or (target.components.pickable and target.components.pickable:CanBePicked()) then
+			table.insert(actions, ACTIONS.BULING_ENZYME)
+		end
+	end
+end)
 
 -- Global Free Crafting Command and RPC Handlers
 GLOBAL.BULING_FREE_CRAFT = false
