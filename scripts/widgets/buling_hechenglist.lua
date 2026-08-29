@@ -246,7 +246,7 @@ self:QK()
 	self.caijizhe:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_jiandao")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_cropbox_item")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_shouge.xml", "buling_shouge.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
