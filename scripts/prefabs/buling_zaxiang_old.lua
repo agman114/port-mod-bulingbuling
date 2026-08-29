@@ -699,7 +699,8 @@ end
 --电动镐
 local function diandonggao()
 
-    local function onequip(inst, doer, owner)
+    local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		if inst.components.finiteuses.current<= 0 then
 			local hands = (doer or inst).components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
 			inst:DoTaskInTime(0.1,function()
@@ -711,7 +712,8 @@ local function diandonggao()
 		owner.AnimState:Hide("ARM_normal")
 		
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end
@@ -757,7 +759,8 @@ local function diandonggao()
 end
 local function dianlifu()--电动斧
 
-    local function onequip(inst, doer, owner)
+    local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", "swap_beeraxe", "swap_beeraxe")
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
@@ -769,7 +772,8 @@ local function dianlifu()--电动斧
 			end)
 		end
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end
@@ -825,13 +829,15 @@ local function jiandao(Sim)
         end
 	end
 
-	local function onequip(inst, doer, owner) 
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner 
 		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_shears", "swap_shears")
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
 	end
 
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end

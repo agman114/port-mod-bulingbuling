@@ -16,12 +16,14 @@ local function OnBlocked(owner, data)
 	end
 end
 
-local function onequip(inst, doer, owner) 
+local function onequip(inst, owner, from_inventory)
+	local doer = owner 
     owner.AnimState:OverrideSymbol("swap_hat", "woodlegs", "swap_hat")
     inst:ListenForEvent("attacked", OnBlocked, owner)
 end
 
-local function onunequip(inst, doer, owner) 
+local function onunequip(inst, owner)
+	local doer = owner 
     owner.AnimState:ClearOverrideSymbol("swap_hat")
     inst:RemoveEventCallback("attacked", OnBlocked, owner)
 end

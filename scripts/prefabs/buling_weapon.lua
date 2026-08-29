@@ -7,7 +7,8 @@ local assets ={
 	--
 }
 local function repair(inst, doer,itemname,Symbol)
-	local function onequip(inst, doer, owner)
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", itemname, Symbol or itemname)
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
@@ -28,7 +29,8 @@ local function repair(inst, doer,itemname,Symbol)
 			lavafx.Transform:SetPosition(inst.Transform:GetWorldPosition())
 		end)
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 		if inst.task0 then
@@ -154,12 +156,14 @@ local function minefn(Sim)
     return inst
 end
 local function gun_weapon()
-	local function onequip(inst, doer, owner)
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_acher", "swap_buling_acher")
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end
@@ -273,14 +277,16 @@ if inst.components.spellcaster.SetSpellTestFn then
 	return inst
 end
 local function boat_hat()
-	local function onequip(inst, doer, owner)
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_hat", "hat_tiexue", "swap_hat")
         owner.AnimState:Show("HAT")
 		owner.AnimState:Show("HAT_HAIR")
 		owner.AnimState:Hide("HEAD")
 		owner.AnimState:Hide("HAIRFRONT")
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Show("HEAD")
 		owner.AnimState:Show("HAIRFRONT")
 		owner.AnimState:Hide("HEAD_HAIR")

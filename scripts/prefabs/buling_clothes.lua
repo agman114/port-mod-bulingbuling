@@ -177,7 +177,8 @@ local function fn(inst, doer)
 			end
 		end
 	end
-	local function onequip(inst, doer, owner) 
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner 
 		--body
 		if inst.components.fueled then
 			inst.components.fueled:StartConsuming()
@@ -218,7 +219,8 @@ local function fn(inst, doer)
 		end
 	end
 	
-	local function onunequip(inst, doer, owner) 
+	local function onunequip(inst, owner)
+	local doer = owner 
 		if inst.components.fueled then
 			inst.components.fueled:StopConsuming()
 		end
@@ -342,13 +344,15 @@ local function buling_christmas_fn()
 	local function onperish(inst, doer)
 		inst:Remove()
 	end
-	local function onequip(inst, doer, owner) 
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner 
 		owner.AnimState:OverrideSymbol("swap_body", "buling_christmas", "swap_body")
 		inst.components.fueled:StartConsuming()
 		inst.Light:Enable(true)
 	end
 
-	local function onunequip(inst, doer, owner) 
+	local function onunequip(inst, owner)
+	local doer = owner 
 		owner.AnimState:ClearOverrideSymbol("swap_body")
 		inst.components.fueled:StopConsuming()
 		inst.Light:Enable(false)

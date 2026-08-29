@@ -162,7 +162,8 @@ local function commonfn()
     return inst
 end
 local function repair(inst, doer,itemname,Symbol)
-	local function onequip(inst, doer, owner)
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", itemname, Symbol or itemname)
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
@@ -173,7 +174,8 @@ local function repair(inst, doer,itemname,Symbol)
 			end)
 		end
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end
@@ -551,12 +553,14 @@ local function banshou()--扳手
 		if target.components.container then target.components.container:DropEverything() end
 		target:DoTaskInTime(0.1,function() target:Remove() end)
 	end
-    local function onequip(inst, doer, owner)
+    local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_banshou", "swap_buling_banshou")
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end
@@ -593,7 +597,8 @@ if inst.components.spellcaster.SetSpellTestFn then
 	return inst
 end
 local function forcefield()--防水立场
-    local function onequip(inst, doer, owner)
+    local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		print("装备力场")
 		inst.components.waterproofer:SetEffectiveness(1)
 		inst.fx = SpawnPrefab("forcefieldfx")
@@ -607,7 +612,8 @@ local function forcefield()--防水立场
 		owner:AddTag("venting")
 		inst.components.beerpower:StartPerishing()
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		print("脱下力场")
 		inst.components.waterproofer:SetEffectiveness(0)
 		if inst.fx then
@@ -709,13 +715,15 @@ local function jiandao(Sim)
         end
 	end
 
-	local function onequip(inst, doer, owner) 
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner 
 		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_shears", "swap_shears")
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
 	end
 
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end

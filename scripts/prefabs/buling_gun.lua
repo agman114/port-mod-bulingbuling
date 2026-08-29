@@ -79,7 +79,8 @@ local function zidan()
 end
 --
 local function buling_hand_gun(inst, doer,anim)
-	local function onequip(inst, doer, owner)
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_weapon",anim)
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
@@ -87,7 +88,8 @@ local function buling_hand_gun(inst, doer,anim)
 			inst.components.container:Open((doer or inst))
 		end)
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 		inst:DoTaskInTime(0.1,function()

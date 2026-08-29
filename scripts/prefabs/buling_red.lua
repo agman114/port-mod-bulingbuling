@@ -13,7 +13,8 @@ local assets ={
 	Asset("ANIM", "anim/swap_lightsword_buling.zip"),
 }
 local function redlycoris()
-    local function onequip(inst, doer, owner)
+    local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		if not inst:HasTag("baojia") then
 			owner.AnimState:OverrideSymbol("swap_hat", "redlycoris", "swap_hat")
 			owner.AnimState:Show("HAT")
@@ -27,7 +28,8 @@ local function redlycoris()
 			owner.components.inventory:Equip(SpawnPrefab("buling_redlycoris_armor"))
 		end
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Show("HEAD")
 		owner.AnimState:Show("HAIRFRONT")
 		owner.AnimState:Hide("HEAD_HAIR")
@@ -104,7 +106,8 @@ local function redlycoris()
 	return inst
 end
 local function redlycoris_armor()
-	local function onequip(inst, doer, owner)
+	local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:SetBuild("wx78_bulingbuling")
 		owner.AnimState:OverrideSymbol("hand", "buling_fly", "hand")
 		owner.AnimState:OverrideSymbol("arm_upper", "buling_fly", "arm_upper")
@@ -115,7 +118,8 @@ local function redlycoris_armor()
 		owner.AnimState:OverrideSymbol("arm_upper_skin", "buling_fly", "arm_upper_skin")
 		owner.AnimState:OverrideSymbol("hair", "bulingbuling", "hair")
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:SetBuild("bulingbuling")
 		owner.AnimState:OverrideSymbol("hand", "bulingbuling", "hand")
 		owner.AnimState:OverrideSymbol("torso", "bulingbuling", "torso")
@@ -400,12 +404,14 @@ local function redlycoris_sword()
 			zidan:Remove()
 		end)
 	end
-    local function onequip(inst, doer, owner)
+    local function onequip(inst, owner, from_inventory)
+	local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", "swap_lightsword_buling", "swap_lightsword_z")
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end

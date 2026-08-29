@@ -34,7 +34,8 @@ local function buling_morph(inst, doer,owner,name)
 end
 
 local function comm(inst, doer)
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		owner.AnimState:SetBuild("bulingbuling")
 		owner.AnimState:Show("HEAD")
 		owner.AnimState:Show("HAIRFRONT")
@@ -182,7 +183,8 @@ local function exoskeleton_sword()
 			inst.components.talker:Say(STRINGS.BULING_SNOWSKELETON_DEF)
 		end
 	end
-	local function onunequip(inst, doer, owner)
+	local function onunequip(inst, owner)
+	local doer = owner
 		if (doer or inst):HasTag("kamen_rider") then
 			inst:DoTaskInTime(0.1,function()
 				local exoskeleton_sword = SpawnPrefab("buling_exoskeleton_sword")
