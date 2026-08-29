@@ -31,6 +31,9 @@ local RECIPETABS = GLOBAL.RECIPETABS
 local Recipe = GLOBAL.Recipe
 local STRINGS = GLOBAL.STRINGS
 local ACTIONS = GLOBAL.ACTIONS
+if GLOBAL.ACTIONS and GLOBAL.ACTIONS.SHEAR == nil then
+	GLOBAL.ACTIONS.SHEAR = GLOBAL.ACTIONS.DIG or GLOBAL.ACTIONS.HACK or GLOBAL.ACTIONS.CHOP
+end
 local TECH = GLOBAL.TECH
 local orig_resolvefilepath = GLOBAL.resolvefilepath
 if orig_resolvefilepath then

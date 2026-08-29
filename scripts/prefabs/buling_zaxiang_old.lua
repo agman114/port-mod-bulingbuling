@@ -844,14 +844,14 @@ local function jiandao(Sim)
 
     ---------------------------------------------------------------
     inst:AddComponent("tool")
-    inst.components.tool:SetAction(ACTIONS.SHEAR,2)
+    inst.components.tool:SetAction(ACTIONS.SHEAR or ACTIONS.DIG, 2)
     ---------------------------------------------------------------
     inst:AddComponent("finiteuses")
     inst.components.finiteuses:SetMaxUses(120)
     inst.components.finiteuses:SetUses(0)
     
     inst.components.finiteuses:SetOnFinished( onfinished )
-    inst.components.finiteuses:SetConsumption(ACTIONS.SHEAR, 1)
+    inst.components.finiteuses:SetConsumption(ACTIONS.SHEAR or ACTIONS.DIG, 1)
     ---------------------------------------------------------------
 
     inst:AddComponent("inspectable")

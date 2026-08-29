@@ -694,10 +694,10 @@ local function jiandao(Sim)
 								table.insert(jiandao.monsterbiao, v.GUID)
 							end
 						end
-						if v and v.components.shearable and v.components.shearable:IsActionValid(ACTIONS.SHEAR) then
+						if v and v.components.shearable and v.components.shearable:IsActionValid((ACTIONS.SHEAR or ACTIONS.DIG)) then
 							v.components.shearable:Shear(caster)
 						end
-						if v and v.components.workable and v.components.workable.action == ACTIONS.SHEAR and v.components.workable:IsActionValid(ACTIONS.SHEAR) then
+						if v and v.components.workable and v.components.workable.action == (ACTIONS.SHEAR or ACTIONS.DIG) and v.components.workable:IsActionValid((ACTIONS.SHEAR or ACTIONS.DIG)) then
 							v.components.workable:WorkedBy(caster, 1)
 						end
 					end
@@ -730,7 +730,7 @@ local function jiandao(Sim)
     inst:AddTag("shears")
 	inst:AddTag("beerpowertool")
     inst:AddComponent("tool")
-    inst.components.tool:SetAction(ACTIONS.SHEAR,2)
+    inst.components.tool:SetAction((ACTIONS.SHEAR or ACTIONS.DIG) or ACTIONS.DIG, 2)
 	inst.buling_name = "swap_buling_shears"
 	inst.symbol = "swap_shears"
 	inst:AddComponent("spellcaster")
@@ -754,7 +754,7 @@ if inst.components.spellcaster.SetSpellTestFn then
     inst.repair = repair
 	inst.repair(inst,inst.buling_name,inst.symbol)
     inst.components.finiteuses:SetOnFinished( onfinished )
-    inst.components.finiteuses:SetConsumption(ACTIONS.SHEAR, 1)
+    inst.components.finiteuses:SetConsumption((ACTIONS.SHEAR or ACTIONS.DIG) or ACTIONS.DIG, 1)
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem.imagename = "buling_yajingjian"
