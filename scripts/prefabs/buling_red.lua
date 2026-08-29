@@ -131,7 +131,7 @@ local function redlycoris_armor()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
     MakeInventoryPhysics(inst)
-	local function onfinished(inst, doer)
+	local function onfinished(inst)
 		inst:Remove()
 	end
     inst:AddComponent("inventoryitem")
@@ -178,7 +178,7 @@ local function redlycoris_weapon()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
     MakeInventoryPhysics(inst)
-	local function onfinished(inst, doer)
+	local function onfinished(inst)
 		if inst:HasTag("gatling") then
 			inst:RemoveTag("gatling")
 		end

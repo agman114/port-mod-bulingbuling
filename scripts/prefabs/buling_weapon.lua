@@ -319,10 +319,11 @@ local function cancreatelight(inst, doer, caster, target, pos)
 	end
 	return false
 end
-local function onfinished(inst, doer)
+local function onfinished(inst)
 	if inst.components.equippable then
-		local target = (doer or inst)
-        local item = target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+		local owner = inst.components.equippable and inst.components.equippable.equippedto
+		local target = (owner or inst)
+		local item = (target.components and target.components.inventory and target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS))
         if inst == item then
             target.components.inventory:GiveItem(item)
         end

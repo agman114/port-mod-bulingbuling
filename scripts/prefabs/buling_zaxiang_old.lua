@@ -717,10 +717,11 @@ local function diandonggao()
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end
-	local function onfinished(inst, doer)
+	local function onfinished(inst)
 		if inst.components.equippable then
-            local target = (doer or inst)
-            local item = target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+            local owner = inst.components.equippable and inst.components.equippable.equippedto
+		local target = (owner or inst)
+		local item = (target.components and target.components.inventory and target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS))
             if inst == item then
                 target.components.inventory:GiveItem(item)
             end
@@ -777,10 +778,11 @@ local function dianlifu()--电动斧
 		owner.AnimState:Hide("ARM_carry")
 		owner.AnimState:Show("ARM_normal")
 	end
-	local function onfinished(inst, doer)
+	local function onfinished(inst)
 		if inst.components.equippable then
-            local target = (doer or inst)
-            local item = target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+            local owner = inst.components.equippable and inst.components.equippable.equippedto
+		local target = (owner or inst)
+		local item = (target.components and target.components.inventory and target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS))
             if inst == item then
                 target.components.inventory:GiveItem(item)
             end
@@ -818,10 +820,11 @@ local function dianlifu()--电动斧
 	return inst
 end
 local function jiandao(Sim)
-	local function onfinished(inst, doer)
+	local function onfinished(inst)
 		if inst.components.equippable then
-            local target = (doer or inst)
-            local item = target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+            local owner = inst.components.equippable and inst.components.equippable.equippedto
+		local target = (owner or inst)
+		local item = (target.components and target.components.inventory and target.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS))
             if inst == item then
                 target.components.inventory:GiveItem(item)
             end
