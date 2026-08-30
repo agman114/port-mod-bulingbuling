@@ -42,7 +42,7 @@ local function boat_perish(inst, doer)
 end
 
 local function candrive(inst, doer, driver)
-	return driver and driver.prefab and driver.prefab == "buling_wx78"
+	return true
 end
 
 local function fn()
@@ -138,5 +138,6 @@ local function bulingfn()
  	return inst
 end
 
-return Prefab("buling_boat", fn, assets, prefabs),
+inst.beeritem = "buling_boat_item"
+	return Prefab("buling_boat", fn, assets, prefabs),
 Prefab("buling_boat_tiexue", bulingfn, assets, prefabs)

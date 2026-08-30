@@ -171,6 +171,10 @@ local weaponhechengbiao ={
 ["buling_gun_jiguang_yaoshou"]={"buling_puleidi,nil,nil,buling_glass,buling_gun_jiguang,buling_glass,buling_puleidi,nil,nil,"},
 --防水力场
 ["buling_waterproof_field"]={"buling_diandeng_item,buling_glass,buling_bileizhen_item,buling_glass,buling_zhongjiqi_item,buling_glass,nil,buling_glass,nil,"},
+--Обычная Лодка
+["buling_boat_item"]={"boards,boards,boards,rope,boards,rope,gears,boards,gears,"},
+--Бронированная Лодка
+["bulingboat_tiexue_item"]={"buling_puleidi,buling_puleidi,buling_puleidi,buling_puleidi,buling_boat_item,buling_puleidi,gears,buling_puleidi,gears,"},
 --木质车车
 ["buling_car_log_item"]={"boards,boards,boards,transistor,buling_chest_item,buling_core,gears,boards,gears,"},
 --物质转换器

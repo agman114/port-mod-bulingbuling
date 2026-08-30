@@ -846,6 +846,20 @@ local function buling_diandengitemfn(inst, doer)
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_diandeng.xml"
     return inst
 end
+local function buling_boat_itemfn(inst, doer)
+    local inst = boxitem(inst)
+	inst.boxname = "buling_boat"
+	inst.components.inventoryitem.imagename = "buling_car_log"
+	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_car_log.xml"
+    return inst
+end
+local function bulingboat_tiexue_itemfn(inst, doer)
+    local inst = boxitem(inst)
+	inst.boxname = "buling_boat_tiexue"
+	inst.components.inventoryitem.imagename = "buling_car_log"
+	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_car_log.xml"
+    return inst
+end
 local function buling_car_logitemfn(inst, doer)
     local inst = boxitem(inst)
 	inst.boxname = "buling_car_log"
@@ -1469,6 +1483,8 @@ Prefab("buling_book_yajin", buling_book_yajin, assets),--铔金提取蓝图
 Prefab("buling_conversion", buling_conversion, assets),--物质转换器
 Prefab("buling_waterproof_field", forcefield, assets),--防水立场
 Prefab("buling_diandeng_item", buling_diandengitemfn, assets),--不灵电灯-物品  
+Prefab("buling_boat_item", buling_boat_itemfn, assets),
+Prefab("bulingboat_tiexue_item", bulingboat_tiexue_itemfn, assets),
 Prefab("buling_car_log_item", buling_car_logitemfn, assets),--不灵木车-物品  
 Prefab("buling_pilianghecheng_item", buling_pilianghecheng_itemfn, assets),--批量合成台
 Prefab("buling_huosai_item", buling_huosai_itemfn, assets),--人力发电-物品  
