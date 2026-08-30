@@ -2040,25 +2040,31 @@ local function tongxuntai(inst, doer)
 	inst:AddComponent("buling_system")
 	return inst
 end
---粉碎机
+--粉碎机 / Измельчитель предметов
 local function buling_fensui(inst, doer)
 	local widgetbuttoninfo = {
-	text = "Remove",
+	text = "Remove / Измельчить",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
-		if inst.components.beerpower.power >= 50 then 
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button", inst.GUID)
+			return
+		end
+		if inst.components.beerpower and inst.components.beerpower.power >= 50 then 
 			for k=1,9 do
 				local item = inst.components.container:GetItemInSlot(k)
-				print(k)
 				if item then
 					if not item:HasTag("irreplaceable") then
 						item:Remove()
 					end
 				end
 			end
+			inst.components.beerpower:UpBeer(-50)
 		else
 			local _target = doer or inst
-			_target.components.talker:Say(STRINGS.BULING_BWNG..STRINGS.BULING_BWNG2)
+			if _target.components.talker then
+				_target.components.talker:Say("Недостаточно энергии! (Нужно 50)")
+			end
 		end
 	end}
 	local inst = CreateEntity()
