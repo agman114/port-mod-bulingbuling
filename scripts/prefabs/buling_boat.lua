@@ -49,10 +49,16 @@ local function fn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
+	inst.entity:AddPhysics()
+	MakeObstaclePhysics(inst, 1)
+	inst:AddComponent("inspectable")
 	
 	trans:SetFourFaced()
 
 	inst:AddTag("shadowboat")
+	inst:AddTag("boat")
+	inst:AddTag("buling_carrier")
 
 	anim:SetBank("rowboat")
 	anim:SetBuild("boat_buling_build")
@@ -107,10 +113,16 @@ local function bulingfn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
+	inst.entity:AddPhysics()
+	MakeObstaclePhysics(inst, 1)
+	inst:AddComponent("inspectable")
 	
 	trans:SetFourFaced()
 
 	inst:AddTag("shadowboat")
+	inst:AddTag("boat")
+	inst:AddTag("buling_carrier")
 
 	anim:SetBank("raft")
 	anim:SetBuild("bulingboat_tiexue_build")

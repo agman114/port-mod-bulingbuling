@@ -849,15 +849,15 @@ end
 local function buling_boat_itemfn(inst, doer)
     local inst = boxitem(inst)
 	inst.boxname = "buling_boat"
-	inst.components.inventoryitem.imagename = "buling_car_log"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_car_log.xml"
+	inst.components.inventoryitem.imagename = "rowboat"
+	inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
     return inst
 end
 local function bulingboat_tiexue_itemfn(inst, doer)
     local inst = boxitem(inst)
 	inst.boxname = "buling_boat_tiexue"
-	inst.components.inventoryitem.imagename = "buling_car_log"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_car_log.xml"
+	inst.components.inventoryitem.imagename = "rowboat"
+	inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
     return inst
 end
 local function buling_car_logitemfn(inst, doer)
