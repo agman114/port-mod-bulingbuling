@@ -507,13 +507,13 @@ self:QK()
 		self.cailiao8 = self.gezi8:AddChild(ImageButton("images/inventoryimages/buling_glass.xml", "buling_glass.tex"))
 		self.cailiao9 = self.gezi9:AddChild(ImageButton("images/inventoryimages/buling_glass.xml", "buling_glass.tex"))
 	end)
-	--强化炮塔
+	--强化炮塔 / 机甲修理器
 	self.item12 = self.image:AddChild(ImageButton("images/inventoryimages/buling_paotai_up.xml", "buling_paotai_up.tex"))
 	self.item12:SetPosition(120, 30, 0)
 	self.item12:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_paotai_item")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_repair_box_item")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_paotai_up.xml", "buling_paotai_up.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
