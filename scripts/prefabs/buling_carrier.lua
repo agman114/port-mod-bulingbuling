@@ -76,7 +76,6 @@ local function upcar(doer,inst)
 			doer:AddTag("buling_driving")
 			if TheCamera then
 				TheCamera:SetTarget(inst)
-				TheCamera:SetHeadingTarget(45)
 			end
 			--local follower = doer.entity:AddFollower()
 			--follower:FollowSymbol(inst.GUID,"body", 0, 0, 0 )

@@ -194,7 +194,7 @@ AddStategraphState("wilson", --玩家sg
                 inst.SoundEmitter:PlaySound("dontstarve_DLC003/common/crafted/iron_lord/morph")
             end),
             TimeEvent(105*FRAMES, function(inst) 
-                inst.components.playercontroller:ShakeCamera(inst, "FULL", 0.7, 0.02, .5, 40)
+                if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
 				local headfur = inst.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD)
 				headfur.buling_morph(headfur,inst,headfur.buling_name)
 				inst.AnimState:Hide("beard")
@@ -210,7 +210,7 @@ AddStategraphState("wilson", --玩家sg
 				end)
             end),
 			TimeEvent(125*FRAMES, function(inst) 
-				inst.components.playercontroller:ShakeCamera(inst, "FULL", 0.7, 0.02, .5, 40)
+				if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
                 SpawnPrefab("groundpound_fx_hulk").Transform:SetPosition(inst.buling_door.Transform:GetWorldPosition())
             end),
             TimeEvent(152*FRAMES, function(inst) 

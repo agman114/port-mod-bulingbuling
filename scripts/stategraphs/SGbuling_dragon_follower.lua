@@ -25,7 +25,7 @@ local SHAKE_DIST = 40
 local function ShakeIfClose(inst)
     local player = GetClosestInstWithTag("player", inst, SHAKE_DIST)
     if player then
-        player.components.playercontroller:ShakeCamera(inst, "FULL", 0.7, 0.02, 1.5, SHAKE_DIST)
+        if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
     end
 end
 

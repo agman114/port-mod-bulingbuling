@@ -105,14 +105,14 @@ local events=
 local function ShakeIfClose(inst)
     local player = GetClosestInstWithTag("player", inst, SHAKE_DIST)
     if player then
-        player.components.playercontroller:ShakeCamera(inst, "FULL", 0.7, 0.02, 3, SHAKE_DIST)
+        if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
     end
 end
 
 local function ShakeIfClose_Footstep(inst)
     local player = GetClosestInstWithTag("player", inst, SHAKE_DIST)
     if player then
-        player.components.playercontroller:ShakeCamera(inst, "FULL", 0.35, 0.02, 1.25, SHAKE_DIST)
+        if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
     end
 end
 
@@ -432,7 +432,7 @@ local states=
             TimeEvent(17*FRAMES, function(inst)    
                 local _target = inst or doer
                 if _target and _target.components and _target.components.playercontroller then
-                    _target.components.playercontroller:ShakeCamera(inst, "FULL", 0.7, 0.02, 2, 40)
+                    if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
                 end
                 inst.components.groundpounder:GroundPound()
             end),
@@ -775,7 +775,7 @@ local states=
                 inst.components.groundpounder.numRings = 4                
                 local _target = inst or doer
                 if _target and _target.components and _target.components.playercontroller then
-                    _target.components.playercontroller:ShakeCamera(inst, "FULL", 0.7, 0.02, 2, 40)
+                    if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
                 end
                 inst.components.groundpounder:GroundPound()
                 local pt = Vector3(inst.Transform:GetWorldPosition())

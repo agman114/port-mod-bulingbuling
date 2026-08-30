@@ -27,7 +27,7 @@ local function DeerclopsFootstep(inst)
     inst.SoundEmitter:PlaySound("dontstarve/creatures/deerclops/step")
  --[[   local player = GetClosestInstWithTag("player", inst, SHAKE_DIST)
     if player then
-        player.components.playercontroller:ShakeCamera(inst, "VERTICAL", 0.5, 0.03, 2, SHAKE_DIST)
+        if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
     end]]
 end
 
@@ -175,7 +175,7 @@ CommonStates.AddCombatStates(states,
             end
             local player = GetClosestInstWithTag("player", inst, SHAKE_DIST)
             if player then
-                player.components.playercontroller:ShakeCamera(inst, "FULL", 0.5, 0.05, 2, SHAKE_DIST)
+                if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
             end
         end),
         TimeEvent(36*FRAMES, function(inst) inst.sg:RemoveStateTag("attack") end),
@@ -191,7 +191,7 @@ CommonStates.AddCombatStates(states,
             end    
             local player = GetClosestInstWithTag("player", inst, SHAKE_DIST)
             if player then
-                player.components.playercontroller:ShakeCamera(inst, "FULL", 0.7, 0.02, 3, SHAKE_DIST)
+                if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.5, 0.05, 2, inst, 40) end
             end
         end),
     },
