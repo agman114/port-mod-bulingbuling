@@ -323,7 +323,7 @@ carfn_onclose = OnClose
 			if container:Has("deerclops_eyeball", 9) or container:Has("deerclops_eyeball", 25) then
 				matched_target = "buling_deerclops"
 				print("[BULING CARRIER] Smart item count matched buling_deerclops!")
-			elif container:Has("gears", 25) or container:Has("gears", 9) then
+			elseif container:Has("gears", 25) or container:Has("gears", 9) then
 				matched_target = "buling_plane"
 				print("[BULING CARRIER] Smart item count matched buling_plane!")
 			elseif container:Has("buling_glass", 25) or container:Has("moonglass", 25) or container:Has("buling_glass", 9) or container:Has("moonglass", 9) then
