@@ -2,6 +2,7 @@ local assets =
 {
 	Asset("ANIM", "anim/boat_buling_build.zip"),
 	Asset("ANIM", "anim/bulingboat_tiexue_build.zip"),
+	Asset("ANIM", "anim/buling_car.zip"),
 }
 
 local prefabs = {}
@@ -60,7 +61,7 @@ local function fn()
 	inst:AddTag("boat")
 	inst:AddTag("buling_carrier")
 
-	anim:SetBank("rowboat")
+	anim:SetBank("buling_car")
 	anim:SetBuild("boat_buling_build")
 	anim:PlayAnimation("run_loop", true)
 
@@ -124,7 +125,7 @@ local function bulingfn()
 	inst:AddTag("boat")
 	inst:AddTag("buling_carrier")
 
-	anim:SetBank("raft")
+	anim:SetBank("buling_car")
 	anim:SetBuild("bulingboat_tiexue_build")
 	anim:PlayAnimation("run_loop", true)
 
