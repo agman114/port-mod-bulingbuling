@@ -676,7 +676,6 @@ DoTransform = function(inst, doer)
 		}, 
 		["buling_deerclops"]={
 			"deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,",
-			"meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,",
 		},
 	}
 
