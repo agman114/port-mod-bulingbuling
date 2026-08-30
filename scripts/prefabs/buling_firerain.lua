@@ -84,7 +84,7 @@ local function DoStep(inst, doer)
 		end
 	end
 
-	player.components.playercontroller:ShakeCamera(player, "VERTICAL", 0.5, 0.03, power, 40) 
+	if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.VERTICAL, 0.5, 0.03, power, player or inst, 40) end 
 end
 
 local function roundToNearest(numToRound, multiple)

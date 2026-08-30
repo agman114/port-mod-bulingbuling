@@ -318,7 +318,7 @@ local function fire()
 		owner.SoundEmitter:PlaySound("dontstarve/creatures/eyeballturret/shotexplo")
 		SpawnPrefab("collapse_small").Transform:SetPosition(v.Transform:GetWorldPosition())
 		SpawnPrefab("explode_small").Transform:SetPosition(v.Transform:GetWorldPosition())
-		owner.components.playercontroller:ShakeCamera(owner, "FULL", 0.2, 0.02, .5, 40)
+		if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.2, 0.02, .5, owner or inst, 40) end
 		if v.components.combat and not v.components.health:IsDead()and v.components.health and not v:HasTag("player") and not v:HasTag("wall") then
 			v.components.combat:GetAttacked(inst,10)
 		end
@@ -350,7 +350,7 @@ local function ice()
 		owner.SoundEmitter:PlaySound("dontstarve/creatures/eyeballturret/shotexplo")
 		SpawnPrefab("collapse_small").Transform:SetPosition(v.Transform:GetWorldPosition())
 		SpawnPrefab("laser_ring").Transform:SetPosition(v.Transform:GetWorldPosition())
-		owner.components.playercontroller:ShakeCamera(owner, "FULL", 0.2, 0.02, .5, 40)
+		if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.FULL, 0.2, 0.02, .5, owner or inst, 40) end
 		if v.components.combat and not v.components.health:IsDead()and v.components.health and not v:HasTag("player") and not v:HasTag("wall") then
 			v.components.combat:GetAttacked(inst,30)	
 		end

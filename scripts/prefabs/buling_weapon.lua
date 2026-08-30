@@ -83,7 +83,7 @@ local function onnearmine(inst, doer, ents)
         inst.SoundEmitter:KillSound("boom_loop")
             local player = GetClosestInstWithTag("player", inst, SHAKE_DIST)
             if player then
-                player.components.playercontroller:ShakeCamera(inst, "VERTICAL", 0.5, 0.03, 2, SHAKE_DIST)
+                if ShakeAllCameras then ShakeAllCameras(CAMERASHAKE.VERTICAL, 0.5, 0.03, 2, inst, SHAKE_DIST or 40) end
             end
             inst:Hide()
             local ring = SpawnPrefab("laser_ring")

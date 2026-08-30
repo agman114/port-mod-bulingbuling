@@ -55,7 +55,8 @@ function NilUi:car_ui()
 	self.carui:SetPosition(Vector3(-600, -300, 0))
 	self.carui:SetOnClick(
 	function ()
-		local car = (self.owner or ThePlayer).components.driver.vehicle
+		local owner = self.owner or ThePlayer
+		local car = owner and owner.components and owner.components.driver and owner.components.driver.vehicle
 		if car and car.components.container then
 			if car.components.container.open then
 				car.components.container:Close((self.owner or ThePlayer))
@@ -71,7 +72,8 @@ function NilUi:rocky_ui()
 	self.carui:SetPosition(Vector3(-600, -300, 0))
 	self.carui:SetOnClick(
 	function ()
-		local car = (self.owner or ThePlayer).components.driver.vehicle
+		local owner = self.owner or ThePlayer
+		local car = owner and owner.components and owner.components.driver and owner.components.driver.vehicle
 		if car and car.prefab == "buling_rocky" and not car:HasTag("cding") then
 			car:AddTag("cding")
 			if car:HasTag("atk") then
