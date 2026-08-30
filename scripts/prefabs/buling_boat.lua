@@ -79,6 +79,7 @@ local function fn()
 	-- inst.perishtime = TUNING.ROWBOAT_PERISHTIME
 	-- inst.components.boathealth:SetHealth(inst.perishtime)
 
+	inst.beeritem = "buling_boat_item"
 	inst.no_wet_prefix = true
 
  	return inst
@@ -132,12 +133,15 @@ local function bulingfn()
 	inst.perishtime = 1000
 	inst.components.boathealth:SetHealth(inst.perishtime)
 	inst:ListenForEvent("mounted", onmounted)
-	inst:ListenForEvent("dismounted", dismounted)
+	inst.beeritem = "bulingboat_tiexue_item"
 	inst.no_wet_prefix = true
 
  	return inst
 end
 
-inst.beeritem = "buling_boat_item"
-	return Prefab("buling_boat", fn, assets, prefabs),
+local function bulingfn_wrap()
+	-- wrapper
+end
+
+return Prefab("buling_boat", fn, assets, prefabs),
 Prefab("buling_boat_tiexue", bulingfn, assets, prefabs)
