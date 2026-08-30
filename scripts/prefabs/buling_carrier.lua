@@ -674,6 +674,10 @@ DoTransform = function(inst, doer)
 			"buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,buling_glass,",
 			"moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,",
 		}, 
+		["buling_deerclops"]={
+			"deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,",
+			"meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,meat,",
+		},
 	}
 
 	local matched_target = nil
