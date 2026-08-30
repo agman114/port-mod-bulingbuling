@@ -17,6 +17,7 @@ local assets=
 	Asset("ANIM", "anim/buling_glomling.zip"),
 	Asset("ANIM", "anim/ui_buling_chest_5x5.zip"),
 	Asset("ANIM", "anim/buling_car.zip"),
+	Asset("ANIM", "anim/buling_deerclops.zip"),
 }
 
 local function LaunchProjectile(inst, doer, targetpos)
