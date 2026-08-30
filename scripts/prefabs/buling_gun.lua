@@ -78,10 +78,14 @@ local function zidan()
     return inst
 end
 --
-local function buling_hand_gun(inst, doer,anim)
+local function buling_hand_gun(inst, anim, doer)
+	if type(anim) ~= "string" and type(doer) == "string" then
+		anim = doer
+	end
+	anim = anim or "swap_buling_gun_zero"
 	local function onequip(inst, owner, from_inventory)
-	local doer = owner
-		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_weapon",anim)
+		local doer = owner
+		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_weapon", anim)
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
 		inst:DoTaskInTime(0.1,function()
