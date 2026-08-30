@@ -318,25 +318,26 @@ carfn_onclose = OnClose
 			if matched_target then break end
 		end
 
-		-- Smart Count Fallback matching for Airplane (buling_plane) & Mechanical Stone Lobster (buling_rocky)
+		-- Smart Count Fallback matching for Airplane, Deerclops, Glommer & Robot
 		if matched_target == nil then
-			if container:Has("gears", 25) then
+			if container:Has("deerclops_eyeball", 9) or container:Has("deerclops_eyeball", 25) then
+				matched_target = "buling_deerclops"
+				print("[BULING CARRIER] Smart item count matched buling_deerclops!")
+			elif container:Has("gears", 25) or container:Has("gears", 9) then
 				matched_target = "buling_plane"
 				print("[BULING CARRIER] Smart item count matched buling_plane!")
+			elseif container:Has("buling_glass", 25) or container:Has("moonglass", 25) or container:Has("buling_glass", 9) or container:Has("moonglass", 9) then
+				matched_target = "buling_glomling"
+				print("[BULING CARRIER] Smart item count matched buling_glomling!")
 			else
-				local has_puleidi = container:Has("buling_puleidi", 16) or container:Has("buling_puleidi_plank", 16)
-				local has_glass = container:Has("buling_glass", 8) or container:Has("moonglass", 8)
+				local has_puleidi = container:Has("buling_puleidi", 1) or container:Has("buling_puleidi_plank", 1)
+				local has_glass = container:Has("buling_glass", 1) or container:Has("moonglass", 1)
 				local has_gears = container:Has("gears", 1)
 				if has_puleidi and has_glass and has_gears then
 					matched_target = "buling_rocky"
 					print("[BULING CARRIER] Smart item count matched buling_rocky!")
 				end
 			end
-		end
-
-		if matched_target == nil and is_free then
-			matched_target = "buling_rocky"
-			print("[BULING CARRIER] Free craft mode target fallback to buling_rocky")
 		end
 
 		if matched_target then
@@ -676,6 +677,7 @@ DoTransform = function(inst, doer)
 			"moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,moonglass,",
 		}, 
 		["buling_deerclops"]={
+			"deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,",
 			"deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,deerclops_eyeball,",
 		},
 	}
