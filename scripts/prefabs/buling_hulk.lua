@@ -8,9 +8,7 @@ local easing = require("easing")
 local assets =
 {
     Asset("ANIM", "anim/metal_buling_build.zip"),
-    --
-
-    --Asset("SOUND", "sound/bearger.fsb"),
+    Asset("ANIM", "anim/buling_deerclops.zip"),
 }
 
 local prefabs =
@@ -561,9 +559,10 @@ local function fn(Sim)
 	RemovePhysicsColliders(inst)
     --inst.Physics:SetCollisionCallback(OnCollide)
 
-    anim:SetBank("metal_hulk")
-    anim:SetBuild("metal_buling_build")
-    anim:PlayAnimation("idle", true)
+    anim:SetBank("deerclops")
+    anim:SetBuild("deerclops_build")
+    anim:OverrideSymbol("deerclops_body", "buling_deerclops", "deerclops_body")
+    anim:PlayAnimation("idle_loop", true)
     
     -- anim:AddOverrideBuild("laser_explode_sm")
     -- anim:AddOverrideBuild("smoke_aoe")    
