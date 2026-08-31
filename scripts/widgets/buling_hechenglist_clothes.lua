@@ -235,7 +235,7 @@ self:QK()
 	self.item6:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_buttons_black_jet")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_1")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_buttons_black_jet.xml", "buling_body_buttons_black_jet.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -261,7 +261,7 @@ self:QK()
 	self.item7:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_cableknit_sweater_tan_khaki")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_2")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_cableknit_sweater_tan_khaki.xml", "buling_body_cableknit_sweater_tan_khaki.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -287,7 +287,7 @@ self:QK()
 	self.item8:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_cardigan_black_jet")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_3")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_cardigan_black_jet.xml", "buling_body_cardigan_black_jet.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -313,7 +313,7 @@ self:QK()
 	self.item9:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_expo_letterman_yellow_beige")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_4")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_expo_letterman_yellow_beige.xml", "buling_body_expo_letterman_yellow_beige.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -338,7 +338,7 @@ self:QK()
 	self.item10:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_expo_sweater_blue_agean")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_5")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_expo_sweater_blue_agean.xml", "buling_body_expo_sweater_blue_agean.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -364,7 +364,7 @@ self:QK()
 	self.item11:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_flannel_blue_snowbird")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_6")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_flannel_blue_snowbird.xml", "buling_body_flannel_blue_snowbird.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -390,7 +390,7 @@ self:QK()
 	self.item12:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_jacket_shearling_orange_salmon")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_7")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_jacket_shearling_orange_salmon.xml", "buling_body_jacket_shearling_orange_salmon.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -413,7 +413,7 @@ self:QK()
 	self.item13:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_jacket_toggle_navy_phthalo")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_8")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_jacket_toggle_navy_phthalo.xml", "buling_body_jacket_toggle_navy_phthalo.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -436,7 +436,7 @@ self:QK()
 	self.item14:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_pj_blue_agean")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_clothe_9")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_pj_blue_agean.xml", "buling_body_pj_blue_agean.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -463,7 +463,7 @@ self:QK()
 	self.item15:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_legs_pants_basic_blue_sky")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_trouser_1")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_legs_pants_basic_blue_sky.xml", "buling_legs_pants_basic_blue_sky.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -489,7 +489,7 @@ self:QK()
 	self.item16:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_legs_shorts_black_scribble")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_trouser_2")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_legs_shorts_black_scribble.xml", "buling_legs_shorts_black_scribble.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -514,7 +514,7 @@ self:QK()
 	self.item17:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_legs_checkered_pleats_blue_cornflower")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_trouser_3")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_legs_checkered_pleats_blue_cornflower.xml", "buling_legs_checkered_pleats_blue_cornflower.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -539,7 +539,7 @@ self:QK()
 	self.item18:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_legs_pinstripe_pants_black_jet")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_trouser_4")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_legs_pinstripe_pants_black_jet.xml", "buling_legs_pinstripe_pants_black_jet.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -564,7 +564,7 @@ self:QK()
 	self.item19:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_legs_jeans_black_scribble")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_trouser_5")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_legs_jeans_black_scribble.xml", "buling_legs_jeans_black_scribble.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -589,7 +589,7 @@ self:QK()
 	self.item20:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_legs_swing_pants_brown_umber")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_trouser_6")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_legs_swing_pants_brown_umber.xml", "buling_legs_swing_pants_brown_umber.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -615,7 +615,7 @@ function buling_hechenglist_clothes:page2()
 	self.item1:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_dancer_dragon")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_dancer_dragon")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_dancer_dragon.xml", "buling_body_dancer_dragon.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -639,7 +639,7 @@ self:QK()
 	self.item2:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_outerwear_quilted_red_cardinal")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_cardinal")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_outerwear_quilted_red_cardinal.xml", "buling_body_outerwear_quilted_red_cardinal.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -665,7 +665,7 @@ self:QK()
 	self.item3:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_silk_eveningrobe_red_rump")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_eveningrobe")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_silk_eveningrobe_red_rump.xml", "buling_body_silk_eveningrobe_red_rump.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -691,7 +691,7 @@ self:QK()
 	self.item4:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_body_overalls_blue_denim")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_denim")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_body_overalls_blue_denim.xml", "buling_body_overalls_blue_denim.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)

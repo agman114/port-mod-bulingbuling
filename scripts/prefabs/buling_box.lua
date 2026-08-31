@@ -1986,10 +1986,88 @@ local function buling_stonechest(inst, doer)
 	return inst
 end
 local function buling_yanjiutai(inst, doer)
-	local function itemtest(inst, item, slot)
-		return item.prefab == "buling_yanjiudian"
+	local widgetbuttoninfo = {
+	text = "Do",
+	position = Vector3(0, -140, 0),
+	fn = function(inst, doer)
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button", inst.GUID)
+			return
+		end
+		local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
+		local peifang = ""
+		for k=1,9 do
+			local item = inst.components.container:GetItemInSlot(k)
+			if item == nil then
+				item = "nil"
+			else
+				item = item.prefab
+			end
+			peifang = peifang..item..","
+		end
+		print("[BULING YANJIUTAI CRAFT] Slot peifang: '" .. tostring(peifang) .. "'")
+		local matched = false
+		for k,v in pairs(hechengbiao) do
+			if v[1] == peifang then
+				matched = true
+				local _crafted = SpawnPrefab(k)
+				if _crafted then
+					if opener and opener.components and opener.components.inventory then
+						opener.components.inventory:GiveItem(_crafted, nil, inst:GetPosition())
+					else
+						_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
+					end
+				end
+				local is_free = GLOBAL.BULING_FREE_CRAFT or (opener and opener.components and opener.components.builder and opener.components.builder.freebuildmode)
+				if not is_free then
+					for slot_i=1,9 do
+						local item = inst.components.container:GetItemInSlot(slot_i)
+						if item ~= nil then
+							if item.components.stackable and item.components.stackable.stacksize > 1 then
+								item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
+							else
+								item:Remove()
+							end
+						end
+					end
+				end
+				if opener and opener.components and opener.components.talker then
+					opener.components.talker:Say("Одежда сшита!")
+				end
+				break
+			end
+		end
+		if not matched then
+			if opener and opener.components and opener.components.talker then
+				opener.components.talker:Say("Неверный рецепт одежды!")
+			end
+		end
 	end
-	local slotpos = {Vector3(0,0,0)}
+	}
+	local slotpos = {}
+	for y = 1, -1, -1 do
+		for x = -1, 1 do
+			table.insert(slotpos, Vector3(80 * x, 80 * y, 0))
+		end
+	end
+	local inst=commonfn(inst)
+	MakeObstaclePhysics(inst, 1)
+	inst.AnimState:SetBank("buling_box")
+    inst.AnimState:SetBuild("buling_box")
+	inst.AnimState:PlayAnimation("tongxuntai")
+	inst.beeritem = "buling_yanjiutai_item"
+	inst:AddComponent("container")
+    inst.components.container:SetNumSlots(9)
+    inst.components.container.widgetslotpos = slotpos
+    inst.components.container.widgetbuttoninfo = widgetbuttoninfo
+    inst.components.container.widget = { slotpos = inst.components.container.widgetslotpos, animbank = 'ui_chest_3x3', animbuild = 'ui_chest_3x3', pos = Vector3(0,200,0), buttoninfo = widgetbuttoninfo, side_align_tip = 100 }
+    inst.components.container.widgetanimbank = "ui_chest_3x3"
+    inst.components.container.widgetanimbuild = "ui_chest_3x3"
+    inst.components.container.widgetpos = Vector3(0,200,0)
+    inst.components.container.side_align_tip = 160
+	return inst
+end
+local function buling_yanjiutai_old(inst, doer)
 	local inst=commonfn(inst)
 	MakeObstaclePhysics(inst, 1)
 	--inst.Transform:SetScale(2, 2, 2)
