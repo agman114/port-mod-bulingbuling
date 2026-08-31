@@ -740,25 +740,22 @@ AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, ta
 		end
 	end
 end)
-GLOBAL.c_bulingfreecraft = function(val)
-	if val == nil then
-		GLOBAL.BULING_FREE_CRAFT = not GLOBAL.BULING_FREE_CRAFT
-	else
-		GLOBAL.BULING_FREE_CRAFT = not not val
+GLOBAL.BULING_FREE_CRAFT = true
+GLOBAL.c_bulingfreecraft = function(enable)
+	if enable == nil then
+		enable = not GLOBAL.BULING_FREE_CRAFT
 	end
-	if GLOBAL.ThePlayer and GLOBAL.ThePlayer.components and GLOBAL.ThePlayer.components.builder then
-		GLOBAL.ThePlayer.components.builder.freebuildmode = GLOBAL.BULING_FREE_CRAFT
-	end
+	GLOBAL.BULING_FREE_CRAFT = enable
 	local status = GLOBAL.BULING_FREE_CRAFT and "ВКЛЮЧЕН" or "ВЫКЛЮЧЕН"
-	print("[BulingBuling] Бесплатный крафт: " .. status)
+	print("[BULING] Бесплатный крафт: " .. status)
 	if GLOBAL.ThePlayer and GLOBAL.ThePlayer.components and GLOBAL.ThePlayer.components.talker then
-		GLOBAL.ThePlayer.components.talker:Say("Бесплатный крафт мода: " .. status)
+		GLOBAL.ThePlayer.components.talker:Say("Бесплатный крафт: " .. status)
 	end
 end
 GLOBAL.c_bfree = GLOBAL.c_bulingfreecraft
 
 AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name)
-	local is_free = GLOBAL.BULING_FREE_CRAFT 
+	local is_free = (GLOBAL.BULING_FREE_CRAFT ~= false)
 		or (player and player.components.builder and (player.components.builder.freebuildmode or (player.components.builder.IsFreeBuildMode and player.components.builder:IsFreeBuildMode())))
 		or (player and player.replica and player.replica.builder and player.replica.builder.IsFreeBuildMode and player.replica.builder:IsFreeBuildMode())
 
