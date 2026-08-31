@@ -268,13 +268,18 @@ local function fn(inst, doer)
 		end
 		if inst:HasTag("pigroyalty_hat") or inst.bodyanim == "body_outerwear_quilted_red_cardinal" then
 			owner:RemoveTag("pigroyalty")
-			owner:DoTaskInTime(0.2, function(owner)
+			local current_hulk = owner._buling_hulk or inst.hulk
+			owner:DoTaskInTime(1.0, function(owner)
 				local body_item = owner.components.inventory and owner.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
-				if not (body_item and (body_item:HasTag("pigroyalty_hat") or body_item.bodyanim == "body_outerwear_quilted_red_cardinal")) then
-					if owner._buling_hulk and owner._buling_hulk:IsValid() then
-						owner._buling_hulk:Remove()
+				local is_wearing = (body_item ~= nil) and (body_item:HasTag("pigroyalty_hat") or body_item.bodyanim == "body_outerwear_quilted_red_cardinal" or body_item.prefab == "buling_cardinal")
+				if not is_wearing then
+					if current_hulk and current_hulk:IsValid() then
+						current_hulk:Remove()
 					end
-					owner._buling_hulk = nil
+					if owner._buling_hulk == current_hulk then
+						owner._buling_hulk = nil
+					end
+					inst.hulk = nil
 				end
 			end)
 		end
