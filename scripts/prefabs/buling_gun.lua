@@ -206,23 +206,9 @@ local function buling_gun_yang(inst, doer)
 	inst.AnimState:PlayAnimation("buling_gun_yang")
 	return inst
 end
-local function canattack(inst, doer, target)--感谢易宁大佬提供的灵感
+local function canattack(inst, doer, target)
 	local dianchi = inst.components.container:GetItemInSlot(1)
-    if dianchi and dianchi.components.beerpower and dianchi.components.beerpower.power > 0 and TheInput:IsMouseDown(MOUSEBUTTON_RIGHT) and inst.cding <= 15 then
-		inst.components.weapon:LaunchProjectile(inst, target)
-		inst.cding = inst.cding + 1
-		if inst.lengque then
-			inst.lengque:Cancel()
-			inst.lengque = nil
-		end
-		inst:DoTaskInTime(3,function() 
-			inst.cding = 0
-		end)
-    end
-    if dianchi and dianchi.components.beerpower.power > 0 then
-       return true
-    end
-	return false
+	return inst.components.container:IsFull() and dianchi ~= nil and dianchi.components.beerpower ~= nil and dianchi.components.beerpower.power > 0
 end
 local function buling_gun_white(inst, doer)
 	local inst=buling_hand_gun(inst,"swap_buling_gun_white")
@@ -232,7 +218,7 @@ local function buling_gun_white(inst, doer)
 	inst.components.weapon.canattackfn = canattack
 	inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
-	inst.components.weapon:SetDamage(0)
+	inst.components.weapon:SetDamage(1)
 	inst.AnimState:PlayAnimation("buling_gun_white")
 	return inst
 end
