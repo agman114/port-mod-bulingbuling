@@ -113,9 +113,29 @@ local clthesfn = {
 	["body_silk_eveningrobe_red_rump"] = function(inst, doer)--南柯一梦
 		inst:RemoveComponent("fueled")
 		inst:AddComponent("inspectable")
-		inst:AddComponent("resurrector")
-		inst.components.resurrector.active = true
-		inst.components.resurrector.doresurrect = function() inst:Remove() (doer or inst).sg:GoToState("amulet_rebirth") end
+		inst:ListenForEvent("equipped", function(inst, data)
+			if data and data.owner then
+				inst._onplayerdied = function(owner, data)
+					if inst:IsValid() and owner:IsValid() then
+						inst:Remove()
+						if owner.components.health and owner.components.health:IsDead() then
+							if owner.ms_respawnfromghost then
+								owner:DoTaskInTime(1, function(owner) owner:ms_respawnfromghost() end)
+							elseif owner.components.revivablecorpse then
+								owner.components.revivablecorpse:Revive()
+							end
+						end
+					end
+				end
+				inst:ListenForEvent("death", inst._onplayerdied, data.owner)
+			end
+		end)
+		inst:ListenForEvent("unequipped", function(inst, data)
+			if data and data.owner and inst._onplayerdied then
+				inst:RemoveEventCallback("death", inst._onplayerdied, data.owner)
+				inst._onplayerdied = nil
+			end
+		end)
 	end,
 	["body_outerwear_quilted_red_cardinal"] = function(inst, doer)--贵族气质
 		inst:AddTag("pigroyalty_hat")
