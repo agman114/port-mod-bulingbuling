@@ -765,11 +765,11 @@ AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name
 	print("[BULING FREE CRAFT RPC] Server received craft request for:", prefab_name, "from player:", player, "is_free:", is_free)
 	if is_free and prefab_name and prefab_name ~= "nil" and prefab_name ~= "closebutton" and prefab_name ~= "turnarrow_icon" then
 		local spawn_name = prefab_name
-		if GLOBAL.Prefabs[prefab_name .. "_item"] then
-			spawn_name = prefab_name .. "_item"
+		if not GLOBAL.Prefabs[spawn_name] and GLOBAL.Prefabs[spawn_name .. "_item"] then
+			spawn_name = spawn_name .. "_item"
 		end
 		local _crafted = GLOBAL.SpawnPrefab(spawn_name)
-		if _crafted == nil and spawn_name ~= prefab_name then
+		if _crafted == nil then
 			_crafted = GLOBAL.SpawnPrefab(prefab_name)
 		end
 

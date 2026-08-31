@@ -22,12 +22,11 @@ local function OnHitMiss(inst, doer, owner, target)
 end
 
 local function OnHit(inst, doer, owner, target)
-    --[[if not target:HasTag("freezable") then
-        local fx = SpawnPrefab("shatter")
-        fx.Transform:SetPosition(target:GetPosition():Get())
-        fx.components.shatterfx:SetLevel(2)
-    end]]
-	if inst.gun and inst.gun:HasTag("buling_gun") and inst.gun.components.container:IsFull() then
+	local attacker = owner or doer or (inst.components.projectile and inst.components.projectile.owner)
+	if not inst.gun and attacker and attacker.components.inventory then
+		inst.gun = attacker.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+	end
+	if inst.gun and inst.gun:HasTag("buling_gun") and inst.gun.components and inst.gun.components.container and inst.gun.components.container:IsFull() then
 		local dianchi =  inst.gun.components.container:GetItemInSlot(1)
 		inst.qiangguan =  inst.gun.components.container:GetItemInSlot(2)
 		local jiguang =  inst.gun.components.container:GetItemInSlot(3)
@@ -38,7 +37,7 @@ local function OnHit(inst, doer, owner, target)
 		end
 		dianchi.components.beerpower:UpBeer(cost)
 		--
-		if jiguang.gunfn then
+		if jiguang and jiguang.gunfn then
 			jiguang:gunfn(inst,target)
 		end
 		if target and target.components.combat and target.components.health and not target.components.health:IsDead() then
@@ -50,9 +49,7 @@ local function OnHit(inst, doer, owner, target)
 			else
 				target.components.combat:GetAttacked((doer or inst),inst.qiangguan.buling_damage)
 			end
-			--target.components.combat:SetTarget((doer or inst))
 		end
-		
 	end
     inst:Remove()
 end
@@ -67,7 +64,6 @@ local function zidan()
     anim:SetBuild("staff_projectile")
     
     inst:AddTag("projectile")
-    inst.gun = (doer or inst).components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
     inst:AddComponent("projectile")
     inst.components.projectile:SetSpeed(50)
     inst.components.projectile:SetLaunchOffset(Vector3(2, .5, 0))
