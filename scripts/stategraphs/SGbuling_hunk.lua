@@ -130,11 +130,7 @@ local states=
 
         onenter = function(inst)
             inst.Physics:Stop()
-            if inst.AnimState:HasAnimation("idle_loop") then
-                inst.AnimState:PlayAnimation("idle_loop", true)
-            else
-                inst.AnimState:PlayAnimation("idle", true)
-            end
+            inst.AnimState:PlayAnimation("idle_loop", true)
         end,
     },
 
