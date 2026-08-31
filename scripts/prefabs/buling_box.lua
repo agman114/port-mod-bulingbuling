@@ -1326,6 +1326,10 @@ local function planttable(inst, doer)
 	text = "Do",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button", inst.GUID)
+			return
+		end
 		local peifang = ""
 		local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
 		local slots = inst.components.container.slots
