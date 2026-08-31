@@ -587,9 +587,9 @@ local function fn(Sim)
     ------------------
 
     inst:AddComponent("combat")
-    inst.components.combat:SetDefaultDamage(TUNING.ANCIENT_HULK_DAMAGE)
+    inst.components.combat:SetDefaultDamage(TUNING.ANCIENT_HULK_DAMAGE or 100)
     inst.components.combat.playerdamagepercent = .5
-    inst.components.combat:SetRange(TUNING.ANCIENT_HULK_ATTACK_RANGE, TUNING.ANCIENT_HULK_MELEE_RANGE)
+    inst.components.combat:SetRange(TUNING.ANCIENT_HULK_ATTACK_RANGE or 20, TUNING.ANCIENT_HULK_MELEE_RANGE or 6)
     --inst.components.combat:SetAreaDamage(5.5, 0.8)
     inst.components.combat.hiteffectsymbol = "segment01"
     inst.components.combat:SetAttackPeriod(TUNING.BEARGER_ATTACK_PERIOD)
