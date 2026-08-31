@@ -657,11 +657,13 @@ local function fn(Sim)
     inst:SetBrain(brain)
 
     if not inst.shotspawn then
-        inst.shotspawn = SpawnPrefab( "ancient_hulk_marker" )        
-        inst.shotspawn:Hide()
+        inst.shotspawn = CreateEntity()
+        inst.shotspawn.entity:AddTransform()
         inst.shotspawn.persists = false
         local follower = inst.shotspawn.entity:AddFollower()
-        follower:FollowSymbol( inst.GUID, "hand01", 0,0,0 )
+        if follower then
+            follower:FollowSymbol( inst.GUID, "hand01", 0,0,0 )
+        end
     end
 	inst:AddComponent("follower")
 	local player = (doer or inst)
