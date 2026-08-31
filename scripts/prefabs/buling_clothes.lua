@@ -143,8 +143,8 @@ local clthesfn = {
 	["body_dancer_dragon"] = function(inst, doer)--电子CQC
 		inst:AddTag("bulingCQC_hat")
 		local function AllowDodge(inst, doer)
-			return (GetTime() - inst.last_dodge_time > TUNING.WHEELER_DODGE_COOLDOWN) and 
-					not inst.components.driver:GetIsDriving() and not inst.components.rider:IsRiding()
+			return ((GetTime() - (inst.last_dodge_time or 0)) > (TUNING.WHEELER_DODGE_COOLDOWN or 2)) and 
+					not (inst.components.driver and inst.components.driver:GetIsDriving()) and not (inst.components.rider and inst.components.rider:IsRiding())
 		end
 		local function BulingCQC(inst, doer, pos, useitem, right)
 			if right then
