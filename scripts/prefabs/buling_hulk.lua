@@ -666,8 +666,9 @@ local function fn(Sim)
         end
     end
 	inst:AddComponent("follower")
-	if EXIT_DESTINATION then
-		inst.components.follower:SetFollowExitDestinations({EXIT_DESTINATION.LAND,EXIT_DESTINATION.WATER})
+	local exit_dest = rawget(_G, "EXIT_DESTINATION")
+	if exit_dest then
+		inst.components.follower:SetFollowExitDestinations({exit_dest.LAND, exit_dest.WATER})
 	end
 	--(doer or inst).components.locomotor = inst.components.locomotor
 	--rider
