@@ -226,7 +226,7 @@ local function fn(inst, doer)
 		if inst:HasTag("has_monster") then
 			owner:AddTag("monster")
 		end
-		if inst:HasTag("pigroyalty_hat") then
+		if inst:HasTag("pigroyalty_hat") or inst.bodyanim == "body_outerwear_quilted_red_cardinal" then
 			owner:AddTag("pigroyalty")
 			if inst.hulk == nil then
 				inst.hulk = SpawnPrefab("buling_hulk")
@@ -239,7 +239,7 @@ local function fn(inst, doer)
 				end
 			end
 		end
-		if inst:HasTag("bulingCQC_hat") then
+		if inst:HasTag("bulingCQC_hat") or inst.bodyanim == "body_dancer_dragon" then
 			owner:AddTag("bulingCQC")
 		end
 	end
@@ -264,7 +264,7 @@ local function fn(inst, doer)
 		if inst:HasTag("has_monster") then
 			owner:RemoveTag("monster")
 		end
-		if inst:HasTag("pigroyalty_hat") then
+		if inst:HasTag("pigroyalty_hat") or inst.bodyanim == "body_outerwear_quilted_red_cardinal" then
 			owner:RemoveTag("pigroyalty")
 			if inst.hulk then
 				inst.hulk:Remove()
@@ -338,6 +338,7 @@ local function body_outerwear_quilted_red_cardinal_fn(inst, doer)
 	inst.OnLoad = nil
 	inst.bodyanim = "body_outerwear_quilted_red_cardinal"
 	inst.leganim = "body_outerwear_quilted_red_cardinal"
+	inst:AddTag("pigroyalty_hat")
 	inst.clothetime = clothes * 2
 	inst.components.fueled:InitializeFuelLevel(inst.clothetime)
 	return inst
