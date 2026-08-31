@@ -229,9 +229,14 @@ local function fn(inst, doer)
 		if inst:HasTag("pigroyalty_hat") then
 			owner:AddTag("pigroyalty")
 			if inst.hulk == nil then
-				inst.hulk =  SpawnPrefab("buling_hulk")
-				inst.hulk.persists = false
-				inst.hulk.Transform:SetPosition((doer or inst).Transform:GetWorldPosition())
+				inst.hulk = SpawnPrefab("buling_hulk")
+				if inst.hulk then
+					inst.hulk.persists = false
+					inst.hulk.Transform:SetPosition(owner.Transform:GetWorldPosition())
+					if inst.hulk.components.follower and owner.components.leader then
+						owner.components.leader:AddFollower(inst.hulk)
+					end
+				end
 			end
 		end
 		if inst:HasTag("bulingCQC_hat") then

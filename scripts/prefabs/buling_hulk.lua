@@ -666,10 +666,6 @@ local function fn(Sim)
         end
     end
 	inst:AddComponent("follower")
-	local player = (doer or inst)
-	if player and player.components.leader then
-		player.components.leader:AddFollower(inst)        
-	end
     inst.components.follower:SetFollowExitDestinations({EXIT_DESTINATION.LAND,EXIT_DESTINATION.WATER})
 	--(doer or inst).components.locomotor = inst.components.locomotor
 	--rider
