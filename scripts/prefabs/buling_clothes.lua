@@ -428,6 +428,20 @@ function Makeclothe(name,anim)
 		inst.components.inventoryitem.imagename = "buling_"..anim
 		inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_"..anim..".xml"
 		inst:AddTag("buling_clothe")
+
+		inst:AddComponent("equippable")
+		inst.components.equippable.equipslot = EQUIPSLOTS.BODY
+		inst.components.equippable:SetOnEquip(function(inst, owner)
+			owner.AnimState:OverrideSymbol("swap_body", "buling_box_2", "buling_"..anim)
+		end)
+		inst.components.equippable:SetOnUnequip(function(inst, owner)
+			owner.AnimState:ClearOverrideSymbol("swap_body")
+		end)
+
+		if clthesfn and clthesfn[anim] then
+			clthesfn[anim](inst)
+		end
+
 		return inst
 	end
 	return Prefab( name, fn, assets)
@@ -449,6 +463,16 @@ function Maketrousers(name,anim,ctime)
 		inst.components.inventoryitem.imagename = "buling_"..anim
 		inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_"..anim..".xml"
 		inst:AddTag("buling_trouser")
+
+		inst:AddComponent("equippable")
+		inst.components.equippable.equipslot = EQUIPSLOTS.BODY
+		inst.components.equippable:SetOnEquip(function(inst, owner)
+			owner.AnimState:OverrideSymbol("swap_body", "buling_box_2", "buling_"..anim)
+		end)
+		inst.components.equippable:SetOnUnequip(function(inst, owner)
+			owner.AnimState:ClearOverrideSymbol("swap_body")
+		end)
+
 		return inst
 	end
 	return Prefab( name, fn, assets)
