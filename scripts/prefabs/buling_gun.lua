@@ -83,12 +83,13 @@ local function buling_hand_gun(inst, anim, doer)
 		anim = doer
 	end
 	anim = anim or "swap_buling_gun_zero"
+	local OnTakeAmmo = nil
 	local function onequip(inst, owner, from_inventory)
 		local doer = owner
 		owner.AnimState:OverrideSymbol("swap_object", "swap_buling_weapon", anim)
 		owner.AnimState:Show("ARM_carry")
 		owner.AnimState:Hide("ARM_normal")
-		OnTakeAmmo(inst, owner)
+		if OnTakeAmmo then OnTakeAmmo(inst, owner) end
 		inst:DoTaskInTime(0.1,function()
 			inst.components.container:Open((doer or inst))
 		end)
@@ -125,7 +126,7 @@ local function buling_hand_gun(inst, anim, doer)
 	local function openui(inst, doer)
 		inst.components.container:Open((doer or inst))
 	end
-	local function OnTakeAmmo(inst, doer)
+	OnTakeAmmo = function(inst, doer)
 		local item = inst.components.container:GetItemInSlot(4)
 		local dianchi = inst.components.container:GetItemInSlot(1)
 		if inst.components.container:IsFull() and dianchi.components.beerpower.power > 0 then
