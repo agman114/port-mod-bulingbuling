@@ -228,16 +228,18 @@ local function fn(inst, doer)
 		end
 		if inst:HasTag("pigroyalty_hat") or inst.bodyanim == "body_outerwear_quilted_red_cardinal" then
 			owner:AddTag("pigroyalty")
-			if owner._buling_hulk == nil or not owner._buling_hulk:IsValid() then
-				local hulk = SpawnPrefab("buling_hulk")
-				if hulk then
-					hulk.persists = false
-					hulk.Transform:SetPosition(owner.Transform:GetWorldPosition())
-					if hulk.components.follower and owner.components.leader then
-						owner.components.leader:AddFollower(hulk)
+			if TheWorld.ismastersim then
+				if owner._buling_hulk == nil or not owner._buling_hulk:IsValid() then
+					local hulk = SpawnPrefab("buling_hulk")
+					if hulk then
+						hulk.persists = false
+						hulk.Transform:SetPosition(owner.Transform:GetWorldPosition())
+						if hulk.components.follower and owner.components.leader then
+							owner.components.leader:AddFollower(hulk)
+						end
+						owner._buling_hulk = hulk
+						inst.hulk = hulk
 					end
-					owner._buling_hulk = hulk
-					inst.hulk = hulk
 				end
 			end
 		end
@@ -268,20 +270,22 @@ local function fn(inst, doer)
 		end
 		if inst:HasTag("pigroyalty_hat") or inst.bodyanim == "body_outerwear_quilted_red_cardinal" then
 			owner:RemoveTag("pigroyalty")
-			local current_hulk = owner._buling_hulk or inst.hulk
-			owner:DoTaskInTime(1.0, function(owner)
-				local body_item = owner.components.inventory and owner.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
-				local is_wearing = (body_item ~= nil) and (body_item:HasTag("pigroyalty_hat") or body_item.bodyanim == "body_outerwear_quilted_red_cardinal" or body_item.prefab == "buling_cardinal")
-				if not is_wearing then
-					if current_hulk and current_hulk:IsValid() then
-						current_hulk:Remove()
+			if TheWorld.ismastersim then
+				local current_hulk = owner._buling_hulk or inst.hulk
+				owner:DoTaskInTime(1.0, function(owner)
+					local body_item = owner.components.inventory and owner.components.inventory:GetEquippedItem(EQUIPSLOTS.BODY)
+					local is_wearing = (body_item ~= nil) and (body_item:HasTag("pigroyalty_hat") or body_item.bodyanim == "body_outerwear_quilted_red_cardinal" or body_item.prefab == "buling_cardinal")
+					if not is_wearing then
+						if current_hulk and current_hulk:IsValid() then
+							current_hulk:Remove()
+						end
+						if owner._buling_hulk == current_hulk then
+							owner._buling_hulk = nil
+						end
+						inst.hulk = nil
 					end
-					if owner._buling_hulk == current_hulk then
-						owner._buling_hulk = nil
-					end
-					inst.hulk = nil
-				end
-			end)
+				end)
+			end
 		end
 		if inst:HasTag("bulingCQC_hat") then
 			owner:RemoveTag("bulingCQC")

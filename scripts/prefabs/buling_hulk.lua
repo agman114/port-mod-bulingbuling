@@ -553,16 +553,24 @@ local function fn(Sim)
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize(6, 3.5)
     
+    inst.entity:AddNetwork()
+    inst:AddTag("companion")
+
     inst.Transform:SetSixFaced()
 
 	MakeCharacterPhysics(inst, 1000, 1.5)
 	RemovePhysicsColliders(inst)
-    --inst.Physics:SetCollisionCallback(OnCollide)
 
     anim:SetBank("deerclops")
     anim:SetBuild("deerclops_build")
     anim:OverrideSymbol("deerclops_body", "buling_deerclops", "deerclops_body")
     anim:PlayAnimation("idle_loop", true)
+    
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
     
     -- anim:AddOverrideBuild("laser_explode_sm")
     -- anim:AddOverrideBuild("smoke_aoe")    
