@@ -718,7 +718,7 @@ self:QK()
 	self.item5:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_qiangguan_nil")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_qiangguan")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_gun_qiangguan_nil.xml", "buling_gun_qiangguan_nil.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -743,7 +743,7 @@ self:QK()
 	self.item6:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_dianchi_nil")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_dianchi")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_gun_dianchi_nil.xml", "buling_gun_dianchi_nil.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -766,7 +766,7 @@ self:QK()
 	self.item7:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_shoubing_nil")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_shoubing")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_gun_shoubing_nil.xml", "buling_gun_shoubing_nil.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
@@ -789,7 +789,7 @@ self:QK()
 	self.item8:SetOnClick(
 	function ()
 
-		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_jiguang_nil")
+		SendModRPCToServer(MOD_RPC["bulingbuling"]["craft_item_free"], "buling_gun_jiguang")
 self:QK()
 		self.tubiao = self.image2:AddChild(Image("images/inventoryimages/buling_gun_jiguang_nil.xml", "buling_gun_jiguang_nil.tex"))
 		self.tubiao:SetPosition(-100, 100, 0)
