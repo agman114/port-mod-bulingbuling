@@ -497,6 +497,7 @@ end
 modimport("scripts/stategraphs/SGbulingbuling.lua")
 modimport("scripts/stategraphs/SGbuling_dragon_follower.lua")
 modimport("scripts/stategraphs/SGbuling_shark.lua")
+modimport("scripts/stategraphs/SGbuling_hunk.lua")
 
 -- Mod RPC Handlers for DST Client-Server UI Communication
 AddModRPCHandler("bulingbuling", "task_next", function(player)

@@ -228,7 +228,7 @@ local function fn(inst, doer)
 		end
 		if inst:HasTag("pigroyalty_hat") or inst.bodyanim == "body_outerwear_quilted_red_cardinal" then
 			owner:AddTag("pigroyalty")
-			if inst.hulk == nil then
+			if inst.hulk == nil or not inst.hulk:IsValid() then
 				inst.hulk = SpawnPrefab("buling_hulk")
 				if inst.hulk then
 					inst.hulk.persists = false
@@ -266,10 +266,10 @@ local function fn(inst, doer)
 		end
 		if inst:HasTag("pigroyalty_hat") or inst.bodyanim == "body_outerwear_quilted_red_cardinal" then
 			owner:RemoveTag("pigroyalty")
-			if inst.hulk then
+			if inst.hulk and inst.hulk:IsValid() then
 				inst.hulk:Remove()
-				inst.hulk = nil
 			end
+			inst.hulk = nil
 		end
 		if inst:HasTag("bulingCQC_hat") then
 			owner:RemoveTag("bulingCQC")
