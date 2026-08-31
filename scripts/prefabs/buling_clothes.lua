@@ -230,12 +230,18 @@ local function fn(inst, doer)
 			owner:AddTag("pigroyalty")
 			if TheWorld.ismastersim then
 				if owner._buling_hulk == nil or not owner._buling_hulk:IsValid() then
-					local hulk = SpawnPrefab("buling_hulk")
+					local hulk = SpawnPrefab("rook_nightmare")
 					if hulk then
 						hulk.persists = false
 						hulk.Transform:SetPosition(owner.Transform:GetWorldPosition())
-						if hulk.components.follower and owner.components.leader then
+						if not hulk.components.follower then
+							hulk:AddComponent("follower")
+						end
+						if owner.components.leader then
 							owner.components.leader:AddFollower(hulk)
+						end
+						if hulk.components.combat then
+							hulk.components.combat:SetTarget(nil)
 						end
 						owner._buling_hulk = hulk
 						inst.hulk = hulk
