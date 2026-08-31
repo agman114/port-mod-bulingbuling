@@ -439,68 +439,39 @@ local buling_trousers = {"legs_pants_basic_blue_sky","legs_shorts_black_scribble
 local buling_clothe = {}
 
 function Makeclothe(name,anim)
-	local function fn()
-		local inst = CreateEntity()
-		inst.entity:AddTransform()
-		inst.entity:AddAnimState()
-		MakeInventoryPhysics(inst)
-		inst:AddComponent("inspectable")
-		inst.AnimState:SetBank("buling_box_2")
-		inst.AnimState:SetBuild("buling_box_2")
-		inst.AnimState:PlayAnimation("yifu")	
-		inst:AddComponent("inventoryitem")
+	local function item_fn()
+		local inst = fn()
+		inst.OnSave = nil
+		inst.OnLoad = nil
 		inst.bodyanim = anim
+		inst.leganim = "bulingbuling"
 		inst.components.inventoryitem.imagename = "buling_"..anim
 		inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_"..anim..".xml"
 		inst:AddTag("buling_clothe")
-
-		inst:AddComponent("equippable")
-		inst.components.equippable.equipslot = EQUIPSLOTS.BODY
-		inst.components.equippable:SetOnEquip(function(inst, owner)
-			owner.AnimState:OverrideSymbol("swap_body", "buling_box_2", "buling_"..anim)
-		end)
-		inst.components.equippable:SetOnUnequip(function(inst, owner)
-			owner.AnimState:ClearOverrideSymbol("swap_body")
-		end)
-
 		if clthesfn and clthesfn[anim] then
 			clthesfn[anim](inst)
 		end
-
 		return inst
 	end
-	return Prefab( name, fn, assets)
+	return Prefab(name, item_fn, assets)
 end
 function Maketrousers(name,anim,ctime)
-	local function fn()
-		local inst = CreateEntity()
-		inst.entity:AddTransform()
-		inst.entity:AddAnimState()
-		MakeInventoryPhysics(inst)
-		inst:AddComponent("inspectable")
-		inst.AnimState:SetBank("buling_box_2")
-		inst.AnimState:SetBuild("buling_box_2")
-		inst.AnimState:PlayAnimation("yifu")	
-		inst:AddComponent("inventoryitem")
-		
+	local function item_fn()
+		local inst = fn()
+		inst.OnSave = nil
+		inst.OnLoad = nil
+		inst.bodyanim = "bulingbuling"
 		inst.leganim = anim
 		inst.clothetime = ctime * 3 * clothes + clothes
+		if inst.components.fueled then
+			inst.components.fueled:InitializeFuelLevel(inst.clothetime)
+		end
 		inst.components.inventoryitem.imagename = "buling_"..anim
 		inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_"..anim..".xml"
 		inst:AddTag("buling_trouser")
-
-		inst:AddComponent("equippable")
-		inst.components.equippable.equipslot = EQUIPSLOTS.BODY
-		inst.components.equippable:SetOnEquip(function(inst, owner)
-			owner.AnimState:OverrideSymbol("swap_body", "buling_box_2", "buling_"..anim)
-		end)
-		inst.components.equippable:SetOnUnequip(function(inst, owner)
-			owner.AnimState:ClearOverrideSymbol("swap_body")
-		end)
-
 		return inst
 	end
-	return Prefab( name, fn, assets)
+	return Prefab(name, item_fn, assets)
 end
 table.insert(buling_clothe,Prefab( "buling_overcoat", fn, assets))
 table.insert(buling_clothe,Prefab( "buling_christmas", buling_christmas_fn, assets))
