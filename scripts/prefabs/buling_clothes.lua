@@ -26,12 +26,12 @@ local clothes = TUNING.SWEATERVEST_PERISHTIME/10
 local buling_clothes = {"body_buttons_black_jet","body_cableknit_sweater_tan_khaki","body_cardigan_black_jet","body_expo_letterman_yellow_beige","body_expo_sweater_blue_agean","body_flannel_blue_snowbird","body_jacket_shearling_orange_salmon","body_jacket_toggle_navy_phthalo","body_pj_blue_agean"}
 local clthesfn = {
 	["body_buttons_black_jet"] = function(inst, doer) --防暑120
-		inst:AddComponent("insulator")
+		if not inst.components.insulator then inst:AddComponent("insulator") end
 		inst.components.insulator:SetInsulation(TUNING.INSULATION_MED)
 		inst.components.insulator:SetSummer()
 	end,
 	["body_cableknit_sweater_tan_khaki"] = function(inst, doer) --保暖120
-		inst:AddComponent("insulator")
+		if not inst.components.insulator then inst:AddComponent("insulator") end
 		inst.components.insulator:SetInsulation(TUNING.INSULATION_MED)
 		inst.components.insulator:SetWinter()
 	end,
@@ -43,7 +43,7 @@ local clthesfn = {
 		inst.components.equippable.walkspeedmult = TUNING.CANE_SPEED_MULT*2
 	end,
 	["body_expo_sweater_blue_agean"] = function(inst, doer) --防暑96保暖96
-		inst:AddComponent("insulator")
+		if not inst.components.insulator then inst:AddComponent("insulator") end
 		local function OnSeasonChange(inst, doer, data) 
 			inst.components.insulator:SetInsulation(TUNING.INSULATION_MED*0.8)
 			inst.components.insulator:SetSummer()
@@ -55,20 +55,20 @@ local clthesfn = {
 		inst:WatchWorldState("season", function() OnSeasonChange(inst) end)
 	end,
 	["body_flannel_blue_snowbird"] = function(inst, doer) --防风防花粉防毒气
-		inst:AddComponent("windproofer")
-		inst.components.windproofer:SetEffectiveness(TUNING.WINDPROOFNESS_ABSOLUTE)
+		if not inst.components.windproofer then inst:AddComponent("windproofer") end
+		inst.components.windproofer:SetEffectiveness(TUNING.WINDPROOFNESS_ABSOLUTE or 1)
 		inst.components.equippable.poisongasblocker = true
 		inst:AddTag("has_gasmask")
 	end,
 	["body_jacket_shearling_orange_salmon"] = function(inst, doer) --保暖240
 		inst.components.equippable.dapperness = TUNING.DAPPERNESS_MED
-		inst:AddComponent("insulator")
+		if not inst.components.insulator then inst:AddComponent("insulator") end
 		inst.components.insulator:SetInsulation(TUNING.INSULATION_MED*2)
 		inst.components.insulator:SetWinter()
 	end,
 	["body_jacket_toggle_navy_phthalo"] = function(inst, doer) --保暖120，怪物大衣
 		inst:AddTag("has_monster")
-		inst:AddComponent("insulator")
+		if not inst.components.insulator then inst:AddComponent("insulator") end
 		inst.components.insulator:SetInsulation(TUNING.INSULATION_MED)
 		inst.components.insulator:SetWinter()
 	end,

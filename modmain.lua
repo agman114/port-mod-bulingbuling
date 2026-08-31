@@ -880,7 +880,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 
 		local oldOnControl = self.OnControl
 	self.OnControl = function(self, control, down, ...)
-		if self.inst and (self.inst:HasTag("buling_driving") or self.inst:HasTag("kamen_rider") or self.inst:HasTag("pigroyalty")) then
+		if self.inst and (self.inst:HasTag("buling_driving") or self.inst:HasTag("kamen_rider")) then
 			if control == GLOBAL.CONTROL_ROTATE_LEFT or control == GLOBAL.CONTROL_ROTATE_RIGHT then
 				return true
 			end
