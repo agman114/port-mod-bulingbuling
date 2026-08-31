@@ -565,10 +565,10 @@ local function fn(Sim)
     anim:SetBuild("metal_buling_build")
     anim:PlayAnimation("idle", true)
     
-    anim:AddOverrideBuild("laser_explode_sm")
-    anim:AddOverrideBuild("smoke_aoe")    
-    anim:AddOverrideBuild("laser_explosion")   
-    anim:AddOverrideBuild("ground_chunks_breaking")   
+    -- anim:AddOverrideBuild("laser_explode_sm")
+    -- anim:AddOverrideBuild("smoke_aoe")    
+    -- anim:AddOverrideBuild("laser_explosion")   
+    -- anim:AddOverrideBuild("ground_chunks_breaking")   
      
     ------------------------------------------
 

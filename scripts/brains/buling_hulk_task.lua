@@ -26,11 +26,8 @@ function AbigailBrain:OnStart()
     local root = PriorityNode(
     {	
 		ChaseAndAttack(self.inst, MAX_CHASE_TIME),
-		Follow(self.inst, function() return self.inst.components.follower.leader end, 0, 0, 0, true),
-		
-		
-		--FaceEntity(self.inst, GetFaceTargetFn, KeepFaceTargetFn),
-        Wander(self.inst, function() return Point(ThePlayer.Transform:GetWorldPosition()) end , MAX_WANDER_DIST)        
+		Follow(self.inst, function() return self.inst.components.follower and self.inst.components.follower.leader end, MIN_FOLLOW, MED_FOLLOW, MAX_FOLLOW, true),
+        Wander(self.inst, function() return self.inst.components.follower and self.inst.components.follower.leader and self.inst.components.follower.leader:GetPosition() or self.inst:GetPosition() end, MAX_WANDER_DIST)        
     }, .5)
         
     self.bt = BT(self.inst, root)
