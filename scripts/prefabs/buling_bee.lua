@@ -1,4 +1,4 @@
-local assets ={
+local assets = {
 	Asset("ATLAS", "images/inventoryimages/buling_bee_pirate.xml"),
 	Asset("ATLAS", "images/inventoryimages/buling_bee_gardener.xml"),
 	Asset("ATLAS", "images/inventoryimages/buling_bee_smith.xml"),
@@ -10,183 +10,311 @@ local assets ={
 	Asset("ATLAS", "images/inventoryimages/buling_bee_stonecutters.xml"),
 	Asset("ATLAS", "images/inventoryimages/buling_bee_governor.xml"),
 }
+
+local function weighted_random_choice(choices)
+	local total = 0
+	for k, v in pairs(choices) do
+		total = total + v
+	end
+	local r = math.random() * total
+	for k, v in pairs(choices) do
+		r = r - v
+		if r <= 0 then
+			return k
+		end
+	end
+	for k, v in pairs(choices) do
+		return k
+	end
+end
+
 local function commonfn()
-    local inst = CreateEntity()
-    inst.entity:AddTransform()
+	local inst = CreateEntity()
+	inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
-    inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+	inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
+
+	MakeInventoryPhysics(inst)
+	inst:AddTag("bulingbug")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst:AddComponent("inspectable")
 	inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
 	inst:AddComponent("inventoryitem")
 	inst:AddComponent("tradable")
-	inst:AddTag("bulingbug")
+
 	inst.tasknum = 0
-	local function onsave(inst, data)
+	inst.OnSave = function(inst, data)
 		data = data or {}
 		data.tasknum = inst.tasknum
-    end
-	local function onload(inst, data)
-		inst.tasknum = data.tasknum
 	end
-	inst.OnSave = onsave
-    inst.OnLoad = onload
-    return inst
-end
-local function buling_cai(inst, doer)
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_cai")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_cai"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_cai.xml"
-	return inst
-end
-local function buling_pirate(inst, doer)
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_pirate")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_pirate"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_pirate.xml"
-	return inst
-end
-local function buling_gardener(inst, doer)
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_gardener")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_gardener"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_gardener.xml"
-	return inst
-end
-local function buling_fish(inst, doer)
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_fish")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_fish"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_fish.xml"
-	return inst
-end
-local function buling_police(inst, doer)
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_police")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_police"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_police.xml"
-	inst.bugitem = "honey"
-	return inst
-end
-local function buling_smith(inst, doer)
-	local minelist = {
-		rocks = 4,
-		flint = 4,
-		honey = 10,
-		buling_seed_rock = 1,
-		buling_seed_flint = 1,
-	}
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_smith")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_smith"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_smith.xml"
-	inst.beeworkfn = function(inst, doer)
-		local owner = inst.components.inventoryitem.owner
-		if inst.tasknum >= 48 and owner and owner.prefab == "buling_bee_box" then
-			if not owner.components.container:IsFull() then
-				inst.tasknum = 0
-				local prize = weighted_random_choice(minelist)
-				owner.components.container:GiveItem(SpawnPrefab(prize))
-			end
+	inst.OnLoad = function(inst, data)
+		if data then
+			inst.tasknum = data.tasknum or 0
 		end
-		inst.tasknum = inst.tasknum + 1
 	end
 	return inst
 end
-local function buling_mine(inst, doer)
-	local minelist = {
-		rocks = 4,
-		flint = 4,
-		honey = 10,
-		buling_seed_rock = 1,
-		buling_seed_flint = 1,
-	}
-	local inst=commonfn(inst)
+
+local function create_working_bee(build_name, image_name, item_list, req_tasks)
+	req_tasks = req_tasks or 10
+	local inst = commonfn()
 	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_mine")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_mine"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_mine.xml"
-	inst.beeworkfn = function(inst, doer)
-	local owner = inst.components.inventoryitem.owner
-		if inst.tasknum >= 48 and owner and owner.prefab == "buling_bee_box" then
-		print(inst.tasknum)
-			if not owner.components.container:IsFull() then
-				inst.tasknum = 0
-				local prize = weighted_random_choice(minelist)
-				owner.components.container:GiveItem(SpawnPrefab(prize))
-			end
-		end
-		inst.tasknum = inst.tasknum + 1
-	end
-	return inst
-end
-local function buling_queen(inst, doer)
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_queen")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_queen"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_queen.xml"
-	inst.beeworkfn = function(inst, doer)
-	local owner = inst.components.inventoryitem.owner
-		if  owner and owner.prefab == "buling_bee_box" and not owner.components.container:IsFull() then
-			for k,v in pairs(owner.components.container.slots) do
-				if v:HasTag("bulingbug") and v~= inst then
-					if  inst.tasknum >= 4 then
+	inst.AnimState:SetBuild(build_name)
+	inst.AnimState:PlayAnimation("land_idle", true)
+
+	if TheWorld.ismastersim then
+		inst.components.inventoryitem.imagename = image_name
+		inst.components.inventoryitem.atlasname = "images/inventoryimages/" .. image_name .. ".xml"
+		inst.beeworkfn = function(inst, owner)
+			owner = owner or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
+			if owner and (owner.prefab == "buling_bee_box" or owner:HasTag("buling_bee_box")) then
+				if inst.tasknum >= req_tasks then
+					if owner.components.container and not owner.components.container:IsFull() then
 						inst.tasknum = 0
-						owner.components.container:GiveItem(SpawnPrefab(v.prefab))
-					else
-						inst.tasknum = inst.tasknum + 1
+						local prize = weighted_random_choice(item_list)
+						if prize then
+							local spawned = SpawnPrefab(prize)
+							if spawned then
+								owner.components.container:GiveItem(spawned)
+							end
+						end
 					end
-					return
+				else
+					inst.tasknum = inst.tasknum + 1
 				end
 			end
 		end
 	end
 	return inst
 end
-local function buling_stonecutters(inst, doer)
-	local inst=commonfn(inst)
+
+local function buling_cai(inst)
+	return create_working_bee("buling_bee_cai", "buling_bee_cai", {
+		cutgrass = 5,
+		twigs = 5,
+		berries = 3,
+		carrot = 2,
+	}, 10)
+end
+
+local function buling_pirate(inst)
+	return create_working_bee("buling_bee_pirate", "buling_bee_pirate", {
+		goldnugget = 5,
+		dubloon = 3,
+		trinket_1 = 1,
+	}, 10)
+end
+
+local function buling_gardener(inst)
+	return create_working_bee("buling_bee_gardener", "buling_bee_gardener", {
+		seeds = 5,
+		carrot = 3,
+		pumpkin = 2,
+		corn = 2,
+	}, 10)
+end
+
+local function buling_fish(inst)
+	return create_working_bee("buling_bee_fish", "buling_bee_fish", {
+		fish = 5,
+		pondfish = 3,
+		eel = 2,
+	}, 10)
+end
+
+local function buling_police(inst)
+	return create_working_bee("buling_bee_police", "buling_bee_police", {
+		honey = 5,
+		stinger = 3,
+		beehat = 1,
+	}, 10)
+end
+
+local function buling_smith(inst)
+	return create_working_bee("buling_bee_smith", "buling_bee_smith", {
+		rocks = 4,
+		flint = 4,
+		honey = 10,
+		goldnugget = 2,
+	}, 10)
+end
+
+local function buling_mine(inst)
+	return create_working_bee("buling_bee_mine", "buling_bee_mine", {
+		rocks = 4,
+		flint = 4,
+		nitre = 3,
+		marble = 1,
+	}, 10)
+end
+
+local function buling_queen(inst)
+	local inst = commonfn()
 	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_stonecutters")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_stonecutters"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_stonecutters.xml"
-	inst.bugitem = "honey"
+	inst.AnimState:SetBuild("buling_bee_queen")
+	inst.AnimState:PlayAnimation("land_idle", true)
+
+	if TheWorld.ismastersim then
+		inst.components.inventoryitem.imagename = "buling_bee_queen"
+		inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_queen.xml"
+		inst.beeworkfn = function(inst, owner)
+			owner = owner or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
+			if owner and (owner.prefab == "buling_bee_box" or owner:HasTag("buling_bee_box")) and owner.components.container and not owner.components.container:IsFull() then
+				for k, v in pairs(owner.components.container.slots) do
+					if v and v:HasTag("bulingbug") and v ~= inst then
+						if inst.tasknum >= 4 then
+							inst.tasknum = 0
+							local new_bee = SpawnPrefab(v.prefab)
+							if new_bee then
+								owner.components.container:GiveItem(new_bee)
+							end
+						else
+							inst.tasknum = inst.tasknum + 1
+						end
+						return
+					end
+				end
+			end
+		end
+	end
 	return inst
 end
-local function buling_governor(inst, doer)
-	local inst=commonfn(inst)
-	inst.AnimState:SetBank("buling_bee")
-    inst.AnimState:SetBuild("buling_bee_governor")
-    inst.AnimState:PlayAnimation("land_idle",true)
-	inst.components.inventoryitem.imagename = "buling_bee_governor"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_governor.xml"
-	inst.bugitem = "honey"
+
+local function buling_stonecutters(inst)
+	return create_working_bee("buling_bee_stonecutters", "buling_bee_stonecutters", {
+		cutstone = 4,
+		rocks = 5,
+		marble = 2,
+	}, 10)
+end
+
+local function buling_governor(inst)
+	return create_working_bee("buling_bee_governor", "buling_bee_governor", {
+		goldnugget = 5,
+		honey = 5,
+		purplegem = 1,
+	}, 10)
+end
+
+-- ==================== BEE BOX STRUCTURE ====================
+
+local function bee_box_onopen(inst)
+	inst.AnimState:PlayAnimation("hit")
+	inst.AnimState:PushAnimation("idle_full", true)
+	inst.SoundEmitter:PlaySound("dontstarve/bee/beebox_open")
+end
+
+local function bee_box_onclose(inst)
+	inst.SoundEmitter:PlaySound("dontstarve/bee/beebox_close")
+end
+
+local function buling_bee_box_fn()
+	local inst = CreateEntity()
+	inst.entity:AddTransform()
+	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
+	inst.Transform:SetFourFaced()
+	MakeObstaclePhysics(inst, 0.5)
+
+	inst.AnimState:SetBank("bee_box")
+	inst.AnimState:SetBuild("bee_box")
+	inst.AnimState:PlayAnimation("idle_full", true)
+
+	inst:AddTag("structure")
+	inst:AddTag("buling_bee_box")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst:AddComponent("inspectable")
+	inst:AddComponent("lootdropper")
+
+	inst:AddComponent("container")
+	inst.components.container:WidgetSetup("treasurechest")
+	inst.components.container.onopenfn = bee_box_onopen
+	inst.components.container.onclosefn = bee_box_onclose
+
+	inst:AddComponent("workable")
+	inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
+	inst.components.workable:SetWorkLeft(4)
+	inst.components.workable:SetOnFinish(function(inst, worker)
+		inst.components.lootdropper:DropLoot()
+		if inst.components.container then
+			inst.components.container:DropEverything()
+		end
+		inst:Remove()
+	end)
+
+	inst:DoPeriodicTask(2, function(inst)
+		if inst.components.container then
+			for k, item in pairs(inst.components.container.slots) do
+				if item and item.beeworkfn then
+					item:beeworkfn(inst)
+				end
+			end
+		end
+	end)
+
 	return inst
 end
-return Prefab("buling_bee_mine", buling_mine, assets),--地质蜂
-Prefab("buling_bee_police", buling_police, assets),--警察蜂
-Prefab("buling_bee_pirate", buling_pirate, assets),--海盗蜂
-Prefab("buling_bee_queen", buling_queen, assets),--女王蜂
-Prefab("buling_bee_governor", buling_governor, assets),--提督蜂
-Prefab("buling_bee_stonecutters", buling_stonecutters, assets),--石匠蜂
-Prefab("buling_bee_gardener", buling_gardener, assets),--园丁蜂
-Prefab("buling_bee_cai", buling_cai, assets),--菜嗡嗡
-Prefab("buling_bee_fish", buling_fish, assets),--渔夫蜂
-Prefab("buling_bee_smith", buling_smith, assets)--铁匠蜂
+
+local function buling_bee_box_item_fn()
+	local inst = CreateEntity()
+	inst.entity:AddTransform()
+	inst.entity:AddAnimState()
+	inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
+	MakeInventoryPhysics(inst)
+
+	inst.AnimState:SetBank("bee_box")
+	inst.AnimState:SetBuild("bee_box")
+	inst.AnimState:PlayAnimation("idle_empty")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst:AddComponent("inspectable")
+	inst:AddComponent("inventoryitem")
+
+	inst:AddComponent("deployable")
+	inst.components.deployable.ondeploy = function(inst, pt, deployer)
+		local box = SpawnPrefab("buling_bee_box")
+		if box then
+			box.Transform:SetPosition(pt.x, pt.y, pt.z)
+			box.SoundEmitter:PlaySound("dontstarve/common/craftable/bee_box")
+			inst:Remove()
+		end
+	end
+
+	return inst
+end
+
+return Prefab("buling_bee_mine", buling_mine, assets),
+	Prefab("buling_bee_police", buling_police, assets),
+	Prefab("buling_bee_pirate", buling_pirate, assets),
+	Prefab("buling_bee_queen", buling_queen, assets),
+	Prefab("buling_bee_governor", buling_governor, assets),
+	Prefab("buling_bee_stonecutters", buling_stonecutters, assets),
+	Prefab("buling_bee_gardener", buling_gardener, assets),
+	Prefab("buling_bee_cai", buling_cai, assets),
+	Prefab("buling_bee_fish", buling_fish, assets),
+	Prefab("buling_bee_smith", buling_smith, assets),
+	Prefab("buling_bee_box", buling_bee_box_fn, assets),
+	Prefab("buling_bee_box_item", buling_bee_box_item_fn, assets)
