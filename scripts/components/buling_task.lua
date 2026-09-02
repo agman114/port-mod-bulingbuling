@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local mixtime = 30
 local maxtime = 360
 local attack = 4800
