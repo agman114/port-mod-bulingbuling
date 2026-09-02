@@ -69,19 +69,21 @@ local function create_working_bee(build_name, image_name, item_list, req_tasks)
 		inst.beeworkfn = function(inst, owner)
 			owner = owner or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
 			if owner and (owner.prefab == "buling_bee_box" or owner:HasTag("buling_bee_box")) then
+				local stacksize = (inst.components.stackable and inst.components.stackable:StackSize()) or 1
+				inst.tasknum = inst.tasknum + stacksize
 				if inst.tasknum >= req_tasks then
 					if owner.components.container and not owner.components.container:IsFull() then
 						inst.tasknum = 0
-						local prize = weighted_random_choice(item_list)
-						if prize then
-							local spawned = SpawnPrefab(prize)
-							if spawned then
-								owner.components.container:GiveItem(spawned)
+						for i = 1, math.min(stacksize, 5) do
+							local prize = weighted_random_choice(item_list)
+							if prize then
+								local spawned = SpawnPrefab(prize)
+								if spawned then
+									owner.components.container:GiveItem(spawned)
+								end
 							end
 						end
 					end
-				else
-					inst.tasknum = inst.tasknum + 1
 				end
 			end
 		end
@@ -161,18 +163,20 @@ local function buling_queen(inst)
 		inst.beeworkfn = function(inst, owner)
 			owner = owner or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
 			if owner and (owner.prefab == "buling_bee_box" or owner:HasTag("buling_bee_box")) and owner.components.container and not owner.components.container:IsFull() then
-				for k, v in pairs(owner.components.container.slots) do
-					if v and v:HasTag("bulingbug") and v ~= inst then
-						if inst.tasknum >= 4 then
-							inst.tasknum = 0
-							local new_bee = SpawnPrefab(v.prefab)
-							if new_bee then
-								owner.components.container:GiveItem(new_bee)
+				local stacksize = (inst.components.stackable and inst.components.stackable:StackSize()) or 1
+				inst.tasknum = inst.tasknum + stacksize
+				if inst.tasknum >= 4 then
+					inst.tasknum = 0
+					for k, v in pairs(owner.components.container.slots) do
+						if v and v:HasTag("bulingbug") and v ~= inst then
+							for i = 1, math.min(stacksize, 3) do
+								local new_bee = SpawnPrefab(v.prefab)
+								if new_bee then
+									owner.components.container:GiveItem(new_bee)
+								end
 							end
-						else
-							inst.tasknum = inst.tasknum + 1
+							return
 						end
-						return
 					end
 				end
 			end
