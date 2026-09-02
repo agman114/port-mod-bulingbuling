@@ -165,10 +165,7 @@ local function fn()
     inst.entity:AddNetwork()
 
     MakeInventoryPhysics(inst)
-    if inst.Physics then
-        inst.Physics:ClearCollisionMask()
-        inst.Physics:SetGravity(0)
-    end
+    RemovePhysicsColliders(inst)
 
     inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
