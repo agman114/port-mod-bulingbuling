@@ -1,5 +1,6 @@
 local assets = {
 	Asset("ANIM", "anim/bee.zip"),
+	Asset("ANIM", "anim/bee_box.zip"),
 }
 
 local function weighted_random_choice(choices)
