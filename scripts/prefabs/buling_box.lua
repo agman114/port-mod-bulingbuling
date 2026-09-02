@@ -1525,12 +1525,13 @@ local function wakuang(inst, doer)
 	inst.beeritem = "buling_wakuang_item"
 	
 	inst.components.trader:SetAcceptTest(
-		function(inst, doer, item)
-			if inst.components.workable.workleft > 0 then
-				local _target = doer or inst
-				_target.components.talker:Say(STRINGS.CAVEBUILD)
+		function(inst, item, giver)
+			if inst.components.workable and inst.components.workable.workleft > 0 then
+				if giver and giver.components.talker then
+					giver.components.talker:Say(STRINGS.CAVEBUILD or "The cave entrance is not ready yet!")
+				end
 			end
-			return item.prefab == "buling_cave_tool" and inst.components.workable.workleft <= 0
+			return item ~= nil and item.prefab == "buling_cave_tool" and inst.components.workable and inst.components.workable.workleft <= 0
 		end)
 	inst.components.trader.onaccept = function(inst, giver, item)
 		SpawnPrefab("cloudpuff").Transform:SetPosition(inst.Transform:GetWorldPosition())
