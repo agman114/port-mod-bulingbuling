@@ -94,6 +94,46 @@ local function buling_recipes()
 		local buling_bee_box = Recipe("buling_bee_box", {Ingredient("boards", 4), Ingredient("honeycomb", 1), Ingredient("bee", 4)}, RECIPETABS.BLTAB, TECH.NONE, "buling_bee_box_placer", 2)
 		buling_bee_box.atlas = "images/inventoryimages.xml"
 		buling_bee_box.image = "beebox.tex"
+
+		local buling_bee_mine = Recipe("buling_bee_mine", {Ingredient("bee", 1), Ingredient("flint", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_mine.atlas = "images/inventoryimages.xml"
+		buling_bee_mine.image = "bee.tex"
+
+		local buling_bee_queen = Recipe("buling_bee_queen", {Ingredient("bee", 1), Ingredient("honeycomb", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_queen.atlas = "images/inventoryimages.xml"
+		buling_bee_queen.image = "bee.tex"
+
+		local buling_bee_smith = Recipe("buling_bee_smith", {Ingredient("bee", 1), Ingredient("rocks", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_smith.atlas = "images/inventoryimages.xml"
+		buling_bee_smith.image = "bee.tex"
+
+		local buling_bee_pirate = Recipe("buling_bee_pirate", {Ingredient("bee", 1), Ingredient("goldnugget", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_pirate.atlas = "images/inventoryimages.xml"
+		buling_bee_pirate.image = "bee.tex"
+
+		local buling_bee_police = Recipe("buling_bee_police", {Ingredient("bee", 1), Ingredient("stinger", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_police.atlas = "images/inventoryimages.xml"
+		buling_bee_police.image = "bee.tex"
+
+		local buling_bee_stonecutters = Recipe("buling_bee_stonecutters", {Ingredient("bee", 1), Ingredient("cutstone", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_stonecutters.atlas = "images/inventoryimages.xml"
+		buling_bee_stonecutters.image = "bee.tex"
+
+		local buling_bee_gardener = Recipe("buling_bee_gardener", {Ingredient("bee", 1), Ingredient("seeds", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_gardener.atlas = "images/inventoryimages.xml"
+		buling_bee_gardener.image = "bee.tex"
+
+		local buling_bee_cai = Recipe("buling_bee_cai", {Ingredient("bee", 1), Ingredient("cutgrass", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_cai.atlas = "images/inventoryimages.xml"
+		buling_bee_cai.image = "bee.tex"
+
+		local buling_bee_fish = Recipe("buling_bee_fish", {Ingredient("bee", 1), Ingredient("fish", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_fish.atlas = "images/inventoryimages.xml"
+		buling_bee_fish.image = "bee.tex"
+
+		local buling_bee_governor = Recipe("buling_bee_governor", {Ingredient("bee", 1), Ingredient("purplegem", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil)
+		buling_bee_governor.atlas = "images/inventoryimages.xml"
+		buling_bee_governor.image = "bee.tex"
 	end
 end
 
