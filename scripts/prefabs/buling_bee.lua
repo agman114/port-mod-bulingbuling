@@ -56,7 +56,7 @@ local function commonfn()
 end
 
 local function create_working_bee(build_name, image_name, item_list, req_tasks)
-	req_tasks = req_tasks or 10
+	req_tasks = req_tasks or 5
 	local inst = commonfn()
 	inst.AnimState:SetBank("buling_bee")
 	inst.AnimState:SetBuild(build_name)
@@ -233,7 +233,7 @@ local function buling_bee_box_fn()
 	inst:AddComponent("lootdropper")
 
 	inst:AddComponent("container")
-	inst.components.container:WidgetSetup("treasurechest")
+	inst.components.container:WidgetSetup("buling_chest_5x5")
 	inst.components.container.onopenfn = bee_box_onopen
 	inst.components.container.onclosefn = bee_box_onclose
 
@@ -251,8 +251,21 @@ local function buling_bee_box_fn()
 	inst:DoPeriodicTask(2, function(inst)
 		if inst.components.container then
 			for k, item in pairs(inst.components.container.slots) do
-				if item and item.beeworkfn then
-					item:beeworkfn(inst)
+				if item and item:IsValid() then
+					if item.beeworkfn then
+						item:beeworkfn(inst)
+					elseif item.prefab == "bee" or item.prefab == "killerbee" then
+						item.tasknum = (item.tasknum or 0) + 1
+						if item.tasknum >= 5 then
+							item.tasknum = 0
+							if not inst.components.container:IsFull() then
+								local honey = SpawnPrefab("honey")
+								if honey then
+									inst.components.container:GiveItem(honey)
+								end
+							end
+						end
+					end
 				end
 			end
 		end
