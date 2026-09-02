@@ -306,6 +306,8 @@ local function buling_bee_box_item_fn()
 	return inst
 end
 
+local placer = MakePlacer("buling_bee_box_placer", "bee_box", "bee_box", "idle_full")
+
 return Prefab("buling_bee_mine", buling_mine, assets),
 	Prefab("buling_bee_police", buling_police, assets),
 	Prefab("buling_bee_pirate", buling_pirate, assets),
@@ -317,4 +319,5 @@ return Prefab("buling_bee_mine", buling_mine, assets),
 	Prefab("buling_bee_fish", buling_fish, assets),
 	Prefab("buling_bee_smith", buling_smith, assets),
 	Prefab("buling_bee_box", buling_bee_box_fn, assets),
-	Prefab("buling_bee_box_item", buling_bee_box_item_fn, assets)
+	Prefab("buling_bee_box_item", buling_bee_box_item_fn, assets),
+	placer

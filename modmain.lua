@@ -392,7 +392,7 @@ end)
 
 
 
-PrefabFiles = {
+	PrefabFiles = {
 	"bulingbuling",
 	"buling_box",
 	"buling_box2",
@@ -414,6 +414,7 @@ PrefabFiles = {
 	"buling_clothes",
 	"buling_herald",
 	"buling_test",
+	"buling_bee",
 }
 
 Assets = {
