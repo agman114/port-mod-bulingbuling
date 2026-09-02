@@ -1,8 +1,8 @@
 local assets = {
-	--
+	Asset("ANIM", "anim/cave_entrance.zip"),
 }
 local function onsave(inst, data)
-		data = data or {}
+	data = data or {}
     if inst:HasTag("spawned_cave") then
         data.spawned_cave = true
     end
@@ -64,29 +64,56 @@ local function creatInterior(inst, doer)
 end
 local function fn(Sim)
 	local inst = CreateEntity()
-	local trans = inst.entity:AddTransform()
-	local anim = inst.entity:AddAnimState()
-
+	inst.entity:AddTransform()
+	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
 
     MakeObstaclePhysics(inst, .5)
 
-	anim:SetBank("cave_entrance")
-	anim:SetBuild("cave_entrance")
-	anim:PlayAnimation("idle_open")
+	inst.AnimState:SetBank("cave_entrance")
+	inst.AnimState:SetBuild("cave_entrance")
+	inst.AnimState:PlayAnimation("idle_open", true)
 
-    --inst:AddTag("structure")
-    inst:AddTag("houndmound")
-    inst:AddTag("batcave")
+    inst:AddTag("structure")
+    inst:AddTag("shelter")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
 
     -------------------
 
-    inst:AddComponent("door")
-    inst.components.door.outside = true
+    if TheWorld and TheWorld.components and TheWorld.components.interiorspawner then
+        inst:AddComponent("door")
+        inst.components.door.outside = true
 
-    inst.task = inst:DoTaskInTime(0, function() 
-         creatInterior(inst)
-    end)
+        inst.task = inst:DoTaskInTime(0, function() 
+             creatInterior(inst)
+        end)
+    else
+        -- DST Bunker & Shelter mode
+        inst:AddComponent("sleepingbag")
+        inst.components.sleepingbag.health_tick = TUNING.SLEEP_HEALTH_PER_TICK * 2
+        inst.components.sleepingbag.sanity_tick = TUNING.SLEEP_SANITY_PER_TICK * 2
+
+        inst:AddComponent("container")
+        inst.components.container:WidgetSetup("treasurechest")
+
+        inst:AddComponent("lootdropper")
+        inst:AddComponent("workable")
+        inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
+        inst.components.workable:SetWorkLeft(4)
+        inst.components.workable:SetOnFinishCallback(function(inst, worker)
+            inst.components.lootdropper:DropLoot()
+            if inst.components.container then
+                inst.components.container:DropEverything()
+            end
+            inst:Remove()
+        end)
+    end
 
     inst.OnSave = onsave 
     inst.OnLoad = onload

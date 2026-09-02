@@ -1534,8 +1534,14 @@ local function wakuang(inst, doer)
 			return item ~= nil and item.prefab == "buling_cave_tool" and inst.components.workable and inst.components.workable.workleft <= 0
 		end)
 	inst.components.trader.onaccept = function(inst, giver, item)
-		SpawnPrefab("cloudpuff").Transform:SetPosition(inst.Transform:GetWorldPosition())
-		SpawnPrefab("buling_cave_entrance").Transform:SetPosition(inst.Transform:GetWorldPosition())
+		local fx = SpawnPrefab("collapse_small") or SpawnPrefab("smoke_puff")
+		if fx then
+			fx.Transform:SetPosition(inst.Transform:GetWorldPosition())
+		end
+		local entrance = SpawnPrefab("buling_cave_entrance")
+		if entrance then
+			entrance.Transform:SetPosition(inst.Transform:GetWorldPosition())
+		end
 		inst:Remove()
 	end
 	return inst
