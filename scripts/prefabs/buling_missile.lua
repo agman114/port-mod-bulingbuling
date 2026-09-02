@@ -16,7 +16,6 @@ local function Explode(inst)
 
     local x, y, z = inst.Transform:GetWorldPosition()
     
-    -- Visual and sound effects
     local boom = SpawnPrefab("explode_small")
     if boom then
         boom.Transform:SetPosition(x, y, z)
@@ -42,7 +41,6 @@ local function Explode(inst)
     local ents = TheSim:FindEntities(x, 0, z, 4.5, nil, {"INLIMBO", "FX", "DECOR", "playerghost"})
     for _, ent in ipairs(ents) do
         if ent ~= inst and ent ~= attacker and ent:IsValid() then
-            -- Do not hit player or friendly vehicle
             local is_ally = ent:HasTag("player") or ent:HasTag("companion") or ent:HasTag("buling_carrier")
             if not is_ally and ent.components.combat and ent.components.health and not ent.components.health:IsDead() then
                 ent.components.combat:GetAttacked(attacker or inst, 150)
@@ -58,73 +56,103 @@ local function Explode(inst)
     inst:Remove()
 end
 
+local function FindNearbyEnemy(x, z, radius, ignore_ent, attacker)
+    local ents = TheSim:FindEntities(x, 0, z, radius or 15, {"_combat"}, {"INLIMBO", "FX", "DECOR", "playerghost", "wall"})
+    local best = nil
+    local best_dsq = math.huge
+    for _, e in ipairs(ents) do
+        if e:IsValid() and e ~= ignore_ent and e ~= attacker then
+            local is_ally = e:HasTag("player") or e:HasTag("companion") or e:HasTag("buling_carrier")
+            if not is_ally and e.components.combat and e.components.health and not e.components.health:IsDead() then
+                local dsq = e:GetDistanceSqToPoint(x, 0, z)
+                if dsq < best_dsq then
+                    best_dsq = dsq
+                    best = e
+                end
+            end
+        end
+    end
+    return best
+end
+
 local function Launch(inst, target_or_pos, attacker)
     inst.owner = attacker
     local x, y, z = inst.Transform:GetWorldPosition()
 
     local target_pos = nil
     local target_ent = nil
-    if target_or_pos and type(target_or_pos) == "table" and target_or_pos.Transform then
+
+    if target_or_pos and type(target_or_pos) == "table" and target_or_pos.Transform and target_or_pos:IsValid() then
         target_ent = target_or_pos
         target_pos = target_ent:GetPosition()
     elseif target_or_pos and target_or_pos.x then
         target_pos = target_or_pos
-    else
+        -- Check if an enemy is near target_pos
+        target_ent = FindNearbyEnemy(target_pos.x, target_pos.z, 6, inst, attacker)
+    end
+
+    -- If still no enemy target, search around attacker
+    if not target_ent and attacker and attacker:IsValid() then
+        local ax, ay, az = attacker.Transform:GetWorldPosition()
+        target_ent = FindNearbyEnemy(ax, az, 25, inst, attacker)
+        if target_ent then
+            target_pos = target_ent:GetPosition()
+        end
+    end
+
+    if not target_pos then
         local rad = (attacker and attacker.Transform:GetRotation() or 0) * DEGREES
-        target_pos = Vector3(x + 15 * math.cos(rad), 0, z - 15 * math.sin(rad))
+        target_pos = Vector3(x + 20 * math.cos(rad), 0, z - 20 * math.sin(rad))
     end
 
+    inst.target_ent = target_ent
+    inst.target_pos = target_pos
+
+    -- Face target and move directly FORWARD
+    local speed = 26
     inst:ForceFacePoint(target_pos.x, 0, target_pos.z)
-
-    local speed = 28
-    local dx = target_pos.x - x
-    local dz = target_pos.z - z
-    local dist = math.sqrt(dx * dx + dz * dz)
-    if dist < 0.1 then dist = 0.1 end
-
-    local vx = (dx / dist) * speed
-    local vz = (dz / dist) * speed
-
     if inst.Physics then
-        inst.Physics:SetMotorVel(vx, 0, vz)
+        inst.Physics:SetMotorVel(speed, 0, 0)
     end
 
-    -- Trail smoke and distance/collision checking
-    inst:DoPeriodicTask(0.08, function()
-        if not inst:IsValid() then return end
+    -- Flight task: real-time homing towards enemy
+    inst:DoPeriodicTask(0.05, function()
+        if not inst:IsValid() or inst._exploded then return end
         local cx, cy, cz = inst.Transform:GetWorldPosition()
-        
-        -- Homing update if target entity exists
-        if target_ent and target_ent:IsValid() then
-            local epos = target_ent:GetPosition()
-            inst:ForceFacePoint(epos.x, 0, epos.z)
-            local tdx = epos.x - cx
-            local tdz = epos.z - cz
-            local tdist = math.sqrt(tdx * tdx + tdz * tdz)
-            if tdist < 1.8 then
-                Explode(inst)
-                return
-            end
-            if tdist > 0.1 and inst.Physics then
-                inst.Physics:SetMotorVel((tdx / tdist) * speed, 0, (tdz / tdist) * speed)
-            end
+
+        -- Update homing target
+        if inst.target_ent and inst.target_ent:IsValid() and not (inst.target_ent.components.health and inst.target_ent.components.health:IsDead()) then
+            inst.target_pos = inst.target_ent:GetPosition()
         else
-            local cur_dx = target_pos.x - cx
-            local cur_dz = target_pos.z - cz
-            if (cur_dx * cur_dx + cur_dz * cur_dz) < 3.0 then
+            -- Search for any new enemy along path
+            local nearby = FindNearbyEnemy(cx, cz, 8, inst, attacker)
+            if nearby then
+                inst.target_ent = nearby
+                inst.target_pos = nearby:GetPosition()
+            end
+        end
+
+        local tpos = inst.target_pos
+        if tpos then
+            inst:ForceFacePoint(tpos.x, 0, tpos.z)
+            if inst.Physics then
+                inst.Physics:SetMotorVel(speed, 0, 0)
+            end
+
+            local dsq = (cx - tpos.x)^2 + (cz - tpos.z)^2
+            if dsq <= 4.0 then
                 Explode(inst)
                 return
             end
         end
 
-        -- Spawn smoke particles
+        -- Smoke trail
         local puff = SpawnPrefab("splash_clouds_drop") or SpawnPrefab("smoke_puff")
         if puff then
             puff.Transform:SetPosition(cx, cy, cz)
         end
     end)
 
-    -- Auto-detonate after 4 seconds max
     inst:DoTaskInTime(4, Explode)
 end
 
@@ -139,8 +167,7 @@ local function fn()
     MakeInventoryPhysics(inst)
     if inst.Physics then
         inst.Physics:ClearCollisionMask()
-        inst.Physics:CollidesWith(COLLISION.CHARACTERS)
-        inst.Physics:CollidesWith(COLLISION.GIANTS)
+        inst.Physics:SetGravity(0)
     end
 
     inst.AnimState:SetBank("buling_item")
@@ -151,6 +178,7 @@ local function fn()
 
     inst:AddTag("projectile")
     inst:AddTag("weapon")
+    inst:AddTag("NOCLICK")
 
     inst.entity:SetPristine()
 

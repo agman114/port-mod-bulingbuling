@@ -755,12 +755,40 @@ AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, ta
 	end
 	player:ClearBufferedAction()
 
-	local target = (target_guid and GLOBAL.Ents[target_guid]) or (player.components.combat and player.components.combat.target)
-	local targetpos = nil
+	local target = (target_guid and GLOBAL.Ents[target_guid]) 
+		or (vehicle and vehicle.components.combat and vehicle.components.combat.target)
+		or (player and player.components.combat and player.components.combat.target)
+
 	local x, y, z = (vehicle or player).Transform:GetWorldPosition()
 
+	-- If target is nil or dead, find nearest valid hostile enemy
+	if not (target and target:IsValid() and target.components.health and not target.components.health:IsDead()) then
+		local search_x = target_x or x
+		local search_z = target_z or z
+		local ents = GLOBAL.TheSim:FindEntities(search_x, 0, search_z, 20, {"_combat"}, {"INLIMBO", "FX", "DECOR", "playerghost", "wall"})
+		local best_ent = nil
+		local best_dsq = math.huge
+		for _, e in ipairs(ents) do
+			if e:IsValid() and e ~= player and e ~= vehicle then
+				local is_ally = e:HasTag("player") or e:HasTag("companion") or e:HasTag("buling_carrier")
+				if not is_ally and e.components.combat and e.components.health and not e.components.health:IsDead() then
+					local dsq = e:GetDistanceSqToPoint(search_x, 0, search_z)
+					if dsq < best_dsq then
+						best_dsq = dsq
+						best_ent = e
+					end
+				end
+			end
+		end
+		target = best_ent
+	end
+
+	local targetpos = nil
 	if target and target:IsValid() then
 		targetpos = target:GetPosition()
+		if vehicle and vehicle:IsValid() then
+			vehicle:ForceFacePoint(targetpos.x, 0, targetpos.z)
+		end
 	elseif target_x and target_z then
 		targetpos = GLOBAL.Vector3(target_x, 0, target_z)
 	else
@@ -784,10 +812,10 @@ AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, ta
 			local proj = GLOBAL.SpawnPrefab("buling_missile")
 			if proj then
 				proj.Transform:SetPosition(x, 2.0, z)
-				local spread_pos = GLOBAL.Vector3(targetpos.x + i * 2.5, 0, targetpos.z + (i % 2) * 2.5)
-				if target and target:IsValid() and i == 0 then
+				if target and target:IsValid() then
 					proj:Launch(target, player)
 				else
+					local spread_pos = GLOBAL.Vector3(targetpos.x + i * 2.5, 0, targetpos.z + (i % 2) * 2.5)
 					proj:Launch(spread_pos, player)
 				end
 			end
