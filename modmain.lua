@@ -104,6 +104,7 @@ local mod_container_prefabs = {
     "buling_boat",
     "buling_box",
     "buling_box2",
+    "buling_bee_box",
     "buling_carrier",
     "buling_food",
     "buling_gun",

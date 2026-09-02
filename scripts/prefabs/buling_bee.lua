@@ -1,6 +1,7 @@
 local assets = {
 	Asset("ANIM", "anim/bee.zip"),
 	Asset("ANIM", "anim/bee_box.zip"),
+	Asset("ANIM", "anim/ui_buling_chest_5x5.zip"),
 }
 
 local function weighted_random_choice(choices)
@@ -232,8 +233,28 @@ local function buling_bee_box_fn()
 	inst:AddComponent("inspectable")
 	inst:AddComponent("lootdropper")
 
+	local slotpos = {}
+	for y = 2, -2, -1 do
+		for x = -2, 2 do
+			table.insert(slotpos, Vector3(80 * x, 80 * y, 0))
+		end
+	end
+
 	inst:AddComponent("container")
-	inst.components.container:WidgetSetup("buling_chest_5x5")
+	inst.components.container:SetNumSlots(#slotpos)
+	inst.components.container.widgetslotpos = slotpos
+	inst.components.container.widgetpos = Vector3(0, 200, 0)
+	inst.components.container.side_align_tip = 100
+	inst.components.container.widgetanimbank = "ui_chest_3x3"
+	inst.components.container.widgetanimbuild = "ui_buling_chest_5x5"
+	inst.components.container.widget = {
+		slotpos = slotpos,
+		animbank = "ui_chest_3x3",
+		animbuild = "ui_buling_chest_5x5",
+		pos = Vector3(0, 200, 0),
+		side_align_tip = 100,
+		type = "chest",
+	}
 	inst.components.container.onopenfn = bee_box_onopen
 	inst.components.container.onclosefn = bee_box_onclose
 
