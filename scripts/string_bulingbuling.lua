@@ -652,6 +652,215 @@ heavy kinetic weaponry, and prepare for decisive orbital confrontation!
 All core systems are in your hands, Ms. Buling!
 ]]
 
+
+-- =========================================================================
+-- ADDITIONAL SYSTEM STRINGS & WORKBENCH TOOLTIPS
+-- =========================================================================
+STRINGS.POWER = "Power"
+STRINGS.FUEL = "Fuel"
+STRINGS.PROGRESS = "Production Progress"
+STRINGS.BUINGKEJI = "Buling Tech"
+STRINGS.BULINGITEM = "Target Item"
+STRINGS.BULINGTIME = "Time Remaining"
+STRINGS.BULINGYANJIU = "Research"
+STRINGS.BULINGYANJIUSHIBAI = "I need to be well-fed and sane to conduct research."
+STRINGS.CAILIAOBUZU = "Insufficient Materials"
+STRINGS.DIXI = "Sensors indicate hostile movement in the area today."
+STRINGS.YUNSHI = "Target meteor trajectory locked."
+
+STRINGS.BULING_CLOTHES = "Tailor Garment"
+STRINGS.BULING_CLOTHES_PEIFANG = "Top slot: Upper wear\nBottom slot: Pants\nStitch into finished apparel.\nTop grants special buffs,\npants grant durability."
+
+STRINGS.BULING_BANSHOU_SHUOMING = "Dismantle and relocate heavy machinery with ease."
+STRINGS.BULING_CHEST_SHUOMING = "Heavy-duty alloy storage chest."
+STRINGS.BULING_CHONGDIANQI_SHUOMING = "Recharges electric tools and portable batteries."
+STRINGS.BULING_CROPBOX_SHUOMING = "Automatically harvests nearby mature crops.\nConsumes 50Bp of power per cycle."
+STRINGS.BULING_DIANDENG_SHUOMING = "Emits standard electrical light.\nConsumes 5Bp per 5 seconds."
+STRINGS.BULING_GOLD_DUST = "Extract trace gold from mineral silt."
+STRINGS.BULING_PAOTAI_SHUOMING = "Basic defense turret.\nHealth: 50, Damage: 15.\nConsumes 5Bp per shot."
+STRINGS.BULING_PLANTTABLE_SHUOMING = "Cross-breed and modify plant seeds."
+STRINGS.BULING_RADAR_SHUOMING = "Requires 800Bp of power to initiate a global scan.\nReveals the world map for a duration."
+STRINGS.BULING_RONGLU_SHUOMING = "Extracts elements from raw materials.\nRequires 10Bp per extraction.\nStores up to 200Bp."
+STRINGS.BULING_SEEDBOX_SHUOMING = "Nurtures sensitive crops.\nAllows winter growth and prevents summer withering."
+STRINGS.BULING_SEED_SHUOMING = "Bio-engineered seeds for sustainable resource harvesting."
+STRINGS.BULING_SEED_ZHONGZIDING_SHUOMING = "Matures in 1 day and can be harvested repeatedly.\nPlant in bulk!"
+STRINGS.BULING_SHENGCUN_SHUOMING = "Burns standard combustible fuels to generate electricity.\nOutput: 5Bp/5s."
+STRINGS.BULING_SOLARENERGY_SHUOMING = "Generates clean power from sunlight.\nMax output: 10Bp/5s."
+STRINGS.BULING_TOOL_SHUOMING = "A versatile rechargeable electric tool."
+STRINGS.BULING_WEAPONCHEST_SHUOMING = "Manufactures advanced tactical gear and modular weaponry.\nConsumes 50Bp per operation."
+STRINGS.BULING_YANJIU = "Scientific Research"
+STRINGS.BULING_ZHONGJIQI_SHUOMING = "Essential power repeater.\nStores generator output and distributes electricity to nearby machines."
+STRINGS.BULING_ZHONGZIDING_SHUOMING = "Eco-friendly synthetic metal ingot.\nCrucial industrial material."
+STRINGS.GEARS_SHUOMING = "Precision mechanical components that never go out of style."
+STRINGS.ROCK_SHUOMING = "Raw mineral rocks ready for pulverizing."
+STRINGS.SEEDS_SHUOMING = "Restores wild genetic variability to seeds."
+
+-- =========================================================================
+-- ADDITIONAL PREFABS, ITEMS & DESCRIPTIONS
+-- =========================================================================
+STRINGS.NAMES.BULING_PAOTAI = "Defense Sentry"
+STRINGS.NAMES.BULING_PAOTAI_ITEM = "Defense Sentry"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PAOTAI = "An automated point-defense turret. Requires electrical power."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PAOTAI_ITEM = "Place on the ground to install a defense turret."
+
+STRINGS.NAMES.BULING_HUOSAI = "Piston Dynamo"
+STRINGS.NAMES.BULING_HUOSAI_ITEM = "Human-Powered Generator"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_HUOSAI = "A human-powered kinetic treadmill generator. Yields up to 2Bp/s."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_HUOSAI_ITEM = "Place on the ground to install a human-powered generator."
+
+STRINGS.NAMES.BULING_SHENGCUN = "Survival Generator"
+STRINGS.NAMES.BULING_SHENGCUN_ITEM = "Survival Generator"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SHENGCUN = "Burns combustible fuel to generate electricity (5Bp/5s)."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SHENGCUN_ITEM = "Place on the ground to install a survival generator."
+
+STRINGS.NAMES.BULING_SOLARENERGY = "Solar Panel MK1"
+STRINGS.NAMES.BULING_SOLARENERGY_ITEM = "Solar Generator"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SOLARENERGY = "Generates clean electricity from direct sunlight (up to 2Bp/s)."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SOLARENERGY_ITEM = "Place on the ground to install a solar generator."
+
+STRINGS.NAMES.BULING_CHONGDIANQI = "Tool Charger"
+STRINGS.NAMES.BULING_CHONGDIANQI_ITEM = "Tool Charger"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_CHONGDIANQI = "Recharges battery-powered electric tools."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_CHONGDIANQI_ITEM = "Place on the ground to install a tool charging station."
+
+STRINGS.NAMES.BULING_DIANDENG = "Electric Lamp"
+STRINGS.NAMES.BULING_DIANDENG_ITEM = "Electric Lamp"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_DIANDENG = "Sheds steady electrical light. Consumes 1Bp/s."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_DIANDENG_ITEM = "Place on the ground to install an electric lamp."
+
+STRINGS.NAMES.BULING_LAMP = "Solar Streetlight"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_LAMP = "Automated solar illumination. Shuts off at dawn, activates at dusk."
+
+STRINGS.NAMES.BULING_BILEIZHEN = "Lightning Capacitor"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_BILEIZHEN = "Stores up to 2000Bp of power. Generates 200Bp when struck by lightning!"
+
+STRINGS.NAMES.BULING_INFINITEBOX = "Subspace Cache"
+STRINGS.NAMES.BULING_INFINITEBOX_ITEM = "Subspace Cache"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_INFINITEBOX = "A dimensional storage interface providing immense capacity for data chips."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_INFINITEBOX_ITEM = "Place on the ground to deploy a subspace cache."
+
+STRINGS.NAMES.BULING_CHIPBOX = "Storage Chip"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_CHIPBOX = "High-density digital storage module holding up to 25 items."
+
+STRINGS.NAMES.BULING_REPAIR_BOX = "Mechanized Repair Unit"
+STRINGS.NAMES.BULING_REPAIR_BOX_ITEM = "Mechanized Repair Unit"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_REPAIR_BOX = "Automatically repairs vehicles and mechanized drones in range."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_REPAIR_BOX_ITEM = "Place on the ground to deploy a vehicle repair station."
+
+STRINGS.NAMES.BULING_PILIANGHECHENG = "Batch Synthesizer"
+STRINGS.NAMES.BULING_PILIANGHECHENG_ITEM = "Batch Synthesizer"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PILIANGHECHENG = "Synthesizes resources in mass quantities."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PILIANGHECHENG_ITEM = "Place on the ground to install a batch synthesizer."
+
+STRINGS.NAMES.BULING_ZIDONGHECHENG = "Automated Assembler"
+STRINGS.NAMES.BULING_ZIDONGHECHENG_ITEM = "Automated Assembler"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_ZIDONGHECHENG = "Configurable automated manufacturing unit for logistics conveyor lines."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_ZIDONGHECHENG_ITEM = "Place on the ground to install an automated assembler."
+
+STRINGS.NAMES.BULING_MANURE = "Potassium Nitrate Fertilizer"
+STRINGS.NAMES.BULING_MANURE_8 = "Potassium Nitrate Fertilizer"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_MANURE = "Potent chemical fertilizer for accelerating crop maturation."
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_MANURE_8 = "Potent chemical fertilizer for accelerating crop maturation."
+
+STRINGS.NAMES.BULING_SEEDBOX_ITEM = "Germination Incubator"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEEDBOX_ITEM = "Place on the ground to install a crop germination incubator."
+STRINGS.NAMES.BULING_RADAR_ITEMFN = "Buling's Radar"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_RADAR_ITEMFN = "Deploy on the ground to erect a long-range radar installation."
+
+STRINGS.NAMES.BULINGBULING_SIKUSHUI = "Sunken Swimsuit"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULINGBULING_SIKUSHUI = "20-day durability. Provides heat protection, 100% water resistance, and insulation."
+STRINGS.NAMES.BULING_CARDINAL = "Cardinal Regalia"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_CARDINAL = "Noble apparel respected by locals. Commands authority and summons allied automatons."
+STRINGS.NAMES.BULING_CHRISTMAS = "Heart of Winter"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_CHRISTMAS = "20-day durability. Provides 480 freezing insulation, light, and high sanity recovery."
+STRINGS.NAMES.BULING_DANCER_DRAGON = "Fury of the Pugilist"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_DANCER_DRAGON = "Allows sliding maneuvers and boosts unarmed strikes to 50 damage. Electronic CQC!"
+
+STRINGS.NAMES.BULING_CONVERSION = "Matter Transmuter"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_CONVERSION = "Transmutes energy directly into matter or distills matter into energy."
+STRINGS.NAMES.BULING_COOK_GUO = "Culinary Cooking Pot"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_COOK_GUO = "Used for preparing delicious gourmet stews and boiled dishes."
+STRINGS.NAMES.BULING_COOK_KAO = "Baking Module"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_COOK_KAO = "Used for baking savory breads and sweet pastries."
+STRINGS.NAMES.BULING_COOK_ZHENG = "Steaming Module"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_COOK_ZHENG = "Used for preparing steamed delicacies."
+
+-- Mineral Plants & Seeds
+STRINGS.NAMES.BULING_PLANT_ROCK = "Mineral Rock Plant"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PLANT_ROCK = "Absorbs subterranean minerals to grow solid rocks."
+STRINGS.NAMES.BULING_SEED_ROCK = "Mineral Rock Seed"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEED_ROCK = "A bio-mineral seed that sprouts into harvestable stone."
+
+STRINGS.NAMES.BULING_PLANT_FLINT = "Flint Plant"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PLANT_FLINT = "Absorbs silicates to produce sharp flint."
+STRINGS.NAMES.BULING_SEED_FLINT = "Flint Seed"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEED_FLINT = "A bio-mineral seed that sprouts into flint."
+
+STRINGS.NAMES.BULING_PLANT_GOLD = "Gold Nugget Plant"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PLANT_GOLD = "Concentrates heavy mineral traces to yield pure gold nuggets."
+STRINGS.NAMES.BULING_SEED_GOLD = "Gold Nugget Seed"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEED_GOLD = "A bio-mineral seed that sprouts into pure gold nuggets."
+
+STRINGS.NAMES.BULING_PLANT_NITRE = "Nitre Sprout"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PLANT_NITRE = "Synthesizes crystalline potassium nitrate from the soil."
+STRINGS.NAMES.BULING_SEED_NITRE = "Nitre Seed"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEED_NITRE = "A bio-mineral seed that sprouts into nitre."
+
+STRINGS.NAMES.BULING_PLANT_MARBLE = "Marble Column Plant"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PLANT_MARBLE = "Crystallizes calcium compounds into smooth marble."
+STRINGS.NAMES.BULING_SEED_MARBLE = "Marble Seed"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEED_MARBLE = "A bio-mineral seed that sprouts into fine marble."
+
+STRINGS.NAMES.BULING_PLANT_OBSIDIAN = "Obsidian Spire Plant"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PLANT_OBSIDIAN = "Concentrates volcanic heat into dense obsidian."
+STRINGS.NAMES.BULING_SEED_OBSIDIAN = "Obsidian Seed"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEED_OBSIDIAN = "A bio-mineral seed that sprouts into obsidian."
+
+STRINGS.NAMES.BULING_PLANT_WHEAT = "Domestic Wheat"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_PLANT_WHEAT = "A reliable agricultural staple for milling fresh flour."
+STRINGS.NAMES.BULING_SEED_WHEAT = "Wheat Grain"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SEED_WHEAT = "Plant to cultivate a golden wheat harvest."
+
+-- Additional Dishes & Snacks
+STRINGS.NAMES.BULING_AOLIAO = "Chocolate Biscuit"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_AOLIAO = "Caffeine burst for 300 seconds. Increases movement speed."
+STRINGS.NAMES.BULING_BAOJIANGDANGAO = "Molten Lava Cake"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_BAOJIANGDANGAO = "Appetizing: gradually restores hunger for 250 seconds."
+STRINGS.NAMES.BULING_BINGKAXIANBING = "Binka Pastry"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_BINGKAXIANBING = "Crisp and flavorful. Refreshing: restores sanity for 100 seconds."
+STRINGS.NAMES.BULING_JIANBINGGUOZI = "Savory Breakfast Crepe"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_JIANBINGGUOZI = "Healthy: gradually restores health for 90 seconds."
+STRINGS.NAMES.BULING_JIANGGUOMUSI = "Wildberry Mousse"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_JIANGGUOMUSI = "Delicious: moderately restores sanity for 60 seconds."
+STRINGS.NAMES.BULING_HONGGUZHOU = "Red Mushroom Congee"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_HONGGUZHOU = "A warm mushroom porridge that purges venom and toxins."
+STRINGS.NAMES.BULING_LANGUZHOU = "Blue Mushroom Congee"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_LANGUZHOU = "Healthy: gradually restores health for 90 seconds."
+STRINGS.NAMES.BULING_LVGUZHOU = "Green Mushroom Congee"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_LVGUZHOU = "Delicious: restores sanity for 90 seconds."
+STRINGS.NAMES.BULING_LUOBUBAO = "Hearty Turnip Stew"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_LUOBUBAO = "Beta-Carotene: grants night vision for 120 seconds."
+STRINGS.NAMES.BULING_MAPODOUFU = "Spicy Mapo Tofu"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_MAPODOUFU = "Blazing: attacks deal bonus fire damage for 60 seconds."
+STRINGS.NAMES.BULING_QIANCENGBING = "Multi-Layer Flaky Cake"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_QIANCENGBING = "Hearty: restores a massive amount of hunger for 30 seconds."
+STRINGS.NAMES.BULING_SANGUBAO = "Mushroom Trinity Stew"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SANGUBAO = "Mushroom King: all three vitals slowly regenerate for 120 seconds."
+STRINGS.NAMES.BULING_SANMINGZHI = "Cactus Club Sandwich"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_SANMINGZHI = "Super Refreshing: restores a large burst of sanity for 30 seconds."
+STRINGS.NAMES.BULING_XIFAN = "Rice Porridge"
+STRINGS.CHARACTERS.GENERIC.DESCRIBE.BULING_XIFAN = "Light congee for settling an upset stomach."
+
+-- Recipe Descriptions
+STRINGS.RECIPE_DESC.BULING_FADIANJI_HUOLI = "Enter the electrical industrial era."
+STRINGS.RECIPE_DESC.BULING_KUANGJIA = "Essential structural frames for industrial machinery."
+STRINGS.RECIPE_DESC.BULING_LINGJIAN = "A metal lathe for processing precision components."
+STRINGS.RECIPE_DESC.BULING_MANUAL = "A workstation for developing technical blueprints."
+STRINGS.RECIPE_DESC.BULING_PAOTAI = "Standard automated point-defense sentry."
+STRINGS.RECIPE_DESC.BULING_WAKUANG_ITEM = "Extract rich subterranean mineral deposits."
+STRINGS.RECIPE_DESC.BULING_WEAPONCHEST_ITEM = "Manufacture advanced tactical combat equipment."
+STRINGS.RECIPE_DESC.BULING_ZHONGJIQI = "Wireless power distribution battery."
+
 if GetModConfigData and GetModConfigData("languages") == 1 then
     STRINGS.CHARACTERS.BULINGBULING = require "speech_bulingbuling"
 else

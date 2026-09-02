@@ -249,14 +249,15 @@ local seedhechengbiao ={
 
 --
 local function get_name(inst, doer)
-	local name = STRINGS.NAMES[string.upper(inst.prefab)]
+	local name = (STRINGS.NAMES and STRINGS.NAMES[string.upper(inst.prefab)]) or inst.prefab or ""
 	local num = 0
 	local beer = 0
-		if inst.components.beerpower and inst.components.beerpower.PowerMax ~= 0 then
-			num = inst.components.beerpower.power
-			beer = inst.components.beerpower.beer
-			name = name.."\n "..STRINGS.POWER.."<"..string.format("%.0f", num).."/"..inst.components.beerpower.PowerMax.."> "
-		end	
+	if inst.components.beerpower and inst.components.beerpower.PowerMax ~= 0 then
+		num = inst.components.beerpower.power or 0
+		beer = inst.components.beerpower.beer or 0
+		local p_label = STRINGS.POWER or "Power"
+		name = name.."\n "..p_label.."<"..string.format("%.0f", num).."/"..tostring(inst.components.beerpower.PowerMax).."> "
+	end	
 	return name
 end
 local slotpos = {}
