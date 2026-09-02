@@ -1,5 +1,6 @@
 local assets = {
 	Asset("ANIM", "anim/cave_entrance.zip"),
+	Asset("ANIM", "anim/ui_buling_chest_5x5.zip"),
 }
 local function onsave(inst, data)
 	data = data or {}
@@ -69,14 +70,13 @@ local function fn(Sim)
     inst.entity:AddSoundEmitter()
     inst.entity:AddNetwork()
 
-    MakeObstaclePhysics(inst, .5)
+    MakeObstaclePhysics(inst, 1.5)
 
 	inst.AnimState:SetBank("cave_entrance")
 	inst.AnimState:SetBuild("cave_entrance")
-	inst.AnimState:PlayAnimation("idle_open", true)
+	inst.AnimState:PlayAnimation("open", true)
 
     inst:AddTag("structure")
-    inst:AddTag("shelter")
 
     inst.entity:SetPristine()
 
@@ -94,13 +94,47 @@ local function fn(Sim)
              creatInterior(inst)
         end)
     else
-        -- DST Bunker & Shelter mode
-        inst:AddComponent("sleepingbag")
-        inst.components.sleepingbag.health_tick = TUNING.SLEEP_HEALTH_PER_TICK * 2
-        inst.components.sleepingbag.sanity_tick = TUNING.SLEEP_SANITY_PER_TICK * 2
+        -- DST Underground Vault Mode: 25 slots storage bunker
+        local slotpos = {}
+        for y = 2, -2, -1 do
+            for x = -2, 2 do
+                table.insert(slotpos, Vector3(80 * x, 80 * y, 0))
+            end
+        end
 
         inst:AddComponent("container")
-        inst.components.container:WidgetSetup("treasurechest")
+        inst.components.container:SetNumSlots(#slotpos)
+        inst.components.container.widgetslotpos = slotpos
+        inst.components.container.widgetpos = Vector3(0, 200, 0)
+        inst.components.container.side_align_tip = 100
+        inst.components.container.widgetanimbank = "ui_chest_3x3"
+        inst.components.container.widgetanimbuild = "ui_buling_chest_5x5"
+        inst.components.container.widget = {
+            slotpos = slotpos,
+            animbank = "ui_chest_3x3",
+            animbuild = "ui_buling_chest_5x5",
+            pos = Vector3(0, 200, 0),
+            side_align_tip = 100,
+            type = "chest",
+        }
+        inst.components.container.onopenfn = function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve/cave/dropoff")
+        end
+        inst.components.container.onclosefn = function(inst)
+            inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_close")
+        end
+
+        -- Periodic subterranean mineral bonus every 30s
+        inst:DoPeriodicTask(30, function(inst)
+            if inst.components.container and not inst.components.container:IsFull() then
+                local ores = { "rocks", "flint", "goldnugget", "nitre", "marble" }
+                local chosen = ores[math.random(#ores)]
+                local item = SpawnPrefab(chosen)
+                if item then
+                    inst.components.container:GiveItem(item)
+                end
+            end
+        end)
 
         inst:AddComponent("lootdropper")
         inst:AddComponent("workable")
