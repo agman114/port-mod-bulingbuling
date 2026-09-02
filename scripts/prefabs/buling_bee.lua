@@ -4,6 +4,19 @@ local assets = {
 	Asset("ANIM", "anim/ui_buling_chest_5x5.zip"),
 }
 
+local function CountBeesInContainer(container, prefab_name)
+	local total = 0
+	if container and container.slots then
+		for k, v in pairs(container.slots) do
+			if v and v.prefab == prefab_name then
+				local sz = (v.components.stackable and v.components.stackable:StackSize()) or 1
+				total = total + sz
+			end
+		end
+	end
+	return total
+end
+
 local function weighted_random_choice(choices)
 	local total = 0
 	for k, v in pairs(choices) do
@@ -163,19 +176,19 @@ local function buling_queen(inst)
 		inst.beeworkfn = function(inst, owner)
 			owner = owner or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
 			if owner and (owner.prefab == "buling_bee_box" or owner:HasTag("buling_bee_box")) and owner.components.container and not owner.components.container:IsFull() then
-				local stacksize = (inst.components.stackable and inst.components.stackable:StackSize()) or 1
-				inst.tasknum = inst.tasknum + stacksize
-				if inst.tasknum >= 4 then
+				inst.tasknum = (inst.tasknum or 0) + 1
+				if inst.tasknum >= 150 then
 					inst.tasknum = 0
 					for k, v in pairs(owner.components.container.slots) do
-						if v and v:HasTag("bulingbug") and v ~= inst then
-							for i = 1, math.min(stacksize, 3) do
+						if v and (v:HasTag("bulingbug") or v.prefab == "bee") and v ~= inst then
+							local cur_count = CountBeesInContainer(owner.components.container, v.prefab)
+							if cur_count < 5 then
 								local new_bee = SpawnPrefab(v.prefab)
 								if new_bee then
 									owner.components.container:GiveItem(new_bee)
 								end
+								return
 							end
-							return
 						end
 					end
 				end
@@ -259,6 +272,17 @@ local function buling_bee_box_fn()
 		side_align_tip = 100,
 		type = "chest",
 	}
+	inst.components.container.itemtestfn = function(container, item, slot)
+		if item and (item:HasTag("bulingbug") or item.prefab == "bee" or item.prefab == "killerbee") then
+			local count = CountBeesInContainer(container, item.prefab)
+			local item_sz = (item.components.stackable and item.components.stackable:StackSize()) or 1
+			if count + item_sz > 5 then
+				return false
+			end
+		end
+		return true
+	end
+
 	inst.components.container.onopenfn = bee_box_onopen
 	inst.components.container.onclosefn = bee_box_onclose
 
@@ -275,6 +299,29 @@ local function buling_bee_box_fn()
 
 	inst:DoPeriodicTask(2, function(inst)
 		if inst.components.container then
+			-- Enforce max 5 bees of any single type
+			local bee_counts = {}
+			for k, item in pairs(inst.components.container.slots) do
+				if item and item:IsValid() and (item:HasTag("bulingbug") or item.prefab == "bee" or item.prefab == "killerbee") then
+					local p_name = item.prefab
+					local sz = (item.components.stackable and item.components.stackable:StackSize()) or 1
+					bee_counts[p_name] = (bee_counts[p_name] or 0) + sz
+					if bee_counts[p_name] > 5 then
+						local excess = bee_counts[p_name] - 5
+						bee_counts[p_name] = 5
+						if item.components.stackable and item.components.stackable:StackSize() > excess then
+							local dropped = item.components.stackable:Get(excess)
+							if dropped then
+								inst.components.container:DropItem(dropped)
+							end
+						else
+							inst.components.container:DropItem(item)
+						end
+					end
+				end
+			end
+
+			-- Run bee work logic
 			for k, item in pairs(inst.components.container.slots) do
 				if item and item:IsValid() then
 					if item.beeworkfn then
