@@ -1096,6 +1096,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 					DoDirCar(vehicle, 0, false)
 				end
 			end
+		end
 	end)
 end)
 
