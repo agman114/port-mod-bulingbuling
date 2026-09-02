@@ -22,20 +22,15 @@ local assets=
 
 local function LaunchProjectile(inst, doer, targetpos)
 	local x, y, z = inst.Transform:GetWorldPosition()
-	targetpos = targetpos or Vector3(x + 10, 0, z)
+	targetpos = targetpos or Vector3(x + 15, 0, z)
 	for i = -1, 1 do
-		local projectile = SpawnPrefab("ancient_hulk_mine") or SpawnPrefab("blowdart_pipe") or SpawnPrefab("fireball_projectile")
+		local projectile = SpawnPrefab("buling_missile")
 		if projectile then
-			projectile.primed = false
-			projectile.AnimState:PlayAnimation("spin_loop", true)
-			projectile.Transform:SetPosition(x, 1.5, z)
-			local spread_pos = Vector3(targetpos.x + i * 2, 0, targetpos.z + (i % 2) * 2)
-			if projectile.components.complexprojectile then
-				projectile.components.complexprojectile:SetHorizontalSpeed(22)
-				projectile.components.complexprojectile:SetGravity(-25)
-				projectile.components.complexprojectile:Launch(spread_pos, inst, inst)
+			local spread_pos = Vector3(targetpos.x + i * 2.5, 0, targetpos.z + (i % 2) * 2.5)
+			projectile.Transform:SetPosition(x, 1.8, z)
+			if projectile.Launch then
+				projectile:Launch(spread_pos, doer or inst)
 			end
-			projectile.owner = inst
 		end
 	end
 end

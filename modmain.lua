@@ -417,6 +417,7 @@ end)
 	"buling_herald",
 	"buling_test",
 	"buling_bee",
+	"buling_missile",
 }
 
 Assets = {
@@ -744,55 +745,76 @@ AddModRPCHandler("bulingbuling", "dir_car", function(player, car_guid, angle, is
 	end
 end)
 
-AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, target_guid)
-	local inst_caster = (vehicle_guid and GLOBAL.Ents[vehicle_guid]) or player
-	if inst_caster and inst_caster:IsValid() then
-		if player and player.components.locomotor then
-			player.components.locomotor:Stop()
-			player.components.locomotor:StopMoving()
+AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, target_guid, target_x, target_z)
+	local vehicle = (vehicle_guid and GLOBAL.Ents[vehicle_guid]) or (player and player.components.driver and player.components.driver.vehicle) or player
+	if not vehicle or not vehicle:IsValid() then return end
+
+	if player and player.components.locomotor then
+		player.components.locomotor:Stop()
+		player.components.locomotor:StopMoving()
+	end
+	player:ClearBufferedAction()
+
+	local target = (target_guid and GLOBAL.Ents[target_guid]) or (player.components.combat and player.components.combat.target)
+	local targetpos = nil
+	local x, y, z = (vehicle or player).Transform:GetWorldPosition()
+
+	if target and target:IsValid() then
+		targetpos = target:GetPosition()
+	elseif target_x and target_z then
+		targetpos = GLOBAL.Vector3(target_x, 0, target_z)
+	else
+		local rad = ((vehicle or player).Transform:GetRotation() or 0) * GLOBAL.DEGREES
+		targetpos = GLOBAL.Vector3(x + 15 * GLOBAL.math.cos(rad), 0, z - 15 * GLOBAL.math.sin(rad))
+	end
+
+	-- Check if vehicle/robot is in special mode (Hulk / shield / def / staff mode)
+	local is_special_mode = vehicle:HasTag("def") 
+		or vehicle:HasTag("rocky_shield") 
+		or vehicle.prefab == "buling_hulk" 
+		or vehicle.prefab == "buling_deerclops"
+		or (player.components.inventory and player.components.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS) and player.components.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS).prefab == "buling_rocky_staff")
+
+	if is_special_mode then
+		if vehicle.SoundEmitter then
+			vehicle.SoundEmitter:PlaySound("dontstarve_DLC003/creatures/boss/hulk_metal_robot/mine_shot")
 		end
-		player:ClearBufferedAction()
 
-		local target = (target_guid and GLOBAL.Ents[target_guid]) or (player and player.components.combat and player.components.combat.target)
-		local targetpos = nil
-		local x, y, z = player.Transform:GetWorldPosition()
-
-		if target and target:IsValid() then
-			targetpos = target:GetPosition()
-		else
-			local rad = (player.Transform:GetRotation() or 0) * GLOBAL.DEGREES
-			targetpos = GLOBAL.Vector3(x + 14 * GLOBAL.math.cos(rad), 0, z - 14 * GLOBAL.math.sin(rad))
-		end
-
-		if player and player.SoundEmitter then
-			player.SoundEmitter:PlaySound("dontstarve_DLC003/creatures/boss/hulk_metal_robot/mine_shot")
-		end
-
-		for i = -2, 2 do
-			local proj = GLOBAL.SpawnPrefab("ancient_hulk_mine")
+		for i = -1, 1 do
+			local proj = GLOBAL.SpawnPrefab("buling_missile")
 			if proj then
-				proj.primed = false
-				proj.AnimState:PlayAnimation("spin_loop", true)
-				proj.Transform:SetPosition(x, 1.8, z)
-				local spread_pos = GLOBAL.Vector3(targetpos.x + i * 3, 0, targetpos.z + (i % 2) * 3)
-				if proj.components.complexprojectile then
-					proj.components.complexprojectile:SetHorizontalSpeed(25)
-					proj.components.complexprojectile:SetGravity(-25)
-					proj.components.complexprojectile:Launch(spread_pos, player, player)
+				proj.Transform:SetPosition(x, 2.0, z)
+				local spread_pos = GLOBAL.Vector3(targetpos.x + i * 2.5, 0, targetpos.z + (i % 2) * 2.5)
+				if target and target:IsValid() and i == 0 then
+					proj:Launch(target, player)
+				else
+					proj:Launch(spread_pos, player)
 				end
-				proj.owner = player
 			end
 		end
 
-		if inst_caster ~= player and inst_caster.sg then
-			if inst_caster.sg:HasState("mine_shoot") then
-				inst_caster.sg:GoToState("mine_shoot")
-			elseif inst_caster.sg:HasState("lob") then
-				inst_caster.lobtarget = targetpos
-				inst_caster.sg:GoToState("lob")
+		if vehicle.sg then
+			if vehicle.sg:HasState("spell") then
+				vehicle.sg:GoToState("spell")
+			elseif vehicle.sg:HasState("lob") then
+				vehicle.lobtarget = targetpos
+				vehicle.sg:GoToState("lob")
+			elseif vehicle.sg:HasState("mine_shoot") then
+				vehicle.sg:GoToState("mine_shoot")
 			else
-				inst_caster.sg:GoToState("attack")
+				vehicle.sg:GoToState("attack")
 			end
+		end
+	else
+		if vehicle.components.combat then
+			if target and target:IsValid() then
+				vehicle.components.combat:DoAttack(target)
+			else
+				vehicle.components.combat:DoAttack()
+			end
+		end
+		if vehicle.sg then
+			vehicle.sg:GoToState("attack", target)
 		end
 	end
 end)
@@ -940,31 +962,37 @@ AddClassPostConstruct("components/playercontroller", function(self)
 		end
 	end
 
-		local oldOnControl = self.OnControl
+	local oldOnControl = self.OnControl
 	self.OnControl = function(self, control, down, ...)
 		if self.inst and (self.inst:HasTag("buling_driving") or self.inst:HasTag("kamen_rider")) then
 			if control == GLOBAL.CONTROL_ROTATE_LEFT or control == GLOBAL.CONTROL_ROTATE_RIGHT then
 				return true
 			end
 
-			-- Dismount on Right Click (CONTROL_SECONDARY) when driving
-			if down and control == GLOBAL.CONTROL_SECONDARY and self.inst:HasTag("buling_driving") then
-				SendBulingRPC("dismount_car")
-				return true
-			end
+			local driver_comp = self.inst.components.driver
+			local vehicle = (driver_comp and driver_comp.vehicle) or self.inst
+			local is_special = vehicle and (vehicle:HasTag("def") 
+				or vehicle:HasTag("rocky_shield") 
+				or vehicle.prefab == "buling_hulk" 
+				or vehicle.prefab == "buling_deerclops"
+				or (self.inst.replica.inventory and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS) and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS).prefab == "buling_rocky_staff"))
 
-			local atk_target = self:GetAttackTarget() or (self.inst.components.combat and self.inst.components.combat.target)
+			local entity_under_mouse = GLOBAL.TheInput:GetWorldEntityUnderMouse()
+			local mouse_target = (entity_under_mouse and entity_under_mouse:IsValid() and entity_under_mouse ~= self.inst and entity_under_mouse ~= vehicle and entity_under_mouse.replica and entity_under_mouse.replica.combat and entity_under_mouse) or nil
+
+			local atk_target = mouse_target or self:GetAttackTarget() or (self.inst.replica.combat and self.inst.replica.combat:GetTarget())
+
 			local is_f_attack = (control == GLOBAL.CONTROL_ATTACK)
-			local is_targeted_click = (control == GLOBAL.CONTROL_PRIMARY) and (atk_target ~= nil and atk_target:IsValid())
+			local is_lmb_attack = (control == GLOBAL.CONTROL_PRIMARY) and (mouse_target ~= nil or is_special)
 
-			if down and (is_f_attack or is_targeted_click) then
-				local driver_comp = self.inst.components.driver
-				local vehicle = (driver_comp and driver_comp.vehicle) or self.inst
-				local target_guid = atk_target and atk_target:IsValid() and atk_target.GUID or nil
-
+			if down and (is_f_attack or is_lmb_attack) then
 				if not self.inst._last_car_atk_time or (GLOBAL.GetTime() - self.inst._last_car_atk_time) > 0.4 then
 					self.inst._last_car_atk_time = GLOBAL.GetTime()
-					SendBulingRPC("attack_car", vehicle.GUID, target_guid)
+					local target_guid = atk_target and atk_target:IsValid() and atk_target.GUID or nil
+					local mouse_pos = GLOBAL.TheInput:GetWorldPosition()
+					local tx = (atk_target and atk_target:GetPosition().x) or (mouse_pos and mouse_pos.x) or nil
+					local tz = (atk_target and atk_target:GetPosition().z) or (mouse_pos and mouse_pos.z) or nil
+					SendBulingRPC("attack_car", vehicle and vehicle.GUID or nil, target_guid, tx, tz)
 				end
 				return true
 			end
@@ -1018,35 +1046,30 @@ AddClassPostConstruct("components/playercontroller", function(self)
 			dir_angle = 90
 		end
 
-		local atk_target = self:GetAttackTarget() or (self.inst.components.combat and self.inst.components.combat.target)
+		local entity_under_mouse = GLOBAL.TheInput:GetWorldEntityUnderMouse()
+		local mouse_target = (entity_under_mouse and entity_under_mouse:IsValid() and entity_under_mouse ~= self.inst and entity_under_mouse ~= vehicle and entity_under_mouse.replica and entity_under_mouse.replica.combat and entity_under_mouse) or nil
+
+		local is_special = vehicle and (vehicle:HasTag("def") 
+			or vehicle:HasTag("rocky_shield") 
+			or vehicle.prefab == "buling_hulk" 
+			or vehicle.prefab == "buling_deerclops"
+			or (self.inst.replica.inventory and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS) and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS).prefab == "buling_rocky_staff"))
+
+		local atk_target = mouse_target or self:GetAttackTarget() or (self.inst.replica.combat and self.inst.replica.combat:GetTarget())
 		local is_key_attack = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_F) 
-			or GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_CTRL) 
 			or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_ATTACK)
-		local is_mouse_attack = (GLOBAL.TheInput:IsMouseDown(GLOBAL.MOUSEBUTTON_LEFT) or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_PRIMARY)) and (atk_target ~= nil)
+		local is_mouse_attack = (GLOBAL.TheInput:IsMouseDown(GLOBAL.MOUSEBUTTON_LEFT) or GLOBAL.TheInput:IsControlPressed(GLOBAL.CONTROL_PRIMARY)) and (mouse_target ~= nil or is_special)
 
 		local is_attacking = is_key_attack or is_mouse_attack
 
 		if is_attacking then
-			if not self.inst._last_car_atk_time or (GLOBAL.GetTime() - self.inst._last_car_atk_time) > 0.5 then
+			if not self.inst._last_car_atk_time or (GLOBAL.GetTime() - self.inst._last_car_atk_time) > 0.4 then
 				self.inst._last_car_atk_time = GLOBAL.GetTime()
 				local target_guid = atk_target and atk_target:IsValid() and atk_target.GUID or nil
-				if not GLOBAL.TheWorld.ismastersim then
-					SendBulingRPC("attack_car", vehicle.GUID, target_guid)
-				else
-					local x, y, z = vehicle.Transform:GetWorldPosition()
-					local rad = (vehicle.Transform:GetRotation() or 0) * GLOBAL.DEGREES
-					local targetpos = (atk_target and atk_target:IsValid() and atk_target:GetPosition()) or GLOBAL.Vector3(x + 10 * GLOBAL.math.cos(rad), 0, z - 10 * GLOBAL.math.sin(rad))
-					if vehicle.LaunchProjectile then
-						pcall(vehicle.LaunchProjectile, vehicle, self.inst, targetpos)
-					end
-					if vehicle.sg then
-						if vehicle.sg:HasState("mine_shoot") then
-							vehicle.sg:GoToState("mine_shoot")
-						else
-							vehicle.sg:GoToState("attack")
-						end
-					end
-				end
+				local mouse_pos = GLOBAL.TheInput:GetWorldPosition()
+				local tx = (atk_target and atk_target:GetPosition().x) or (mouse_pos and mouse_pos.x) or nil
+				local tz = (atk_target and atk_target:GetPosition().z) or (mouse_pos and mouse_pos.z) or nil
+				SendBulingRPC("attack_car", vehicle and vehicle.GUID or nil, target_guid, tx, tz)
 			end
 		end
 
@@ -1073,6 +1096,13 @@ AddClassPostConstruct("components/playercontroller", function(self)
 					DoDirCar(vehicle, 0, false)
 				end
 			end
-		end
 	end)
+end)
+
+GLOBAL.TheInput:AddKeyDownHandler(GLOBAL.KEY_R, function()
+	if GLOBAL.ThePlayer and GLOBAL.ThePlayer:IsValid() and GLOBAL.ThePlayer:HasTag("buling_driving") then
+		if not (GLOBAL.TheFrontEnd and GLOBAL.TheFrontEnd:GetFocusWidget() and GLOBAL.TheFrontEnd:GetFocusWidget().text_edit) then
+			SendBulingRPC("dismount_car")
+		end
+	end
 end)

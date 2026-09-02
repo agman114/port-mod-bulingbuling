@@ -406,47 +406,27 @@ end
 
 local function LaunchProjectile(inst, doer, targetpos)
     local x, y, z = inst.Transform:GetWorldPosition()
-
-    local projectile = SpawnPrefab("ancient_hulk_mine")
-
-    projectile.primed = false
-    projectile.AnimState:PlayAnimation("spin_loop",true)
-    projectile.Transform:SetPosition(x, 1, z)
-
-    --V2C: scale the launch speed based on distance
-    --     because 15 does not reach our max range.
-    local dx = targetpos.x - x
-    local dz = targetpos.z - z
-    local rangesq = dx * dx + dz * dz
-    local maxrange = TUNING.FIRE_DETECTOR_RANGE
-    local speed = easing.linear(rangesq, 15, 3, maxrange * maxrange)
-    projectile.components.complexprojectile:SetHorizontalSpeed(speed)
-    projectile.components.complexprojectile:SetGravity(-25)
-    projectile.components.complexprojectile:Launch(targetpos, inst, inst)
-    projectile.owner = inst
+    targetpos = targetpos or Vector3(x + 15, 0, z)
+    local projectile = SpawnPrefab("buling_missile")
+    if projectile then
+        projectile.Transform:SetPosition(x, 1.8, z)
+        if projectile.Launch then
+            projectile:Launch(targetpos, doer or inst)
+        end
+    end
 end
-
 
 local function ShootProjectile(inst, doer, targetpos)
     local x, y, z = inst.Transform:GetWorldPosition()
-
-    local projectile = SpawnPrefab("ancient_hulk_orb")
-
-    projectile.primed = false
-    projectile.AnimState:PlayAnimation("spin_loop",true)
-
-    local pt = inst.shotspawn:GetPosition()
-    projectile.Transform:SetPosition(pt.x, pt.y, pt.z)
-    --projectile.Transform:SetPosition(x, 4, z)
-
-   -- inst.shotspawn:Remove()
-   -- inst.shotspawn = nil
-
-    local speed =  60 --  easing.linear(rangesq, 15, 3, maxrange * maxrange)
-    projectile.components.complexprojectile:SetHorizontalSpeed(speed)
-    projectile.components.complexprojectile:SetGravity(-25)
-    projectile.components.complexprojectile:Launch(targetpos, inst, inst)
-    projectile.owner = inst
+    targetpos = targetpos or Vector3(x + 15, 0, z)
+    local projectile = SpawnPrefab("buling_missile")
+    if projectile then
+        local pt = (inst.shotspawn and inst.shotspawn:IsValid() and inst.shotspawn:GetPosition()) or Vector3(x, 2, z)
+        projectile.Transform:SetPosition(pt.x, pt.y, pt.z)
+        if projectile.Launch then
+            projectile:Launch(targetpos, doer or inst)
+        end
+    end
 end
 
 local function spawnbarrier(inst, doer,pt)

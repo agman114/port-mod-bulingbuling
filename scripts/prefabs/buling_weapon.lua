@@ -195,52 +195,15 @@ local function gun_rocky_weapon()
 		return caster.components.combat:CanTarget(target)
 	end
 	local function destroystructure(staff, target,pos)
-		print(staff, target,pos)
-		local pos = staff:GetPosition()
-		local pt = target:GetPosition()
-		local daodan = SpawnPrefab("buling_fx")
-		MakeInventoryPhysics(daodan)
-		daodan.persists = false
-		daodan.AnimState:SetBank("buling_item")
-		daodan.AnimState:SetBuild("buling_item")
-		daodan.entity:AddAnimState():PlayAnimation("buling_daodan")
-		daodan.AnimState:SetOrientation( ANIM_ORIENTATION.OnGround )
-		daodan.AnimState:SetLayer( LAYER_BACKGROUND )
-		daodan.AnimState:SetSortOrder( 2 )
-		daodan.Transform:SetRotation(math.random(0,360))
-		daodan.Physics:SetMotorVelOverride(10,0,0)
-		daodan.Transform:SetPosition(pos.x,pos.y,pos.z)
-		daodan.Transform:SetScale(1.5, 1.5, 1.5)
-		daodan.task = daodan:DoPeriodicTask(0.5,function() 
-			daodan.Transform:SetRotation(math.random(0,360))
-		end)
-		daodan:DoTaskInTime(3,function() 
-			if daodan.task then 
-				daodan.task:Cancel()
-				daodan.task = nil
+		local owner = staff.components.inventoryitem and staff.components.inventoryitem.owner
+		local spos = staff:GetPosition()
+		local projectile = SpawnPrefab("buling_missile")
+		if projectile then
+			projectile.Transform:SetPosition(spos.x, 1.8, spos.z)
+			if projectile.Launch then
+				projectile:Launch(target or pos, owner or staff)
 			end
-			daodan.task = daodan:DoPeriodicTask(0.3,function()
-				if target then
-					pt = target:GetPosition()
-				end
-				daodan:ForceFacePoint(pt)
-			end)
-		end)
-		daodan:DoTaskInTime(10,function() daodan:Remove() end)
-		daodan:DoPeriodicTask(.1,function()
-			SpawnPrefab("splash_clouds_drop").Transform:SetPosition(daodan.Transform:GetWorldPosition())
-			local pos = daodan:GetPosition()
-			local ents = TheSim:FindEntities(pos.x,0, pos.z, 2, nil, {"FX", "DECOR", "INLIMBO"})
-			for k,v in pairs(ents) do
-				if v.components.combat and v.components.health and not v.components.health:IsDead()and  v== target then
-					v.components.combat:GetAttacked((doer or inst), 20)
-					daodan:Remove()
-					local lavafx = SpawnPrefab("sparks_green_fx")
-					lavafx.Transform:SetScale(.8, .8, .8)
-					lavafx.Transform:SetPosition(v.Transform:GetWorldPosition())
-				end
-			end
-		end)
+		end
 	end
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
