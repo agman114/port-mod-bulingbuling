@@ -200,7 +200,7 @@ end
 
 local function bee_box_onopen(inst)
 	inst.AnimState:PlayAnimation("hit")
-	inst.AnimState:PushAnimation("idle_full", true)
+	inst.AnimState:PushAnimation("idle_empty", true)
 	inst.SoundEmitter:PlaySound("dontstarve/bee/beebox_open")
 end
 
@@ -220,7 +220,7 @@ local function buling_bee_box_fn()
 
 	inst.AnimState:SetBank("bee_box")
 	inst.AnimState:SetBuild("bee_box")
-	inst.AnimState:PlayAnimation("idle_full", true)
+	inst.AnimState:PlayAnimation("idle_empty", true)
 
 	inst:AddTag("structure")
 	inst:AddTag("buling_bee_box")
@@ -298,7 +298,7 @@ local function buling_bee_box_item_fn()
 	return inst
 end
 
-local placer = MakePlacer("buling_bee_box_placer", "bee_box", "bee_box", "idle_full")
+local placer = MakePlacer("buling_bee_box_placer", "bee_box", "bee_box", "idle_empty")
 
 return Prefab("buling_bee_mine", buling_mine, assets),
 	Prefab("buling_bee_police", buling_police, assets),
