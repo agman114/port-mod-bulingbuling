@@ -190,21 +190,6 @@ local function gun_weapon()
 	return inst
 end
 local function gun_rocky_weapon()
-	local function candestroy(staff, caster, target)
-		if not target then return false end
-		return caster.components.combat:CanTarget(target)
-	end
-	local function destroystructure(staff, target,pos)
-		local owner = staff.components.inventoryitem and staff.components.inventoryitem.owner
-		local spos = staff:GetPosition()
-		local projectile = SpawnPrefab("buling_missile")
-		if projectile then
-			projectile.Transform:SetPosition(spos.x, 1.8, spos.z)
-			if projectile.Launch then
-				projectile:Launch(target or pos, owner or staff)
-			end
-		end
-	end
 	local inst = CreateEntity()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
@@ -222,21 +207,9 @@ local function gun_rocky_weapon()
 	inst.components.equippable.insulated = true
 	inst:AddComponent("weapon")
 	inst.components.weapon:SetRange(4, 4)
-	inst.components.weapon:SetDamage(50)
+	inst.components.weapon:SetDamage(100)
 	inst:AddComponent("waterproofer")
 	inst.components.waterproofer:SetEffectiveness(1)
-	inst:AddComponent("spellcaster")
-    inst.components.spellcaster.canuseontargets = true
-    inst.components.spellcaster.canusefrominventory = false
-if inst.components.spellcaster.SetSpellTestFn then
-        inst.components.spellcaster:SetSpellTestFn(candestroy)
-    elseif inst.components.spellcaster.SetCanCastFn then
-        inst.components.spellcaster:SetCanCastFn(candestroy)
-    else
-        inst.components.spellcaster.canCastFn = candestroy
-    end
-    inst.components.spellcaster:SetSpellFn(destroystructure)
-	inst.components.spellcaster.actiontype = "buling_hongzha"
 	return inst
 end
 local function boat_hat()
