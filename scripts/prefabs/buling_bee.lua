@@ -241,7 +241,7 @@ local function buling_bee_box_fn()
 	inst:AddComponent("workable")
 	inst.components.workable:SetWorkAction(ACTIONS.HAMMER)
 	inst.components.workable:SetWorkLeft(4)
-	inst.components.workable:SetOnFinish(function(inst, worker)
+	inst.components.workable:SetOnFinishCallback(function(inst, worker)
 		inst.components.lootdropper:DropLoot()
 		if inst.components.container then
 			inst.components.container:DropEverything()

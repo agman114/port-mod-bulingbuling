@@ -94,10 +94,6 @@ local function buling_recipes()
 		local buling_bee_box = Recipe("buling_bee_box", {Ingredient("boards", 4), Ingredient("honeycomb", 1), Ingredient("bee", 4)}, RECIPETABS.BLTAB, TECH.NONE, "buling_bee_box_placer", 2)
 		buling_bee_box.atlas = "images/inventoryimages.xml"
 		buling_bee_box.image = "beebox.tex"
-
-		local buling_bee_box_item = Recipe("buling_bee_box_item", {Ingredient("boards", 4), Ingredient("honeycomb", 1), Ingredient("bee", 4)}, RECIPETABS.BLTAB, TECH.NONE, nil)
-		buling_bee_box_item.atlas = "images/inventoryimages.xml"
-		buling_bee_box_item.image = "beebox.tex"
 	end
 end
 
