@@ -929,6 +929,12 @@ end)
 AddClassPostConstruct("components/playercontroller", function(self)
 	local oldDoCameraControl = self.DoCameraControl
 	self.DoCameraControl = function(self, ...)
+		if self.inst and (self.inst:HasTag("buling_driving") or self.inst:HasTag("kamen_rider")) then
+			if GLOBAL.TheCamera then
+				GLOBAL.TheCamera:SetHeadingTarget(45)
+			end
+			return
+		end
 		if oldDoCameraControl then
 			return oldDoCameraControl(self, ...)
 		end
