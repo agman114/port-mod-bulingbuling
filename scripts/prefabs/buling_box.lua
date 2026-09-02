@@ -1447,45 +1447,48 @@ local function huosaifadian(inst, doer)
 	return inst
 end
 local function wakuang(inst, doer)
-	local function chukuang(inst, doer,kuangwu)
-		--for k = 1, math.random(1,5) do
+	local function chukuang(inst, kuangwu)
+		if kuangwu then
 			local nug = SpawnPrefab(kuangwu)
-			local pt = Vector3(inst.Transform:GetWorldPosition()) + Vector3(0,4.5,0)
-                
-			nug.Transform:SetPosition(pt:Get())
-			local down = TheCamera:GetDownVec()
-			local angle = math.atan2(down.z, down.x) + (math.random()*60-30)*DEGREES
-			local sp = math.random()*4+2
-			nug.Physics:SetVel(sp*math.cos(angle), math.random()*2+8, sp*math.sin(angle))
-		--end
+			if nug then
+				local pt = Vector3(inst.Transform:GetWorldPosition()) + Vector3(0,4.5,0)
+				nug.Transform:SetPosition(pt:Get())
+				local down = TheCamera:GetDownVec()
+				local angle = math.atan2(down.z, down.x) + (math.random()*60-30)*DEGREES
+				local sp = math.random()*4+2
+				if nug.Physics then
+					nug.Physics:SetVel(sp*math.cos(angle), math.random()*2+8, sp*math.sin(angle))
+				end
+			end
+		end
 	end
 	local function task(inst, doer)
-		inst.components.workable.workleft = inst.components.workable.workleft - 1
-		inst.components.beerpower:UpBeer(75)
+		if inst.components.workable then
+			inst.components.workable.workleft = inst.components.workable.workleft - 1
+		end
+		if inst.components.beerpower then
+			inst.components.beerpower:UpBeer(75)
+		end
 		local kuangwuzhi = math.random(1,150)
 		local kuangwu = "rocks"
-		if kuangwuzhi < 5 then
+		if kuangwuzhi <= 10 then
 			kuangwu = "nitre"
-		elseif kuangwuzhi > 5 and kuangwuzhi < 10 then
+		elseif kuangwuzhi <= 40 then
 			kuangwu = "flint"
-		elseif kuangwuzhi > 10 and kuangwuzhi < 40 then
+		elseif kuangwuzhi <= 60 then
 			kuangwu = "charcoal"
-		elseif kuangwuzhi > 40 and kuangwuzhi < 50 then
-			kuangwu = "flint"
-		elseif kuangwuzhi > 50 and kuangwuzhi < 60 then
-			kuangwu = "nitre"
-		elseif kuangwuzhi > 60 and kuangwuzhi < 70 then
-			kuangwu = "iron"
-		elseif kuangwuzhi > 70 and kuangwuzhi < 80 then
+		elseif kuangwuzhi <= 80 then
+			kuangwu = "rocks"
+		elseif kuangwuzhi <= 100 then
 			kuangwu = "marble"
-		elseif kuangwuzhi > 80 and kuangwuzhi < 90 then
+		elseif kuangwuzhi <= 120 then
 			kuangwu = "goldnugget"
-		elseif kuangwuzhi > 90 and kuangwuzhi < 100 then
+		elseif kuangwuzhi <= 140 then
 			kuangwu = "seeds"
-		elseif kuangwuzhi > 100 and kuangwuzhi < 110 then
-			kuangwu = "tar"
+		else
+			kuangwu = "rocks"
 		end
-		chukuang(inst,kuangwu)
+		chukuang(inst, kuangwu)
 	end
 	local inst=commonfn(inst)
 	inst.AnimState:SetBank("wakuangji")

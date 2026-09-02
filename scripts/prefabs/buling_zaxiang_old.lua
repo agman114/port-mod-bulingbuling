@@ -613,52 +613,54 @@ end
 
 --电力挖矿机
 local function wakuang(inst, doer)
-	local function chukuang(inst, doer,kuangwu)
-		for k = 1, math.random(1,5) do
-			local nug = SpawnPrefab(kuangwu)
-			local pt = Vector3(inst.Transform:GetWorldPosition()) + Vector3(0,4.5,0)
-                
-			nug.Transform:SetPosition(pt:Get())
-			local down = TheCamera:GetDownVec()
-			local angle = math.atan2(down.z, down.x) + (math.random()*60-30)*DEGREES
-			local sp = math.random()*4+2
-			nug.Physics:SetVel(sp*math.cos(angle), math.random()*2+8, sp*math.sin(angle))
+	local function chukuang(inst, kuangwu)
+		if kuangwu then
+			for k = 1, math.random(1,5) do
+				local nug = SpawnPrefab(kuangwu)
+				if nug then
+					local pt = Vector3(inst.Transform:GetWorldPosition()) + Vector3(0,4.5,0)
+					nug.Transform:SetPosition(pt:Get())
+					local down = TheCamera:GetDownVec()
+					local angle = math.atan2(down.z, down.x) + (math.random()*60-30)*DEGREES
+					local sp = math.random()*4+2
+					if nug.Physics then
+						nug.Physics:SetVel(sp*math.cos(angle), math.random()*2+8, sp*math.sin(angle))
+					end
+				end
+			end
 		end
 	end
 	local function task(inst, doer)
-		if inst.components.beerpower.power > 75 then
+		if inst.components.beerpower and inst.components.beerpower.power > 75 then
 			inst:DoTaskInTime(0,function()
-				inst.components.machine:TurnOff()
+				if inst.components.machine then
+					inst.components.machine:TurnOff()
+				end
 				if inst.task then
 					inst.task:Cancel()
 					inst.task = nil
 				end	
 			end)
 		end 
+		if inst.components.beerpower then
 			inst.components.beerpower:UpBeer(75)
-			local kuangwuzhi = math.random(1,150)
-			local kuangwu = "rocks"
-			if kuangwuzhi < 5 then
-				kuangwu = "thulecite"
-			elseif kuangwuzhi > 5 and kuangwuzhi < 10 then
-				kuangwu = "orangegem"
-			elseif kuangwuzhi > 10 and kuangwuzhi < 30 then
-				kuangwu = "gears"
-			elseif kuangwuzhi > 30 and kuangwuzhi < 50 then
-				kuangwu = "flint"
-			elseif kuangwuzhi > 50 and kuangwuzhi < 60 then
-				kuangwu = "nitre"
-			elseif kuangwuzhi > 60 and kuangwuzhi < 70 then
-				kuangwu = "buling_jinshu"
-			elseif kuangwuzhi > 70 and kuangwuzhi < 80 then
-				kuangwu = "marble"
-			elseif kuangwuzhi > 80 and kuangwuzhi < 90 then
-				kuangwu = "goldnugget"
-			elseif kuangwuzhi > 90 and kuangwuzhi < 120 then
-				kuangwu = "buling_jinshu"
-			end
-			chukuang(inst,kuangwu)
-		
+		end
+		local kuangwuzhi = math.random(1,150)
+		local kuangwu = "rocks"
+		if kuangwuzhi <= 10 then
+			kuangwu = "rocks"
+		elseif kuangwuzhi <= 30 then
+			kuangwu = "flint"
+		elseif kuangwuzhi <= 50 then
+			kuangwu = "nitre"
+		elseif kuangwuzhi <= 80 then
+			kuangwu = "goldnugget"
+		elseif kuangwuzhi <= 110 then
+			kuangwu = "marble"
+		else
+			kuangwu = "rocks"
+		end
+		chukuang(inst, kuangwu)
 	end
 	local inst=commonfn(inst)
 	inst.AnimState:SetBank("wakuangji")
