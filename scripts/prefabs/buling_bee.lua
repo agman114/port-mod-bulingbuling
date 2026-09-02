@@ -199,13 +199,11 @@ end
 -- ==================== BEE BOX STRUCTURE ====================
 
 local function bee_box_onopen(inst)
-	inst.AnimState:PlayAnimation("hit")
-	inst.AnimState:PushAnimation("idle", true)
-	inst.SoundEmitter:PlaySound("dontstarve/bee/beebox_open")
+	inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_open")
 end
 
 local function bee_box_onclose(inst)
-	inst.SoundEmitter:PlaySound("dontstarve/bee/beebox_close")
+	inst.SoundEmitter:PlaySound("dontstarve/wilson/chest_close")
 end
 
 local function buling_bee_box_fn()
