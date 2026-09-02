@@ -661,7 +661,7 @@ AddModRPCHandler("BulingBuling", "AdvanceTask", function(player)
 			if player.components.inventory and player.components.inventory:Has(req_item, req_count) then
 				player.components.buling_task:itemnexttask()
 			elseif player.components.talker then
-				player.components.talker:Say("Требуется: " .. tostring(req_item) .. " x" .. tostring(req_count))
+				player.components.talker:Say("Required item: " .. tostring(req_item) .. " x" .. tostring(req_count))
 			end
 		end
 	end

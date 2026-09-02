@@ -1,6 +1,6 @@
 
-description = "不灵小姐似乎在绝赞遇难中"
-author = "贝尔LRB4"
+description = "Miss Buling seems to be having a wonderful disaster in this strange world."
+author = "贝尔LRB4 (DST Port & Fixes)"
 version = "1.42"
 name = "[Bulingbuling] v"..version
 forumthread=""
@@ -25,9 +25,9 @@ configuration_options = {
 {name = "languages",
 		label = "Languages/语言",
 		options = {
-			{description = "中文",    data = 1 },
 			{description = "English",   data = 2 },
+			{description = "中文",    data = 1 },
 		},
-		default = 1 
+		default = 2 
 }
 }

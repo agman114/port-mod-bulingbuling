@@ -318,7 +318,7 @@ local function buling_manual(inst, doer)
 					end
 				end
 				if opener and opener.components and opener.components.talker then
-					opener.components.talker:Say("Крафт выполнен!")
+					opener.components.talker:Say("Crafting successful!")
 				end
 				break
 			end
@@ -326,7 +326,7 @@ local function buling_manual(inst, doer)
 		if not matched then
 			print("[BULING CRAFT LOG] NO MATCH for peifang: '" .. tostring(peifang) .. "'")
 			if opener and opener.components and opener.components.talker then
-				opener.components.talker:Say("Неверная комбинация предметов!")
+				opener.components.talker:Say("Invalid crafting recipe!")
 			end
 		end
 	end, }
@@ -2042,14 +2042,14 @@ local function buling_yanjiutai(inst, doer)
 					end
 				end
 				if opener and opener.components and opener.components.talker then
-					opener.components.talker:Say("Одежда сшита!")
+					opener.components.talker:Say("Tailoring complete!")
 				end
 				break
 			end
 		end
 		if not matched then
 			if opener and opener.components and opener.components.talker then
-				opener.components.talker:Say("Неверный рецепт одежды!")
+				opener.components.talker:Say("Invalid tailoring recipe!")
 			end
 		end
 	end
@@ -2155,7 +2155,7 @@ local function buling_fensui(inst, doer)
 		else
 			local _target = doer or inst
 			if _target.components.talker then
-				_target.components.talker:Say("Недостаточно энергии! (Нужно 50)")
+				_target.components.talker:Say("Insufficient power! (Requires 50Bp)")
 			end
 		end
 	end}

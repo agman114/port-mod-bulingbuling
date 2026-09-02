@@ -37,7 +37,7 @@ buling_communication = Class(Widget, function(self,owner)
 	--终端
 	self.nyarlathotep = self:AddChild(ImageButton("images/bulingui/buling_kuangjia.xml", "buling_kuangjia.tex"))
 	self.nyarlathotep:SetScale(2,2,2)
-	self.nyarlathoteptext = self.nyarlathotep:AddChild(Text(BODYTEXTFONT, 20,"终端"))
+	self.nyarlathoteptext = self.nyarlathotep:AddChild(Text(BODYTEXTFONT, 20, STRINGS.BULING_TERMINAL or "Terminal"))
 	self.nyarlathotep:SetPosition(-180,200, 0)
 	self.nyarlathotep:SetOnClick(function()
 		if (self.owner or ThePlayer).components.buling_task.tasknum == 16 then
