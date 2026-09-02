@@ -1,14 +1,5 @@
 local assets = {
-	Asset("ATLAS", "images/inventoryimages/buling_bee_pirate.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_gardener.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_smith.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_queen.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_mine.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_police.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_cai.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_fish.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_stonecutters.xml"),
-	Asset("ATLAS", "images/inventoryimages/buling_bee_governor.xml"),
+	Asset("ANIM", "anim/bee.zip"),
 }
 
 local function weighted_random_choice(choices)
@@ -71,8 +62,8 @@ local function create_working_bee(build_name, image_name, item_list, req_tasks)
 	inst.AnimState:PlayAnimation("land_idle", true)
 
 	if TheWorld.ismastersim then
-		inst.components.inventoryitem.imagename = image_name
-		inst.components.inventoryitem.atlasname = "images/inventoryimages/" .. image_name .. ".xml"
+		inst.components.inventoryitem.imagename = "bee"
+		inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
 		inst.beeworkfn = function(inst, owner)
 			owner = owner or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
 			if owner and (owner.prefab == "buling_bee_box" or owner:HasTag("buling_bee_box")) then
@@ -163,8 +154,8 @@ local function buling_queen(inst)
 	inst.AnimState:PlayAnimation("land_idle", true)
 
 	if TheWorld.ismastersim then
-		inst.components.inventoryitem.imagename = "buling_bee_queen"
-		inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bee_queen.xml"
+		inst.components.inventoryitem.imagename = "bee"
+		inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
 		inst.beeworkfn = function(inst, owner)
 			owner = owner or (inst.components.inventoryitem and inst.components.inventoryitem.owner)
 			if owner and (owner.prefab == "buling_bee_box" or owner:HasTag("buling_bee_box")) and owner.components.container and not owner.components.container:IsFull() then
