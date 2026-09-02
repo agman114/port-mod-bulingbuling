@@ -598,22 +598,74 @@ AddClassPostConstruct("widgets/itemtile", Addbeerui)
 -- Actions
 local BULING_STSTEM = GLOBAL.Action({}, 0, false, false, 1)
 BULING_STSTEM.id = "BULING_STSTEM"
-BULING_STSTEM.str = STRINGS.BULING_STSTEM or "Terminal"
+BULING_STSTEM.str = STRINGS.BULING_STSTEM or "Открыть терминал"
 BULING_STSTEM.fn = function(act) 
 	if act.doer then 
-		if not act.target and act.invobject and act.invobject.prefab == "buling_system" then 
+		if not act.target and act.invobject and (act.invobject.prefab == "buling_system" or act.invobject:HasTag("buling_system_item")) then 
 			act.doer:PushEvent("OpenBuling_system")
+			if SendModRPCToClient and GetClientModRPC then
+				SendModRPCToClient(GetClientModRPC("BulingBuling", "OpenUI"), act.doer.userid, "OpenBuling_system")
+			end
 		elseif act.target and act.target.prefab == "buling_tongxuntai" then 
 			act.doer:PushEvent("Openbuling_communication")
+			if SendModRPCToClient and GetClientModRPC then
+				SendModRPCToClient(GetClientModRPC("BulingBuling", "OpenUI"), act.doer.userid, "Openbuling_communication")
+			end
 		elseif act.invobject and act.invobject.prefab == "buling_system2" then 
 			act.doer:PushEvent("OpenBuling_system2")
+			if SendModRPCToClient and GetClientModRPC then
+				SendModRPCToClient(GetClientModRPC("BulingBuling", "OpenUI"), act.doer.userid, "OpenBuling_system2")
+			end
 		end 
 	end
 	return true	
 end
 AddAction(BULING_STSTEM)
 AddStategraphActionHandler("wilson", ActionHandler(ACTIONS.BULING_STSTEM, "doshortaction"))
-AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.BULING_STSTEM, "doshortaction"))
+AddStategraphActionHandler("wilson_client", ActionHandler(ACTIONS.BULING_STSTEM, function(inst, action)
+	if action.invobject and (action.invobject.prefab == "buling_system" or action.invobject:HasTag("buling_system_item")) then 
+		inst:PushEvent("OpenBuling_system")
+	elseif action.target and action.target.prefab == "buling_tongxuntai" then 
+		inst:PushEvent("Openbuling_communication")
+	elseif action.invobject and action.invobject.prefab == "buling_system2" then 
+		inst:PushEvent("OpenBuling_system2")
+	end
+	return "doshortaction"
+end))
+
+AddComponentAction("INVENTORY", "inventoryitem", function(inst, doer, actions, right)
+	if inst.prefab == "buling_system" or inst:HasTag("buling_system_item") or inst.prefab == "buling_system2" then
+		table.insert(actions, ACTIONS.BULING_STSTEM)
+	end
+end)
+
+AddComponentAction("SCENE", "inspectable", function(inst, doer, actions, right)
+	if inst.prefab == "buling_tongxuntai" then
+		table.insert(actions, ACTIONS.BULING_STSTEM)
+	end
+end)
+
+AddClientModRPCHandler("BulingBuling", "OpenUI", function(event_name)
+	if GLOBAL.ThePlayer then
+		GLOBAL.ThePlayer:PushEvent(event_name)
+	end
+end)
+
+AddModRPCHandler("BulingBuling", "AdvanceTask", function(player)
+	if player and player.components and player.components.buling_task then
+		if player.components.buling_task:Getitem() == nil then
+			player.components.buling_task:nexttask()
+		else
+			local req_item = player.components.buling_task:Getitem()
+			local req_count = player.components.buling_task:Getitemnum()
+			if player.components.inventory and player.components.inventory:Has(req_item, req_count) then
+				player.components.buling_task:itemnexttask()
+			elseif player.components.talker then
+				player.components.talker:Say("Требуется: " .. tostring(req_item) .. " x" .. tostring(req_count))
+			end
+		end
+	end
+end)
 
 local BULING_ENZYME = GLOBAL.Action({mount_enabled=true})
 BULING_ENZYME.id = "BULING_ENZYME"

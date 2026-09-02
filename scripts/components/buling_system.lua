@@ -12,15 +12,11 @@ function buling_system:OnRead(reader)
 end
 
 function buling_system:CollectSceneActions(doer, actions)
-    if doer.components.reader and self.inst.prefab == "buling_tongxuntai" then
-        table.insert(actions, ACTIONS.BULING_STSTEM)
-    end
+    table.insert(actions, ACTIONS.BULING_STSTEM)
 end
 
 function buling_system:CollectInventoryActions(doer, actions)
-    if doer.components.reader then
-        table.insert(actions, ACTIONS.BULING_STSTEM)
-    end
+    table.insert(actions, ACTIONS.BULING_STSTEM)
 end
 
 return buling_system
