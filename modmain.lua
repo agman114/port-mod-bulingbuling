@@ -796,12 +796,8 @@ AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, ta
 		targetpos = GLOBAL.Vector3(x + 15 * GLOBAL.math.cos(rad), 0, z - 15 * GLOBAL.math.sin(rad))
 	end
 
-	-- Check if vehicle/robot is in special mode (Hulk / shield / def / staff mode)
-	local is_special_mode = vehicle:HasTag("def") 
-		or vehicle:HasTag("rocky_shield") 
-		or vehicle.prefab == "buling_hulk" 
-		or vehicle.prefab == "buling_deerclops"
-		or (player.components.inventory and player.components.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS) and player.components.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS).prefab == "buling_rocky_staff")
+	-- Check if vehicle/robot is in special mode (Hulk / shield / def mode)
+	local is_special_mode = vehicle and (vehicle:HasTag("def") or vehicle:HasTag("rocky_shield")) and not vehicle:HasTag("atk")
 
 	if is_special_mode then
 		if vehicle.SoundEmitter then
@@ -999,11 +995,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 
 			local driver_comp = self.inst.components.driver
 			local vehicle = (driver_comp and driver_comp.vehicle) or self.inst
-			local is_special = vehicle and (vehicle:HasTag("def") 
-				or vehicle:HasTag("rocky_shield") 
-				or vehicle.prefab == "buling_hulk" 
-				or vehicle.prefab == "buling_deerclops"
-				or (self.inst.replica.inventory and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS) and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS).prefab == "buling_rocky_staff"))
+			local is_special = vehicle and ((vehicle:HasTag("def") or vehicle:HasTag("rocky_shield")) and not vehicle:HasTag("atk"))
 
 			local entity_under_mouse = GLOBAL.TheInput:GetWorldEntityUnderMouse()
 			local mouse_target = (entity_under_mouse and entity_under_mouse:IsValid() and entity_under_mouse ~= self.inst and entity_under_mouse ~= vehicle and entity_under_mouse.replica and entity_under_mouse.replica.combat and entity_under_mouse) or nil
@@ -1077,11 +1069,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 		local entity_under_mouse = GLOBAL.TheInput:GetWorldEntityUnderMouse()
 		local mouse_target = (entity_under_mouse and entity_under_mouse:IsValid() and entity_under_mouse ~= self.inst and entity_under_mouse ~= vehicle and entity_under_mouse.replica and entity_under_mouse.replica.combat and entity_under_mouse) or nil
 
-		local is_special = vehicle and (vehicle:HasTag("def") 
-			or vehicle:HasTag("rocky_shield") 
-			or vehicle.prefab == "buling_hulk" 
-			or vehicle.prefab == "buling_deerclops"
-			or (self.inst.replica.inventory and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS) and self.inst.replica.inventory:GetEquippedItem(GLOBAL.EQUIPSLOTS.HANDS).prefab == "buling_rocky_staff"))
+		local is_special = vehicle and ((vehicle:HasTag("def") or vehicle:HasTag("rocky_shield")) and not vehicle:HasTag("atk"))
 
 		local atk_target = mouse_target or self:GetAttackTarget() or (self.inst.replica.combat and self.inst.replica.combat:GetTarget())
 		local is_key_attack = GLOBAL.TheInput:IsKeyDown(GLOBAL.KEY_F) 
