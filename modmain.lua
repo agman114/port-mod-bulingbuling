@@ -838,6 +838,27 @@ AddClientModRPCHandler("BulingBuling", "OpenUI", function(event_name)
 	end
 end)
 
+AddClientModRPCHandler("BulingBuling", "SyncTaskNum", function(num)
+	if GLOBAL.ThePlayer then
+		GLOBAL.ThePlayer._buling_tasknum = num
+		if GLOBAL.ThePlayer.HUD and GLOBAL.ThePlayer.HUD.controls and GLOBAL.ThePlayer.HUD.controls.bulinguis then
+			for _, ui in ipairs(GLOBAL.ThePlayer.HUD.controls.bulinguis) do
+				if ui and ui.UpdateText then
+					ui:UpdateText()
+				end
+			end
+		end
+	end
+end)
+
+AddModRPCHandler("BulingBuling", "GetTaskNum", function(player)
+	if player and player.components and player.components.buling_task then
+		if SendModRPCToClient and GetClientModRPC then
+			SendModRPCToClient(GetClientModRPC("BulingBuling", "SyncTaskNum"), player.userid, player.components.buling_task.tasknum or 1)
+		end
+	end
+end)
+
 AddModRPCHandler("BulingBuling", "AdvanceTask", function(player)
 	if player and player.components and player.components.buling_task then
 		if player.components.buling_task:Getitem() == nil then
@@ -848,8 +869,11 @@ AddModRPCHandler("BulingBuling", "AdvanceTask", function(player)
 			if player.components.inventory and player.components.inventory:Has(req_item, req_count) then
 				player.components.buling_task:itemnexttask()
 			elseif player.components.talker then
-				player.components.talker:Say("Required item: " .. tostring(req_item) .. " x" .. tostring(req_count))
+				player.components.talker:Say("Требуется: " .. tostring(req_item) .. " x" .. tostring(req_count))
 			end
+		end
+		if player.components.buling_task.SyncTaskNumToClient then
+			player.components.buling_task:SyncTaskNumToClient()
 		end
 	end
 end)

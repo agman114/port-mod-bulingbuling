@@ -78,11 +78,18 @@ function buling_task:RecollectRecipe()
 	end
 end
 
+function buling_task:SyncTaskNumToClient()
+	if self.inst and self.inst.userid and GLOBAL.SendModRPCToClient and GLOBAL.GetClientModRPC then
+		GLOBAL.SendModRPCToClient(GLOBAL.GetClientModRPC("BulingBuling", "SyncTaskNum"), self.inst.userid, self.tasknum or 1)
+	end
+end
+
 function buling_task:nexttask()
 	self:LueranRecipe()
 	if self:Getitem() == nil then
 		self.tasknum = self.tasknum + 1
 	end
+	self:SyncTaskNumToClient()
 end
 
 function buling_task:robotattack()
@@ -154,6 +161,7 @@ function buling_task:itemnexttask()
 			self.tasknum = self.tasknum + 1
 		end
 	end
+	self:SyncTaskNumToClient()
 end
 
 function buling_task:zzSave(...)
@@ -170,6 +178,7 @@ function buling_task:zzLoad(data)
 		self[k] = v or 0
 	end
 	self:RecollectRecipe()
+	self:SyncTaskNumToClient()
 end
 
 function buling_task:OnSave()
