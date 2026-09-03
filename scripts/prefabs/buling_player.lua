@@ -116,21 +116,28 @@ local function moonmonster()
 	inst.items = items
 	inst.entity:AddDynamicShadow()
 	inst.equipfn = EquipItem
-    EquipItem(inst)
 	inst.entity:SetCanSleep(false)
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
-	local shadow = inst.entity:AddDynamicShadow()
-	shadow:SetSize( 1.5, .5 )
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
 	MakeCharacterPhysics(inst, 10, .5)
 	inst.DynamicShadow:SetSize(3, 1)
-    inst:AddComponent("inspectable")
+
 	inst.AnimState:SetBank("wilson")
     inst.AnimState:SetBuild("wx78_bulingbuling")
-	inst:AddTag("buling_player")
 	inst.AnimState:PlayAnimation("idle")
-	inst.Transform:SetFourFaced(inst)
+	inst.Transform:SetFourFaced()
+	inst:AddTag("buling_player")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("health")
 	inst.components.health:SetMaxHealth(150)
 	inst.components.health:SetAbsorptionAmount(0.5)

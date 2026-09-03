@@ -286,6 +286,23 @@ local common_postinit = function(inst, doer)
 	inst:AddTag("insomniac")
 	inst:AddTag("bulingbuling")
 	inst.MiniMapEntity:SetIcon("bulingbuling.tex")
+
+	inst.net_vehicle = net_entity(inst.GUID, "buling_vehicle", "buling_vehicledirty")
+	if not TheWorld.ismastersim then
+		inst:ListenForEvent("buling_vehicledirty", function(inst)
+			local vehicle = inst.net_vehicle:value()
+			if vehicle and vehicle:IsValid() then
+				if TheCamera and inst == ThePlayer then
+					TheCamera:SetTarget(vehicle)
+					TheCamera:SetHeadingTarget(45)
+				end
+			else
+				if TheCamera and inst == ThePlayer then
+					TheCamera:SetTarget(inst)
+				end
+			end
+		end)
+	end
 end
 
 local master_postinit = function(inst, doer)

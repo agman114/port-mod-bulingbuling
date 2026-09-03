@@ -69,6 +69,9 @@ local function upcar(doer,inst)
 			doer.components.driver.vehicle = inst
 			doer.components.driver.driving = true
 			doer:AddTag("buling_driving")
+			if doer.net_vehicle then
+				doer.net_vehicle:set(inst)
+			end
 			if TheCamera then
 				TheCamera:SetTarget(inst)
 				TheCamera:SetHeadingTarget(45)
@@ -78,7 +81,7 @@ local function upcar(doer,inst)
 			--ChangeToObstaclePhysics(doer)
 			--doer.HUD.controls.status:Hide()
 			doer.sg:Stop()
-			doer.HUD.controls.crafttabs:Hide()
+			if doer.HUD and doer.HUD.controls and doer.HUD.controls.crafttabs then doer.HUD.controls.crafttabs:Hide() end
 			local x, y, z = inst.Transform:GetWorldPosition()
 			doer.Transform:SetPosition(x, y, z)
 			if inst._sync_task then
@@ -144,9 +147,13 @@ local function drop(inst, doer, viewer)
 	inst.work = nil
 	ChangeToCharacterPhysics(viewer)
 	viewer.Physics:SetMass(75)
-	viewer.HUD.controls.crafttabs:Show()
-	-- viewer.entity:SetParent(nil)
-	viewer.HUD.controls.status:Show()
+	if viewer.HUD and viewer.HUD.controls then
+		if viewer.HUD.controls.crafttabs then viewer.HUD.controls.crafttabs:Show() end
+		if viewer.HUD.controls.status then viewer.HUD.controls.status:Show() end
+	end
+	if viewer.net_vehicle then
+		viewer.net_vehicle:set(nil)
+	end
 	if not viewer.components.driver then
 		viewer:AddComponent("driver")
 	end

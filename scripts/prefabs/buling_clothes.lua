@@ -301,11 +301,19 @@ local function fn(inst, doer)
     
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
     inst.clthesfn = clthesfn
     inst.AnimState:SetBank("buling_box_2")
     inst.AnimState:SetBuild("buling_box_2")
     inst.AnimState:PlayAnimation("yifu")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
     
     inst:AddComponent("inspectable")
     
@@ -414,10 +422,20 @@ local function buling_christmas_fn()
 	light:Enable(false)
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
+    MakeInventoryPhysics(inst)
+
     inst.AnimState:SetBank("buling_box_2")
     inst.AnimState:SetBuild("buling_box_2")
-    MakeInventoryPhysics(inst)
     inst.AnimState:PlayAnimation("yifu")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem.imagename = "buling_christmas"

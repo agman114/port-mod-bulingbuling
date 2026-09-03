@@ -350,11 +350,20 @@ local function window(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	inst.AnimState:SetBank("buling_door")
     inst.AnimState:SetBuild("buling_door")
 	inst.AnimState:PlayAnimation("buling_airship_window")
 	inst.Transform:SetScale(2.8, 2.5, 1.8)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
 	return inst
 end
 return Prefab("buling_jidi", jidi, assets),

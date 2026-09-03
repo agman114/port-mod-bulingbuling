@@ -149,7 +149,8 @@ local states =
             inst.AnimState:PlayAnimation("idle_loop")
             inst.Physics:Stop() 
 			local _target = inst or doer
-			_target.components.driver:OnDismount(false, Vector3(TheInput:GetWorldPosition():Get()))
+			local pt = (TheInput and TheInput:GetWorldPosition()) or _target:GetPosition()
+			if _target.components.driver then _target.components.driver:OnDismount(false, pt) end
         end,
         events=
         {	
@@ -221,7 +222,7 @@ local states =
 			local _target = inst or doer
 			_target.ActionStringOverride = beaveractionstring
             --inst.components.health:StartRegen(TUNING.ROCKY_REGEN_AMOUNT, TUNING.ROCKY_REGEN_PERIOD)
-			TheCamera:SetDistance(70)
+			if TheCamera then TheCamera:SetDistance(70) end
             inst.sg:SetTimeout(3)
         end,
 
@@ -259,7 +260,7 @@ local states =
 			if _target and _target.components and _target.components.playeractionpicker then _target.components.playeractionpicker.rightclickoverride = nil end
 			local _target = inst or doer
 			_target.ActionStringOverride = nil
-			TheCamera:SetDefault()
+			if TheCamera then TheCamera:SetDefault() end
         end,
 
         timeline = 

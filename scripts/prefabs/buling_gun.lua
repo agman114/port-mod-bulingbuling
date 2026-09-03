@@ -57,19 +57,27 @@ local function zidan()
     local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
     RemovePhysicsColliders(inst)
     
     anim:SetBank("projectile")
     anim:SetBuild("staff_projectile")
-    
+    inst.AnimState:PlayAnimation("fire_spin_loop", true)
+	inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     inst:AddTag("projectile")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("projectile")
     inst.components.projectile:SetSpeed(50)
     inst.components.projectile:SetLaunchOffset(Vector3(2, .5, 0))
     inst.components.projectile:SetOnMissFn(OnHitMiss)
-    inst.AnimState:PlayAnimation("fire_spin_loop", true)
-	inst.AnimState:SetBloomEffectHandle( "shaders/anim.ksh" )
     inst.components.projectile:SetOnHitFn(OnHit)
     return inst
 end
@@ -144,7 +152,16 @@ local function buling_hand_gun(inst, anim, doer)
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("gun_zero")
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(1)

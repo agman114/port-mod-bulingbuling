@@ -157,8 +157,10 @@ local function commonfn()
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+
     return inst
 end
 local function repair(inst, doer,itemname,Symbol)
@@ -192,6 +194,10 @@ local function buling_manure(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("buling_manure")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
     inst:AddComponent("inventoryitem")
@@ -213,6 +219,10 @@ local function buling_manure_4(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("buling_manure")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem:SetOnPickupFn(function()
 		inst:DoTaskInTime(0.1,function()
 			inst:Remove()
@@ -229,6 +239,10 @@ local function buling_glass(inst, doer)
 	inst.AnimState:SetBank("buling_glass")
     inst.AnimState:SetBuild("buling_glass")
     inst.AnimState:PlayAnimation("f3")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
     inst:AddComponent("inventoryitem")
@@ -242,6 +256,10 @@ local function buling_fabric(inst, doer)
 	inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
     inst.AnimState:PlayAnimation("buling_cloth")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
     inst:AddComponent("inventoryitem")
@@ -255,6 +273,10 @@ local function buling_yajin(inst, doer)
 	inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
     inst.AnimState:PlayAnimation("yajin")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
     inst:AddComponent("inventoryitem")
@@ -271,6 +293,10 @@ local function buling_zhusheqi(inst, doer)
 	inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
     inst.AnimState:PlayAnimation("zhusheqi")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("buling_getenzyme")
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_zhusheqi"
@@ -289,6 +315,10 @@ local function buling_puleidi(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("puleidi",true)
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
     inst:AddComponent("inventoryitem")
@@ -304,6 +334,10 @@ local function buling_puleidi_plank(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("puleidiban")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("stackable")
 	--inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
     inst:AddComponent("inventoryitem")
@@ -319,6 +353,10 @@ local function buling_yanjiudian(inst, doer)
 	inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
     inst.AnimState:PlayAnimation("yanjiu")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("stackable")
 	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
     inst:AddComponent("inventoryitem")
@@ -334,6 +372,10 @@ local function buling_core(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("waike")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_core"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_core.xml"
@@ -347,6 +389,10 @@ local function buling_conversion(inst, doer)
 	inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
     inst.AnimState:PlayAnimation("buling_conversion")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_conversion"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_conversion.xml"
@@ -363,6 +409,10 @@ local function buling_juhemei_alpha(inst, doer)
 	inst.AnimState:SetBank("buling_item")
     inst.AnimState:SetBuild("buling_item")
     inst.AnimState:PlayAnimation("buling_juhemei_a")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_juhemei_alpha"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_juhemei_alpha.xml"
@@ -391,12 +441,22 @@ local function gongzuotaiitemfn(Sim)
     
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
     
     inst.AnimState:SetBank("buling_manual")
     inst.AnimState:SetBuild("buling_manual")
     inst.AnimState:PlayAnimation("idle")
 	inst.Transform:SetScale(.5, .5, .5)
+	inst:AddTag("eyeturret")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem.imagename = "buling_manual"
@@ -513,12 +573,20 @@ local function dianlifu()--电动斧
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	
     inst.AnimState:SetBank("buling_tool")
     inst.AnimState:SetBuild("buling_tool")
 	inst.AnimState:PlayAnimation("fuzi")
 	
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_dianlifu"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_dianlifu.xml"
@@ -596,11 +664,19 @@ local function banshou()--扳手
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
 	MakeInventoryPhysics(inst)
 
 	inst.AnimState:SetBank("buling_banshou")
 	inst.AnimState:SetBuild("buling_banshou")
 	inst.AnimState:PlayAnimation("idle")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
 
 	inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_banshou"
@@ -662,6 +738,8 @@ local function forcefield()--防水立场
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	
     inst.AnimState:SetBank("buling_box")
@@ -671,6 +749,13 @@ local function forcefield()--防水立场
 	inst:AddTag("buling_gun_dianchi")
 	inst:AddTag("buling_lingjian")
 	inst:AddTag("fogproof")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
 	inst:AddComponent("waterproofer")
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_waterproof_field"
@@ -707,12 +792,20 @@ local function diandonggao()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	
     inst.AnimState:SetBank("buling_tool")
     inst.AnimState:SetBuild("buling_tool")
 	inst.AnimState:PlayAnimation("gaozi")
 	
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_diandonggao"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_diandonggao.xml"
@@ -765,12 +858,21 @@ local function jiandao(Sim)
     local trans = inst.entity:AddTransform()
     local anim = inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
 
     MakeInventoryPhysics(inst)
     
     anim:SetBank("buling_tool")
     anim:SetBuild("buling_tool")
     anim:PlayAnimation("jiandao")
+    inst:AddTag("shears")
+	inst:AddTag("beerpowertool")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
 
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.SHEARS_DAMAGE)
@@ -810,17 +912,28 @@ local function boxitem(Sim)
     local inst = CreateEntity()
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+
     inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("zhuangzhi")
+	inst:AddTag("eyeturret")
+	inst.Transform:SetScale(.5, .5, .5)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
     inst.components.inventoryitem.imagename = "buling_zhuangzhi"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhuangzhi.xml"
-	inst:AddTag("eyeturret")
 	inst:AddComponent("stackable")
-        inst:AddComponent("deployable")
+    inst:AddComponent("deployable")
     inst.components.deployable.ondeploy = ondeploy
     if DEPLOYMODE and DEPLOYMODE.ANY then
         inst.components.deployable:SetDeployMode(DEPLOYMODE.ANY)
@@ -1132,6 +1245,10 @@ local function buling_cook_kaopan(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("kaopan")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_cook_kaopan"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_cook_kaopan.xml"
@@ -1154,6 +1271,10 @@ local function buling_cook_caidao(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("caidao")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_cook_caidao"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_cook_caidao.xml"
@@ -1181,6 +1302,10 @@ local function buling_cook_guo(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("guo")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_cook_guo"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_cook_guo.xml"
@@ -1194,6 +1319,10 @@ local function buling_cook_jiaobanbo(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("jiaobanbo")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_cook_jiaobanbo"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_cook_jiaobanbo.xml"
@@ -1207,6 +1336,10 @@ local function buling_cave_build(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("zhuangzhi")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_cave_tool"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_cave_tool.xml"
@@ -1220,14 +1353,24 @@ local function common_gunfn()
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
-	inst:AddComponent("inventoryitem")
-	inst:AddComponent("tradable")
+
 	inst:AddTag("buling_lingjian")
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("qiangxie")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
+    inst:AddComponent("inspectable")
+	inst:AddComponent("inventoryitem")
+	inst:AddComponent("tradable")
     return inst
 end
 --手柄
@@ -1414,6 +1557,10 @@ local function buling_book_tongxuntai(inst, doer)
 	inst.AnimState:SetBank("blueprint")
     inst.AnimState:SetBuild("blueprint")
     inst.AnimState:PlayAnimation("idle")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "blueprint"
     inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
@@ -1430,6 +1577,10 @@ local function buling_book_yajin(inst, doer)
 	inst.AnimState:SetBank("blueprint")
     inst.AnimState:SetBuild("blueprint")
     inst.AnimState:PlayAnimation("idle")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "blueprint"
     inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"

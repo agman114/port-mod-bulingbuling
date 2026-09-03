@@ -175,7 +175,7 @@ local function DoDamage(inst, doer, rad, startang, endang, spawnburns)
         startang = startang + 90
         endang = endang + 90
         
-        local down = TheCamera:GetDownVec()             
+        local down = (TheCamera and TheCamera:GetDownVec()) or Vector3(0, 0, -1)             
         angle = math.atan2(down.z, down.x)/DEGREES
     end
 

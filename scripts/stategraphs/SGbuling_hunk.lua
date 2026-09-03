@@ -68,7 +68,7 @@ local function spawnburns(inst,rad,startangle,endangle,num)
     startangle = startangle *DEGREES
     endangle = endangle *DEGREES
     local pt = Vector3(inst.Transform:GetWorldPosition()) 
-    local down = TheCamera:GetDownVec()             
+    local down = (TheCamera and TheCamera:GetDownVec()) or Vector3(0, 0, -1)             
     local angle = math.atan2(down.z, down.x)
 
     local angle = angle + startangle

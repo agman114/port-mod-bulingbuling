@@ -52,9 +52,9 @@ local function fn()
 	local anim = inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
 	inst.entity:AddPhysics()
+	inst.entity:AddNetwork()
+
 	MakeObstaclePhysics(inst, 1)
-	inst:AddComponent("inspectable")
-	
 	trans:SetFourFaced()
 
 	inst:AddTag("shadowboat")
@@ -64,6 +64,14 @@ local function fn()
 	anim:SetBank("buling_car")
 	anim:SetBuild("boat_buling_build")
 	anim:PlayAnimation("run_loop", true)
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst:AddComponent("inspectable")
 
 	--setupcontainer(inst, {}, "boat_hud_raft", "boat_hud_raft", {}, "boat_inspect_raft", "boat_inspect_raft", {x=0,y=5}, {})
 
@@ -94,21 +102,24 @@ end
 local function bulingfn()
 	local function onmounted(inst, doer,data)
 		local owner = (doer or inst)
-		owner.components.inventory:Equip(SpawnPrefab("buling_plane_gun"))
-		owner.components.inventory:Equip(SpawnPrefab("buling_boat_hat"))
+		if owner.components and owner.components.inventory then
+			owner.components.inventory:Equip(SpawnPrefab("buling_plane_gun"))
+			owner.components.inventory:Equip(SpawnPrefab("buling_boat_hat"))
+		end
 	end
 	local function dismounted(inst, doer,data)
-		print("不灵小姐下船了")
 		local owner = (doer or inst)
-		local handfur = owner.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
-		local hatur = owner.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD)
-		if handfur and handfur.prefab == "buling_plane_gun"  then
-			handfur.components.equippable.un_unequipable = nil
-			handfur:Remove()
-		end
-		if hatur and hatur.prefab == "buling_boat_hat"  then
-			hatur.components.equippable.un_unequipable = nil
-			hatur:Remove()
+		if owner.components and owner.components.inventory then
+			local handfur = owner.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+			local hatur = owner.components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD)
+			if handfur and handfur.prefab == "buling_plane_gun"  then
+				handfur.components.equippable.un_unequipable = nil
+				handfur:Remove()
+			end
+			if hatur and hatur.prefab == "buling_boat_hat"  then
+				hatur.components.equippable.un_unequipable = nil
+				hatur:Remove()
+			end
 		end
 	end
 	local inst = CreateEntity()
@@ -116,9 +127,9 @@ local function bulingfn()
 	local anim = inst.entity:AddAnimState()
 	inst.entity:AddSoundEmitter()
 	inst.entity:AddPhysics()
+	inst.entity:AddNetwork()
+
 	MakeObstaclePhysics(inst, 1)
-	inst:AddComponent("inspectable")
-	
 	trans:SetFourFaced()
 
 	inst:AddTag("shadowboat")
@@ -128,6 +139,14 @@ local function bulingfn()
 	anim:SetBank("buling_car")
 	anim:SetBuild("bulingboat_tiexue_build")
 	anim:PlayAnimation("run_loop", true)
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst:AddComponent("inspectable")
 
 	setupcontainer(inst, {}, "boat_hud_raft", "boat_hud_raft", {}, "boat_inspect_raft", "boat_inspect_raft", {x=0,y=5}, {x=40, y=-45})
 

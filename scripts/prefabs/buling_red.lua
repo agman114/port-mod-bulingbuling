@@ -134,6 +134,12 @@ local function redlycoris_armor()
 	local function onfinished(inst)
 		inst:Remove()
 	end
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_diandonggao"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_diandonggao.xml"
@@ -177,6 +183,8 @@ local function redlycoris_weapon()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	local function onfinished(inst)
 		if inst:HasTag("gatling") then
@@ -248,7 +256,8 @@ local function redlycoris_weapon()
 	end
 	local function createlight(inst, doer, caster, target, pos)
 		local firerain = SpawnPrefab("buling_firerain")
-        firerain.Transform:SetPosition(TheInput:GetWorldPosition():Get())
+        local target_pt = (TheInput and TheInput:GetWorldPosition()) or (doer or inst):GetPosition()
+        firerain.Transform:SetPosition(target_pt.x, target_pt.y, target_pt.z)
         firerain:StartStep()
 		local headfur = (doer or inst).components.inventory:GetEquippedItem(EQUIPSLOTS.HEAD)
 		headfur.components.useableitem.inuse = false
@@ -302,12 +311,23 @@ local function fire()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
+
 	inst.persists = false 
     MakeInventoryPhysics(inst)
     RemovePhysicsColliders(inst)
     anim:SetBank("projectile")
     anim:SetBuild("staff_projectile")
+    inst.AnimState:PlayAnimation("fire_spin_loop", true)
+	inst.AnimState:SetBloomEffectHandle("shaders/anim.ksh")
     inst:AddTag("projectile")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("projectile")
     inst.components.projectile:SetSpeed(50)
     inst.components.projectile:SetLaunchOffset(Vector3(2, .5, 0))
@@ -333,12 +353,23 @@ local function ice()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
+
 	inst.persists = false 
     MakeInventoryPhysics(inst)
     RemovePhysicsColliders(inst)
     anim:SetBank("laser_explode_sm")
     anim:SetBuild("laser_explode_sm")
+    inst.AnimState:PlayAnimation("anim", true)
+	inst.AnimState:SetBloomEffectHandle("shaders/anim.ksh")
     inst:AddTag("projectile")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("projectile")
     inst.components.projectile:SetSpeed(50)
     inst.components.projectile:SetLaunchOffset(Vector3(2, .5, 0))
@@ -420,7 +451,16 @@ local function redlycoris_sword()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_dianlifu"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_dianlifu.xml"
@@ -463,11 +503,20 @@ local function tornado_fn()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
     local sound = inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
 	inst.persists = false 
 	anim:SetBank("deerclops_icespike")
 	anim:SetBuild("deerclops_icespike")
 	anim:PlayAnimation("spike1")
 	MakeInventoryPhysics(inst)
+	inst.Transform:SetScale(2, 2, 2)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
 	inst.Transform:SetScale(2, 2, 2)
 	inst.Physics:CollidesWith(COLLISION.WORLD_01)
    -- RemovePhysicsColliders(inst)

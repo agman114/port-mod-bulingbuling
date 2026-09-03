@@ -132,6 +132,7 @@ local function firerainfn(Sim)
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
 
 	trans:SetFourFaced()
 
@@ -140,6 +141,12 @@ local function firerainfn(Sim)
 	--anim:PlayAnimation("idle")
 
 	inst:AddTag("FX")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
 
 	inst:AddComponent("groundpounder")
 	inst.components.groundpounder.numRings = 4

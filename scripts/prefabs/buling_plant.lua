@@ -44,9 +44,20 @@ local function fn(Sim)
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
     anim:SetBank("plant_normal")
     anim:SetBuild("plant_normal")
     anim:PlayAnimation("grow")
+    anim:SetFinalOffset(-1)
+	inst:AddTag("buling_plant")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst:AddComponent("lootdropper")
 	inst:AddComponent("workable")
 	inst.components.workable:SetWorkAction(ACTIONS.DIG)
@@ -362,17 +373,27 @@ local function seedsfn()
     inst.entity:AddTransform()
     inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+
     inst.AnimState:SetBank("buling_seed")
     inst.AnimState:SetBuild("buling_seed")
 	inst.AnimState:PlayAnimation("idle",true)
+    inst:AddTag("seed")
+	inst:AddTag("buling_seed")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst:AddComponent("stackable")
     inst:AddComponent("inspectable")
     inst:AddComponent("deployable")
     inst:AddComponent("inventoryitem")
 	inst:AddComponent("tradable")
-    inst:AddTag("seed")
-	inst:AddTag("buling_seed")
 	inst.components.deployable.placer = "seeds_placer"
     return inst
 end
@@ -607,13 +628,23 @@ local function buling_redai_4(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
-    inst:AddComponent("inventoryitem")
-	inst.components.inventoryitem.imagename = "buling_seed_redai"
-    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_redai.xml"
+
 	inst.AnimState:SetBank("eyeplant_bulb")
     inst.AnimState:SetBuild("eyeplant_bulb")
     inst.AnimState:PlayAnimation("idle")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inventoryitem")
+	inst.components.inventoryitem.imagename = "buling_seed_redai"
+    inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_redai.xml"
 	inst.components.inventoryitem:SetOnPickupFn(function()
 		inst:DoTaskInTime(0.1,function()
 			inst:Remove()

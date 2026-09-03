@@ -113,19 +113,25 @@ local function minefn(Sim)
     local trans = inst.entity:AddTransform()
     local anim = inst.entity:AddAnimState()
     local sound = inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
 
     MakeInventoryPhysics(inst, 75, 0.5)
-
-    --inst.Physics:SetCollisionCallback(OnMineCollide)
 
     anim:SetBank("metal_hulk_mine")
     anim:SetBuild("metal_hulk_bomb")
     anim:PlayAnimation("green_loop", true)
 
     inst:AddTag("ancient_hulk_mine")
+    inst:AddTag("nopick")
+	inst.Transform:SetScale(.7,.7,.7)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
 
     inst.primed = true
-	inst.Transform:SetScale(.7,.7,.7)
     inst:AddComponent("locomotor")
     inst:AddComponent("complexprojectile")
     inst.components.complexprojectile:SetOnHit(OnHit)
@@ -171,7 +177,18 @@ local function gun_weapon()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+	inst:AddTag("hand_gun")
+	inst:AddTag("gun")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_yajinggao"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_yajinggao.xml"
@@ -185,8 +202,6 @@ local function gun_weapon()
 	inst.components.equippable:SetOnUnequip( onunequip )
 	inst.components.equippable.un_unequipable = true
     inst:AddComponent("inspectable")
-	inst:AddTag("hand_gun")
-	inst:AddTag("gun")
 	return inst
 end
 local function gun_rocky_weapon()
@@ -194,14 +209,23 @@ local function gun_rocky_weapon()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+	inst:AddTag("fogproof")
+	inst:AddTag("venting")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_rocky_staff"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_rocky_staff.xml"
 	inst.components.inventoryitem:SetOnDroppedFn(function() inst:Remove() end)
 	inst.persists = false 
-	inst:AddTag("fogproof")
-	inst:AddTag("venting")
 	inst:AddComponent("equippable")
 	inst.components.equippable.un_unequipable = true
 	inst.components.equippable.insulated = true
@@ -232,7 +256,16 @@ local function boat_hat()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_diandonggao"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_diandonggao.xml"
@@ -355,11 +388,20 @@ local function diandonggao()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	
     inst.AnimState:SetBank("buling_tool")
     inst.AnimState:SetBuild("buling_tool")
 	inst.AnimState:PlayAnimation("gaozi")
+	inst:AddTag("beerpowertool")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
 	
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_yajinggao"
@@ -451,7 +493,8 @@ local function dianlifu()
 				caster.Physics:SetMotorVelOverride(15,0,0)
 				SpawnPrefab("shock_machines_fx").Transform:SetPosition(inst.Transform:GetWorldPosition())
 				inst:AddTag("cding")
-				caster:ForceFacePoint(Vector3(TheInput:GetWorldPosition():Get()))
+				local face_pt = (TheInput and TheInput:GetWorldPosition()) or (caster and caster:GetPosition())
+				if face_pt then caster:ForceFacePoint(face_pt.x, face_pt.y, face_pt.z) end
 				local pos = inst:GetPosition()
 				local ents = TheSim:FindEntities(pos.x,0, pos.z, 3, nil, {"FX", "DECOR", "INLIMBO"})
 				for k,v in pairs(ents) do
@@ -487,11 +530,21 @@ local function dianlifu()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	
     inst.AnimState:SetBank("buling_tool")
     inst.AnimState:SetBuild("buling_tool")
 	inst.AnimState:PlayAnimation("fuzi")
+	inst:AddTag("beerpowertool")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
 	inst.buling_spell = 0
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_yajingfu"
@@ -663,10 +716,21 @@ local function jiandao(Sim)
     local trans = inst.entity:AddTransform()
     local anim = inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
     anim:SetBank("buling_tool")
     anim:SetBuild("buling_tool")
     anim:PlayAnimation("jiandao")
+    inst:AddTag("shears")
+	inst:AddTag("beerpowertool")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("weapon")
     inst.components.weapon:SetDamage(TUNING.SHEARS_DAMAGE)
 	inst.components.weapon:SetOnAttack(attack)

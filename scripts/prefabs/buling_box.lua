@@ -1612,7 +1612,7 @@ local function wakuang(inst, doer)
 			if nug then
 				local pt = Vector3(inst.Transform:GetWorldPosition()) + Vector3(0,4.5,0)
 				nug.Transform:SetPosition(pt:Get())
-				local down = TheCamera:GetDownVec()
+				local down = (TheCamera and TheCamera:GetDownVec()) or Vector3(0, 0, -1)
 				local angle = math.atan2(down.z, down.x) + (math.random()*60-30)*DEGREES
 				local sp = math.random()*4+2
 				if nug.Physics then

@@ -34,16 +34,27 @@ local function fn()
 	inst.entity:AddTransform()
     inst.entity:AddSoundEmitter()
 	inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    MakeInventoryFloatable(inst, "idle_water", "anim")
+	inst.entity:AddNetwork()
 
-    inst.components.floatable:SetOnHitWaterFn(function(inst)
-        inst.SoundEmitter:PlaySound("dontstarve_DLC002/common/obsidian_wetsizzles")
-    end)
-    
+    MakeInventoryPhysics(inst)
     inst.AnimState:SetBank("armor_obsidian")
     inst.AnimState:SetBuild("armor_obsidian")
     inst.AnimState:PlayAnimation("anim")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
+    if MakeInventoryFloatable then
+        MakeInventoryFloatable(inst, "idle_water", "anim")
+        if inst.components.floatable then
+            inst.components.floatable:SetOnHitWaterFn(function(inst)
+                inst.SoundEmitter:PlaySound("dontstarve_DLC002/common/obsidian_wetsizzles")
+            end)
+        end
+    end
     
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
@@ -104,7 +115,20 @@ local function counterattackfxfn(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
 	MakeSpecialGhostPhysics(inst,1,.5)
+	inst.Transform:SetFourFaced()
+	inst.persists = false
+	inst.AnimState:SetBank("wilson")
+	inst.AnimState:SetBuild("onikiri")
+	inst.AnimState:PlayAnimation("nil")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
 	inst.Transform:SetFourFaced()
 	inst.persists = false
 	inst.AnimState:SetBank("wilson")

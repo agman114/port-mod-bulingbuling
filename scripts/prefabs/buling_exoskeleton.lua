@@ -55,11 +55,19 @@ local function comm(inst, doer)
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
 	
     inst.AnimState:SetBank("buling_tool")
     inst.AnimState:SetBuild("buling_tool")
 	inst.AnimState:PlayAnimation("gaozi")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
 	
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_diandonggao"
@@ -202,7 +210,16 @@ local function exoskeleton_sword()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_rider_lock"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_rider_lock.xml"
@@ -252,7 +269,16 @@ local function goldenshadowguard_sword()
 	inst.entity:AddTransform()
 	inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
+    inst.entity:AddNetwork()
+
     MakeInventoryPhysics(inst)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_rider_lock"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_rider_lock.xml"

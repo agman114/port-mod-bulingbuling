@@ -97,6 +97,8 @@ local function fn()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize( 1.5, .75 )
     inst.Transform:SetFourFaced()
@@ -105,18 +107,24 @@ local function fn()
 
     anim:SetBank("pigman")
     anim:SetBuild("merm_fisherman_build")
-    
-    inst:AddComponent("locomotor")
-    inst.components.locomotor.runspeed = TUNING.MERM_RUN_SPEED
-    inst.components.locomotor.walkspeed = TUNING.MERM_WALK_SPEED
-    
-    inst:SetStateGraph("SGmerm")
     anim:Hide("hat")
 
     inst:AddTag("character")
     inst:AddTag("merm")
     inst:AddTag("mermfighter")
     inst:AddTag("wet")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("locomotor")
+    inst.components.locomotor.runspeed = TUNING.MERM_RUN_SPEED
+    inst.components.locomotor.walkspeed = TUNING.MERM_WALK_SPEED
+    
+    inst:SetStateGraph("SGmerm")
 
     local brain = require "brains/mermbrain"
     inst:SetBrain(brain)

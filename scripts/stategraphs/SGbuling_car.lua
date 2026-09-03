@@ -108,7 +108,8 @@ local states =
             inst.AnimState:PlayAnimation("idle")
             inst.Physics:Stop() 
 			local _target = inst or doer
-			_target.components.driver:OnDismount(false, Vector3(TheInput:GetWorldPosition():Get()))
+			local pt = (TheInput and TheInput:GetWorldPosition()) or _target:GetPosition()
+			if _target.components.driver then _target.components.driver:OnDismount(false, pt) end
         end,
         events=
         {	

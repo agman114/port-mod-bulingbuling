@@ -17,6 +17,8 @@ local function mikufn(Sim)
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize(1.75,.75)
     inst.Transform:SetFourFaced()
@@ -35,6 +37,13 @@ local function mikufn(Sim)
     inst.Light:SetFalloff(0.5)
     inst.Light:SetIntensity(.75)
     inst.Light:SetColour(255/255,255/255,236/255)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(350)
     inst:AddComponent("combat")
@@ -70,6 +79,8 @@ local function logfn(Sim)
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize(1.75,.75)
     inst.Transform:SetSixFaced()
@@ -88,6 +99,13 @@ local function logfn(Sim)
     inst.Light:SetFalloff(0.5)
     inst.Light:SetIntensity(.75)
     inst.Light:SetColour(255/255,255/255,236/255)
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("health")
     inst.components.health:SetMaxHealth(350)
     inst:AddComponent("combat")
@@ -130,11 +148,12 @@ local function logfn(Sim)
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
 	inst.sounds = sounds
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize( 2.5, 1.25 )    
     inst.Transform:SetSixFaced()
-    --inst.Transform:SetFourFaced()
     inst.Transform:SetScale(0.5, 0.5, 0.5)
     MakePoisonableCharacter(inst)
     MakeCharacterPhysics(inst, 100, .75)    
@@ -144,6 +163,13 @@ local function logfn(Sim)
     anim:SetBuild("buling_log_beefalo_baby")
     anim:PlayAnimation("idle_loop", true)    
     inst:AddTag("animal")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("eater")
     inst.components.eater:SetVegetarian()    
     inst:AddComponent("combat") 

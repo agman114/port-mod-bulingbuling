@@ -119,18 +119,26 @@ local function kittenfn()
 	local anim = inst.entity:AddAnimState()
     local physics = inst.entity:AddPhysics()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
+
 	local shadow = inst.entity:AddDynamicShadow()
     MakeGhostPhysics(inst, 1, 0.5)
-    --RemovePhysicsColliders(inst)
-    MakePoisonableCharacter(inst)
-    MakeSmallBurnable(inst)
-    MakeSmallPropagator(inst)
 	inst.Transform:SetScale(0.3,0.3,0.3)
 	shadow:SetSize( 1, 1.5 )
     trans:SetFourFaced()
     anim:SetBank("sharkitten")
     anim:SetBuild("sharkitten_build")
     anim:PlayAnimation("idle")
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
+    MakePoisonableCharacter(inst)
+    MakeSmallBurnable(inst)
+    MakeSmallPropagator(inst)
     inst:AddComponent("inspectable")
     inst:AddComponent("locomotor")
     inst.components.locomotor.walkspeed = 15

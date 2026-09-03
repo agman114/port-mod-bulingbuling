@@ -1004,7 +1004,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 			end
 
 			local driver_comp = self.inst.components.driver
-			local vehicle = (driver_comp and driver_comp.vehicle) or self.inst
+			local vehicle = (self.inst.net_vehicle and self.inst.net_vehicle:value()) or (driver_comp and driver_comp.vehicle) or self.inst
 			local is_special = vehicle and ((vehicle:HasTag("def") or vehicle:HasTag("rocky_shield")) and not vehicle:HasTag("atk"))
 
 			local entity_under_mouse = GLOBAL.TheInput:GetWorldEntityUnderMouse()
@@ -1045,7 +1045,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 		end
 
 		local driver_comp = self.inst.components.driver
-		local vehicle = (driver_comp and driver_comp.vehicle) or self.inst
+		local vehicle = (self.inst.net_vehicle and self.inst.net_vehicle:value()) or (driver_comp and driver_comp.vehicle) or self.inst
 		if not vehicle or not vehicle:IsValid() then return end
 
 		local vx, vy, vz = vehicle.Transform:GetWorldPosition()
