@@ -1080,6 +1080,12 @@ BULING_DRIVE.id = "BULING_DRIVE"
 BULING_DRIVE.str = "Сесть в машину (Drive)"
 BULING_DRIVE.fn = function(act)
 	if act.target and act.doer and act.target:HasTag("buling_carrier") then
+		if act.target:HasTag("has_driver") or (act.target.components.drivable and act.target.components.drivable.driver ~= nil and act.target.components.drivable.driver ~= act.doer) then
+			if act.doer.components.talker then
+				act.doer.components.talker:Say("Этот робот уже занят!")
+			end
+			return false
+		end
 		if act.target.components.drivable and act.target.components.drivable.OnMounted then
 			act.target.components.drivable:OnMounted(act.doer)
 		end
@@ -1099,6 +1105,9 @@ BULING_DISMOUNT.fn = function(act)
 		if vehicle and vehicle.bulingdrop then
 			vehicle.bulingdrop(vehicle, act.doer, act.doer)
 		end
+		if GLOBAL.TheCamera and act.doer == GLOBAL.ThePlayer then
+			GLOBAL.TheCamera:SetTarget(GLOBAL.ThePlayer)
+		end
 		return true
 	end
 end
@@ -1110,7 +1119,7 @@ AddComponentAction("SCENE", "drivable", function(inst, doer, actions, right)
 	if right and inst and inst:HasTag("buling_carrier") then
 		if doer and doer:HasTag("buling_driving") then
 			table.insert(actions, GLOBAL.ACTIONS.BULING_DISMOUNT)
-		else
+		elseif not inst:HasTag("has_driver") then
 			table.insert(actions, GLOBAL.ACTIONS.BULING_DRIVE)
 		end
 	end
@@ -1118,7 +1127,7 @@ end)
 
 AddComponentAction("SCENE", "trader", function(inst, doer, actions, right)
 	if right and inst and inst:HasTag("buling_carrier") then
-		if not (doer and doer:HasTag("buling_driving")) then
+		if not (doer and doer:HasTag("buling_driving")) and not inst:HasTag("has_driver") then
 			table.insert(actions, GLOBAL.ACTIONS.BULING_DRIVE)
 		end
 	end
@@ -1128,9 +1137,13 @@ AddModRPCHandler("bulingbuling", "drive_car", function(player, car_guid)
 	if car_guid then
 		local car = GLOBAL.Ents[car_guid]
 		if car and car.components.drivable and car.components.drivable.OnMounted then
+			if car:HasTag("has_driver") or (car.components.drivable.driver ~= nil and car.components.drivable.driver ~= player) then
+				return
+			end
 			car.components.drivable:OnMounted(player)
-			if GLOBAL.TheCamera then
+			if GLOBAL.TheCamera and player == GLOBAL.ThePlayer then
 				GLOBAL.TheCamera:SetTarget(car)
+				GLOBAL.TheCamera:SetHeadingTarget(45)
 			end
 		end
 	end
@@ -1141,8 +1154,8 @@ AddModRPCHandler("bulingbuling", "dismount_car", function(player)
 		local vehicle = player.components.driver.vehicle
 		if vehicle and vehicle.bulingdrop then
 			vehicle.bulingdrop(vehicle, player, player)
-			if GLOBAL.TheCamera then
-				GLOBAL.TheCamera:SetTarget(player)
+			if GLOBAL.TheCamera and player == GLOBAL.ThePlayer then
+				GLOBAL.TheCamera:SetTarget(GLOBAL.ThePlayer)
 			end
 		end
 	end
@@ -1216,6 +1229,10 @@ AddClassPostConstruct("components/playercontroller", function(self)
 			if was_moving then
 				was_moving = false
 				last_angle = nil
+			end
+			-- Always ensure local camera tracks local player if not driving!
+			if self.inst == GLOBAL.ThePlayer and GLOBAL.TheCamera and GLOBAL.TheCamera.target ~= self.inst then
+				GLOBAL.TheCamera:SetTarget(self.inst)
 			end
 			return
 		end
@@ -1311,6 +1328,17 @@ GLOBAL.TheInput:AddKeyDownHandler(GLOBAL.KEY_R, function()
 	if GLOBAL.ThePlayer and GLOBAL.ThePlayer:IsValid() and GLOBAL.ThePlayer:HasTag("buling_driving") then
 		if not (GLOBAL.TheFrontEnd and GLOBAL.TheFrontEnd:GetFocusWidget() and GLOBAL.TheFrontEnd:GetFocusWidget().text_edit) then
 			SendBulingRPC("dismount_car")
+			if GLOBAL.TheCamera then
+				GLOBAL.TheCamera:SetTarget(GLOBAL.ThePlayer)
+			end
 		end
 	end
+end)
+
+AddPlayerPostInit(function(inst)
+	inst:ListenForEvent("buling_getoff", function()
+		if inst == GLOBAL.ThePlayer and GLOBAL.TheCamera then
+			GLOBAL.TheCamera:SetTarget(GLOBAL.ThePlayer)
+		end
+	end)
 end)

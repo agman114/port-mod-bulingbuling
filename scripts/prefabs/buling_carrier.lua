@@ -36,6 +36,21 @@ local function LaunchProjectile(inst, doer, targetpos)
 end
 
 local function upcar(doer,inst)
+	if not doer or not doer:IsValid() or not inst or not inst:IsValid() then return end
+
+	-- Single seat check: prevent another player from boarding if already occupied!
+	if inst:HasTag("has_driver") or (inst.components.drivable and inst.components.drivable.driver ~= nil and inst.components.drivable.driver:IsValid() and inst.components.drivable.driver ~= doer) then
+		if doer.components.talker then
+			doer.components.talker:Say("Этот робот уже занят!")
+		end
+		return
+	end
+
+	inst:AddTag("has_driver")
+	if inst.components.drivable then
+		inst.components.drivable.driver = doer
+	end
+
 	if inst and inst:IsValid() then
 		if inst.components.combat then
 			inst.components.combat:SetTarget(nil)
@@ -55,28 +70,24 @@ local function upcar(doer,inst)
 		end
 	end
 	doer:DoTaskInTime(0.1,function()
+		if not doer or not doer:IsValid() or not inst or not inst:IsValid() then return end
 		if not doer.components.health:IsDead() and not inst.components.health:IsDead() then
 			
 			doer.components.temperature:SetTemp(25)
 			doer.sg:GoToState("idle")
-			--doer:SetStateGraph("SGwilsonboating")
-			if not doer.components.driver then
-				doer:AddComponent("driver")
-			end
 			if not doer.components.driver then
 				doer:AddComponent("driver")
 			end
 			doer.components.driver.vehicle = inst
 			doer.components.driver.driving = true
 			doer:AddTag("buling_driving")
-			if TheCamera then
+
+			-- Only set camera if this is the local client/host player!
+			if TheCamera and doer == ThePlayer then
 				TheCamera:SetTarget(inst)
 				TheCamera:SetHeadingTarget(45)
 			end
-			--local follower = doer.entity:AddFollower()
-			--follower:FollowSymbol(inst.GUID,"body", 0, 0, 0 )
-			--ChangeToObstaclePhysics(doer)
-			--doer.HUD.controls.status:Hide()
+
 			doer.sg:Stop()
 			if doer.HUD and doer.HUD.controls and doer.HUD.controls.crafttabs then doer.HUD.controls.crafttabs:Hide() end
 			local x, y, z = inst.Transform:GetWorldPosition()
@@ -92,7 +103,6 @@ local function upcar(doer,inst)
 				end
 			end)
 			doer:Hide()
-			
 			
 			-- Retain player components.combat & locomotor for PlayerController safety
 			if doer:IsValid() then
@@ -131,15 +141,23 @@ local function drop(inst, doer, viewer)
 	if inst.RestartBrain then inst:RestartBrain() end
 	viewer = viewer or doer or (inst.components.drivable and inst.components.drivable.driver)
 	if viewer == nil or not viewer:IsValid() then
+		inst:RemoveTag("has_driver")
+		if inst.components.drivable then
+			inst.components.drivable.driver = nil
+		end
 		return
 	end
 	
+	inst:RemoveTag("has_driver")
+	if inst.components.drivable then
+		inst.components.drivable.driver = nil
+	end
+
 	viewer:Show()
 	local pos = Vector3(inst.Transform:GetWorldPosition())
 	if inst.locomotor and viewer.components.locomotor == nil then viewer.components.locomotor = inst.locomotor end
 	if not viewer.components.combat then viewer:AddComponent("combat") end
 	if not viewer.components.locomotor then viewer:AddComponent("locomotor") end
-	--viewer.entity:AddFollower():FollowSymbol(viewer.GUID,"body", 0, 0, 0)
 	viewer.Transform:SetPosition(pos.x+1,0,pos.z)
 	inst.work = nil
 	ChangeToCharacterPhysics(viewer)
@@ -153,30 +171,30 @@ local function drop(inst, doer, viewer)
 	end
 	if viewer.components.driver then
 		viewer.components.driver.driving = false
-	viewer:RemoveTag("buling_driving")
 		viewer.components.driver.vehicle = nil
 	end
-	if TheCamera and viewer then
-		TheCamera:SetTarget(viewer)
+	viewer:RemoveTag("buling_driving")
+
+	-- If this is the local player on client or host, always reset camera to the player!
+	if TheCamera and (viewer == ThePlayer or doer == ThePlayer) then
+		TheCamera:SetTarget(ThePlayer)
 	end
+
 	viewer.components.temperature:SetTemp()
 	viewer.sg:Start()
-	local x,y,z = (doer or inst).Transform:GetWorldPosition()
-	local _target = doer or inst
-	_target.Transform:SetPosition(x,2,z)
-	local _target = doer or inst
-	if _target and _target.PushEvent then _target:PushEvent("buling_getoff") end
+	viewer.Transform:SetPosition(pos.x+1,0,pos.z)
+	if viewer.PushEvent then viewer:PushEvent("buling_getoff") end
 	ChangeToCharacterPhysics(viewer)
 	viewer.Physics:SetMass(75)
 	viewer.Physics:SetActive(true)
-	local staff = viewer.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
+	local staff = viewer.components.inventory and viewer.components.inventory:GetEquippedItem(EQUIPSLOTS.HANDS)
 	if staff and staff.prefab == "buling_rocky_staff" then
 		staff:Remove()
 	end
-	viewer:DoTaskInTime(1,function()
+	viewer:DoTaskInTime(0.5,function()
 		ChangeToCharacterPhysics(viewer)
-	viewer.Physics:SetMass(75)
-	viewer.Physics:SetActive(true)
+		viewer.Physics:SetMass(75)
+		viewer.Physics:SetActive(true)
 	end)
 end
 local function deathset(inst, doer)
