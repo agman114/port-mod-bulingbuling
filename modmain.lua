@@ -69,7 +69,15 @@ STRINGS.UI.CRAFTING_FILTERS["YJTAB"] = "研究项目"
 local orig_Recipe = GLOBAL.Recipe
 if orig_Recipe then
     GLOBAL.Recipe = function(name, ingredients, tab, level, min_spacing, placer, min_type, numtogive, builder_tag, atlas, image, ...)
+        local is_buling_tab = (GLOBAL.RECIPETABS and (tab == GLOBAL.RECIPETABS.BLTAB or tab == GLOBAL.RECIPETABS.YJTAB))
+            or (type(tab) == "table" and (tab.str == "BLTAB" or tab.str == "YJTAB"))
+        if is_buling_tab and builder_tag == nil then
+            builder_tag = "bulingbuling"
+        end
         local rec = orig_Recipe(name, ingredients, tab, level, min_spacing, placer, min_type, numtogive, builder_tag, atlas, image, ...)
+        if rec and is_buling_tab and rec.builder_tag == nil then
+            rec.builder_tag = "bulingbuling"
+        end
         if name then
             local filter_id = (tab and type(tab) == "table" and tab.str) or "BLTAB"
             local fn_add_to_filter = GLOBAL.rawget(GLOBAL, "AddRecipeToFilter")
@@ -79,7 +87,9 @@ if orig_Recipe then
             if fn_add_to_filter then
                 pcall(fn_add_to_filter, name, filter_id)
                 pcall(fn_add_to_filter, name, "CHARACTER")
-                pcall(fn_add_to_filter, name, "EVERYTHING")
+                if not is_buling_tab and not builder_tag then
+                    pcall(fn_add_to_filter, name, "EVERYTHING")
+                end
             end
         end
         return rec

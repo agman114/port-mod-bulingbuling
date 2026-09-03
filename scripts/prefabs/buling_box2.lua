@@ -244,11 +244,21 @@ local function buling_alcoholtable(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+    inst.entity:AddNetwork()
+
+    MakeObstaclePhysics(inst, .5)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("planttable")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst.displaynamefn = get_name
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
@@ -270,10 +280,14 @@ local function commonfn()
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
+	inst:AddTag("structure")
+
+	inst:AddComponent("inspectable")
 	inst:AddComponent("beerpower")
 	inst.displaynamefn = get_name
     return inst
@@ -309,6 +323,14 @@ local function dianxiangan(inst, doer)
 	MakeObstaclePhysics(inst, 1)
 	inst.Transform:SetScale(2, 2, 2)
 	inst.AnimState:PlayAnimation("paotai",true)
+	inst:AddTag("zhongjiqi")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst.components.beerpower:SetNumber(100)
 	inst.task = task(inst)
 	inst:AddTag("zhongjiqi")
@@ -370,14 +392,23 @@ local function buling_chuansongdai(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
-    --MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
+    inst.entity:AddNetwork()
+
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("chuansongdai")
 	inst.AnimState:SetOrientation( ANIM_ORIENTATION.OnGround )
 	inst.AnimState:SetLayer( LAYER_BACKGROUND )
 	inst.AnimState:SetSortOrder(2)
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst.pos = Vector3(inst.Transform:GetWorldPosition())
 	inst.angle = anglejiaozheng(inst:GetAngleToPoint(inst.pos:Get()))
 	inst.Transform:SetRotation(inst.angle)
@@ -468,6 +499,9 @@ local function buling_jixiebi(inst, doer)
 	end
 	local inst = buling_chuansongdai(inst)
 	inst.AnimState:PlayAnimation("jixiebi")
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.beeritem = "buling_jixiebi_item"
 	inst:AddComponent("beerpower")
 	--inst:AddComponent("machine")
@@ -511,13 +545,23 @@ local function buling_shuipei(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
-    inst:AddComponent("inspectable")
+    inst.entity:AddNetwork()
+
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("shuipei")
 	inst.AnimState:SetOrientation( ANIM_ORIENTATION.OnGround )
 	inst.AnimState:SetLayer( LAYER_BACKGROUND )
 	inst.AnimState:SetSortOrder(2)
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("objectspawner")
 	inst.beeritem = "buling_shuipei_item"
 	inst:AddComponent("trader")
@@ -659,12 +703,21 @@ local function buling_zidonghecheng(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("hecheng")
-	--inst:AddComponent("inventory")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
 	inst.components.container.widgetslotpos = slotpos
@@ -712,8 +765,10 @@ local function buling_zidonghecheng(inst, doer)
 end
 local function buling_pilianghecheng(inst, doer)
 	local inst = buling_zidonghecheng(inst)
-	--inst.AnimState:PlayAnimation("zidonghecheng")
 	inst.Transform:SetScale(.4, .4, .4)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	
 	inst.beeritem = "buling_zidonghecheng_item"
 	
@@ -743,11 +798,22 @@ local function bulingbox(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("chest")
+	inst.Transform:SetScale(.4, .4, .4)
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
 	inst.components.container.widgetslotpos = slotpos
@@ -776,6 +842,8 @@ local function nuanqifn()
     inst.entity:AddAnimState()
     inst.entity:AddSoundEmitter()
     inst.entity:AddLight()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
     inst.Light:Enable(true)
     inst.Light:SetRadius(1.0)
@@ -791,7 +859,13 @@ local function nuanqifn()
     inst:AddTag("wildfireprotected")
     inst:AddTag("cooker")
     inst:AddTag("HASHEATER")
-    --inst.entity:SetPristine()
+
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
     inst:AddComponent("cooker")
     inst:AddComponent("lootdropper")
     inst:AddComponent("inspectable")
@@ -824,11 +898,21 @@ local function buling_infinitebox(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("infinitebox_close")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
 	inst.components.container.widgetslotpos = slotpos

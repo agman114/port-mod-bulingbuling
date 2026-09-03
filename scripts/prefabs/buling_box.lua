@@ -28,8 +28,14 @@ local assets ={
 	Asset("ANIM", "anim/wakuangji.zip"),
 	Asset("ANIM", "anim/ui_buling_chest_3x5.zip"),
 }
+local _buling_recipes_box_done = false
 local function buling_recipes()
-	local buling_book_tongxuntai = Recipe("buling_yanjiudian", {Ingredient("boards",10)}, RECIPETABS.BLTAB,{SCIENCE = 20},nil)
+	if _buling_recipes_box_done then return end
+	_buling_recipes_box_done = true
+	local buling_book_tongxuntai = Recipe("buling_yanjiudian", {Ingredient("boards",10)}, RECIPETABS.BLTAB,{SCIENCE = 20},nil,nil,nil,nil,"bulingbuling")
+	if buling_book_tongxuntai then
+		buling_book_tongxuntai.builder_tag = "bulingbuling"
+	end
 end
 local hechengbiao = {
 --塞德锭
@@ -343,11 +349,22 @@ local function buling_manual(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
+
 	inst.AnimState:SetBank("buling_manual")
     inst.AnimState:SetBuild("buling_manual")
     inst.AnimState:PlayAnimation("idle")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
 	inst.components.container.widgetslotpos = slotpos
@@ -416,12 +433,21 @@ local function ronglufn()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize(2,0.75)
 	trans:SetFourFaced()
 	inst.AnimState:SetBuild("buling_ronglu")
 	inst.AnimState:SetBank("buling_ronglu")
 	inst.AnimState:PlayAnimation("idle")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst:AddComponent("inspectable")
 	inst:AddComponent("beerpower")
 	inst.components.beerpower:SetNumber(200)
@@ -443,6 +469,10 @@ local function ronglufn()
 end
 local function radar(inst, doer)
 	local inst=commonfn(inst)
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:DoTaskInTime(0,function()
 		for k=1,7 do
 			SpawnPrefab("buling_zhongziding").Transform:SetPosition(inst.Transform:GetWorldPosition())
@@ -484,15 +514,25 @@ local function buling_solarenergy(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-	inst.task = inst:DoPeriodicTask(5,function()task(inst)end)
-    inst:AddComponent("inspectable")
 	inst.Transform:SetScale(2, 2, 2)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("buling_solarenergy")
-	inst.beeritem = "buling_solarenergy_item"
+	inst:AddTag("structure")
 	inst:AddTag("bp_source")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst.task = inst:DoPeriodicTask(5,function()task(inst)end)
+    inst:AddComponent("inspectable")
+	inst.beeritem = "buling_solarenergy_item"
 	return inst
 end 
 --种子管家
@@ -501,15 +541,25 @@ local function buling_seedbox(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
-	inst:AddComponent("beerpower")
-	inst.components.beerpower:SetNumber(200)
-	inst.displaynamefn = get_name
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("seedbox")
 	inst.Transform:SetScale(2, 2, 2)
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
+	inst:AddComponent("beerpower")
+	inst.components.beerpower:SetNumber(200)
+	inst.displaynamefn = get_name
 	inst.nengliang = 0
 	local function turnon(inst, doer)
 		inst.components.machine.ison = true
@@ -652,11 +702,21 @@ local function buling_weaponchest(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+    inst.entity:AddNetwork()
+
+    MakeObstaclePhysics(inst, .5)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("weaponchest")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("beerpower")
 	inst.components.beerpower:SetNumber(500)
 	inst.displaynamefn = get_name
@@ -739,13 +799,22 @@ local function shouhuo(inst, doer)
 	inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
 	inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
+
 	MakeObstaclePhysics(inst, .5)
-	inst:AddComponent("inspectable")
 
 	inst.AnimState:SetBank("buling_box")
 	inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("shouhuo")
+	inst:AddTag("structure")
 
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst:AddComponent("inspectable")
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
 	inst.components.container.widgetslotpos = slotpos
@@ -786,12 +855,27 @@ local function commonfn()
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
+
 	inst.AnimState:SetBank("buling_zaxiang")
     inst.AnimState:SetBuild("buling_zaxiang")
-	inst:AddComponent("beerpower")
-	inst.displaynamefn = get_name
+	inst:AddTag("structure")
+
+    return inst
+end
+
+local function common_finish(inst)
+    inst.entity:SetPristine()
+
+    if not TheWorld.ismastersim then
+        return inst
+    end
+
+    inst:AddComponent("inspectable")
+    inst:AddComponent("beerpower")
+    inst.displaynamefn = get_name
     return inst
 end
 --炮台
@@ -846,6 +930,13 @@ local function paotai(inst, doer)
 		end, nil, notags)
 		return newtarget
 	end
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst.components.beerpower:SetNumber(50)
 	inst:AddComponent("inventory")
 	inst:AddTag("buling_box")
@@ -909,6 +1000,10 @@ local function buling_repair_box(inst, doer)
 	inst.AnimState:SetBank("buling_box_2")
     inst.AnimState:SetBuild("buling_box_2")
 	inst.AnimState:PlayAnimation("paotai",true)
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.beerpower:SetNumber(1000)
 	inst:AddComponent("inventory")
 	inst:AddTag("buling_box")
@@ -987,6 +1082,10 @@ local function zhongjiqi(inst, doer)
 	MakeObstaclePhysics(inst, 1)
 	inst.Transform:SetScale(2, 2, 2)
 	inst.AnimState:PlayAnimation("zhongjiqi_off")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
@@ -1031,6 +1130,10 @@ local function shengcun(inst, doer)
 	local inst=commonfn(inst)
 	inst.Transform:SetScale(2, 2, 2)
 	inst.AnimState:PlayAnimation("shengcunfadianji")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.task = inst:DoPeriodicTask(5,function()task(inst)end)
 	inst:AddComponent("fueled")
 	--inst.components.fueled.fueltype = "HUAXUERANLIAO"
@@ -1078,6 +1181,10 @@ local function diandeng(inst, doer)
 	inst.Light:SetIntensity(.75)
     inst.Light:SetFalloff( 0.9 )
     inst.Light:SetRadius( 8 )
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
@@ -1105,6 +1212,10 @@ local function diandeng2(inst, doer)
     inst.Light:SetFalloff( 0.9 )
     inst.Light:SetRadius( 15 )
 	inst.beeritem = "buling_lamp_item"
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:DoTaskInTime(0.1,function()
 		if (TheWorld.state and TheWorld.state.isdusk) or (TheWorld.state and TheWorld.state.isnight) then
 			inst.Light:Enable(true)
@@ -1172,6 +1283,10 @@ local function chongdian(inst, doer)
 	local inst= commonfn(inst)
 	inst.displaynamefn = get_name
 	inst.AnimState:PlayAnimation("ai_aff")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.beerpower:SetNumber(200)
 	inst:AddComponent("container")
     inst.components.container:SetNumSlots(1.1)
@@ -1199,11 +1314,21 @@ local function bulingbox(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-    inst:AddComponent("inspectable")
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("chest")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
 	inst.components.container.widgetslotpos = slotpos
@@ -1221,12 +1346,22 @@ local function bulingchemistrytable(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
 	inst.Transform:SetScale(1.5, 1.5, 1.5)
-    inst:AddComponent("inspectable")
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
     inst.AnimState:PlayAnimation("yanjiuzhuo")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst.beeritem = "buling_chemistrytable_item"
 	return inst
 end
@@ -1301,12 +1436,21 @@ local function buling_fengrenji(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
+    inst.entity:AddNetwork()
+
     MakeObstaclePhysics(inst, .5)
-	--inst.Transform:SetScale(1.5, 1.5, 1.5)
-    inst:AddComponent("inspectable")
 	inst.AnimState:SetBank("buling_box_2")
     inst.AnimState:SetBuild("buling_box_2")
     inst.AnimState:PlayAnimation("fengrenji")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst.beeritem = "buling_fengrenji_item"
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
@@ -1386,11 +1530,21 @@ local function planttable(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+    inst.entity:AddNetwork()
+
+    MakeObstaclePhysics(inst, .5)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("planttable")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst.displaynamefn = get_name
 	inst:AddComponent("container")
 	inst.components.container:SetNumSlots(#slotpos)
@@ -1439,6 +1593,10 @@ local function huosaifadian(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("huosaifadian")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
@@ -1496,6 +1654,10 @@ local function wakuang(inst, doer)
     inst.AnimState:SetBuild("wakuangji")
 	inst.AnimState:PlayAnimation("idle",true)
 	local function turnon(inst, doer)
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 		inst.components.machine.ison = true
 		inst.AnimState:PlayAnimation("workpre")
 		inst.AnimState:PushAnimation("worded",true)
@@ -1605,6 +1767,10 @@ local function gaoyazhongjiqi(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("zhongjiqi_off")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
@@ -1646,6 +1812,10 @@ local function buling_bileizhen(inst, doer)
 	local inst=commonfn(inst)
 	MakeObstaclePhysics(inst, 1)
 	inst.Transform:SetScale(2, 2, 2)
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.task = task(inst)
 	inst:AddTag("lightningrod")
 	inst.lightningpriority = 0
@@ -1725,6 +1895,7 @@ local function ronglufn2()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
 	local shadow = inst.entity:AddDynamicShadow()
 	shadow:SetSize(2,0.75)
 	inst.Transform:SetScale(.4, .4, .4)
@@ -1732,6 +1903,14 @@ local function ronglufn2()
 	inst.AnimState:SetBuild("buling_ronglu")
 	inst.AnimState:SetBank("buling_ronglu")
 	inst.AnimState:PlayAnimation("idle")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst:AddComponent("inspectable")
 	inst:AddComponent("beerpower")
 	inst.components.beerpower:SetNumber(2000)
@@ -1829,6 +2008,10 @@ local function buling_icechest(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("zhongjiqi_off")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
@@ -1894,6 +2077,10 @@ local function buling_bugchest(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("zhongjiqi_off")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
@@ -1979,6 +2166,10 @@ local function buling_stonechest(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("zhongjiqi_off")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
@@ -2067,6 +2258,10 @@ local function buling_yanjiutai(inst, doer)
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("tongxuntai")
 	inst.beeritem = "buling_yanjiutai_item"
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst:AddComponent("container")
     inst.components.container:SetNumSlots(9)
     inst.components.container.widgetslotpos = slotpos
@@ -2085,6 +2280,10 @@ local function buling_yanjiutai_old(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("tongxuntai")
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.beerpower:SetNumber(300)
 	inst.beeritem = "buling_yanjiutai_item"
 	inst:AddComponent("container")
@@ -2123,12 +2322,22 @@ local function tongxuntai(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+    inst.entity:AddNetwork()
+
+    MakeObstaclePhysics(inst, .5)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("leida")
 	inst.Transform:SetScale(2,2,2)
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst.beeritem = "buling_tongxuntai_item"
 	inst:AddComponent("buling_system")
 	return inst
@@ -2164,11 +2373,21 @@ local function buling_fensui(inst, doer)
     inst.entity:AddTransform()
 	inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
-    MakeInventoryPhysics(inst)
-    inst:AddComponent("inspectable")
+    inst.entity:AddNetwork()
+
+    MakeObstaclePhysics(inst, .5)
 	inst.AnimState:SetBank("buling_zaxiang")
     inst.AnimState:SetBuild("buling_zaxiang")
 	inst.AnimState:PlayAnimation("lingjian_off")
+	inst:AddTag("structure")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+    inst:AddComponent("inspectable")
 	inst:AddComponent("beerpower")
 	inst.components.beerpower:SetNumber(500)
 	inst.displaynamefn = get_name

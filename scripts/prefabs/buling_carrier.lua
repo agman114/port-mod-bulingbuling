@@ -192,15 +192,28 @@ local function fn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local sound = inst.entity:AddSoundEmitter()
+	local anim = inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
 	inst.entity:AddDynamicShadow()
 	inst.entity:AddPhysics()
-	inst.entity:AddAnimState():SetBloomEffectHandle("shaders/anim.ksh")
+	anim:SetBloomEffectHandle("shaders/anim.ksh")
 	inst.Transform:SetSixFaced(inst)
 	ChangeToFlyingCharacterPhysics(inst, 1, .5)
 	inst.DynamicShadow:SetSize(.8, .5)
-	inst.entity:AddAnimState():SetBank("buling_glomling")
-	inst.entity:AddAnimState():SetBuild("buling_glomling")
-	inst.entity:AddAnimState():PlayAnimation("idle_loop", true)
+	anim:SetBank("buling_glomling")
+	anim:SetBuild("buling_glomling")
+	anim:PlayAnimation("idle_loop", true)
+	inst.Transform:SetScale(3, 3, 3)
+	inst:AddTag("buling_carrier")
+	inst:AddTag("boat")
+	inst:AddTag("flying")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst:SetStateGraph("SGbuling_glomling")
 
 	inst:AddComponent("locomotor")
@@ -382,15 +395,24 @@ carfn_onclose = OnClose
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local sound = inst.entity:AddSoundEmitter()
+	local anim = inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
 	inst.entity:AddDynamicShadow()
     inst.entity:AddPhysics()
-    --inst.entity:AddAnimState():SetBloomEffectHandle( "shaders/anim.ksh" )
     inst.Transform:SetFourFaced(inst)
     MakeCharacterPhysics(inst, 1, .5)
     inst.DynamicShadow:SetSize( .8, .5 )
-    inst.entity:AddAnimState():SetBank("buling_car")
-    inst.entity:AddAnimState():SetBuild("buling_car")
-    inst.entity:AddAnimState():PlayAnimation("idle", true)
+    anim:SetBank("buling_car")
+    anim:SetBuild("buling_car")
+    anim:PlayAnimation("idle", true)
+	inst:AddTag("buling_carrier")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
     inst:AddComponent("locomotor")
     inst.components.locomotor:SetSlowMultiplier( 0.6 )
     inst.components.locomotor.walkspeed = 10
@@ -510,6 +532,7 @@ local function gdfn()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
 	inst.hp_level = 0
 	inst.atk_level = 0
 	inst.entity:AddDynamicShadow()
@@ -519,6 +542,16 @@ local function gdfn()
 	inst.DynamicShadow:SetSize(3, 3)
 	anim:SetBuild("buling_rocky")
 	anim:PlayAnimation("idle_loop", true)
+	inst.Transform:SetScale(3, 3, 3)
+	inst:AddTag("buling_carrier")
+	inst:AddTag("atk")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst:AddComponent("lootdropper")
 	inst:AddComponent("locomotor")
     inst.components.locomotor:SetSlowMultiplier( 0.6 )
@@ -580,16 +613,25 @@ local function dcfn()
 	local trans = inst.entity:AddTransform()
 	local anim = inst.entity:AddAnimState()
 	local sound = inst.entity:AddSoundEmitter()
+	inst.entity:AddNetwork()
 	inst.entity:AddDynamicShadow()
 	inst.Transform:SetFourFaced(inst)
 	MakeCharacterPhysics(inst, 1, .5)
 	inst.DynamicShadow:SetSize(3, 3 )
 	anim:SetBank("deerclops")
 	anim:SetBuild("deerclops_build")
-	inst.AnimState:OverrideSymbol("deerclops_body", "buling_deerclops", "deerclops_body")
-	inst.AnimState:OverrideSymbol("beefalo_furpatch", "nil", "deerclops_body")
-	inst.AnimState:OverrideSymbol("deerclops_head", "nil", "deerclops_body")
-	--anim:PlayAnimation("idle_loop", true)
+	anim:OverrideSymbol("deerclops_body", "buling_deerclops", "deerclops_body")
+	anim:OverrideSymbol("beefalo_furpatch", "nil", "deerclops_body")
+	anim:OverrideSymbol("deerclops_head", "nil", "deerclops_body")
+	inst.Transform:SetScale(1.7, 1.7, 1.7)
+	inst:AddTag("buling_carrier")
+
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
 	inst:AddComponent("lootdropper")
 	inst:AddComponent("locomotor")
     inst.components.locomotor:SetSlowMultiplier( 0.6 )
@@ -757,9 +799,10 @@ local function planefn()
 	local inst = CreateEntity()
 	local trans = inst.entity:AddTransform()
 	local sound = inst.entity:AddSoundEmitter()
+	local anim = inst.entity:AddAnimState()
+	inst.entity:AddNetwork()
 	inst.entity:AddDynamicShadow()
 	inst.entity:AddPhysics()
-	local anim = inst.entity:AddAnimState()
 	anim:SetBloomEffectHandle("shaders/anim.ksh")
 	inst.Transform:SetFourFaced()
 	ChangeToFlyingCharacterPhysics(inst, 1, .5)
@@ -768,8 +811,17 @@ local function planefn()
 	anim:SetBank("buling_plane")
 	anim:SetBuild("buling_plane")
 	anim:PlayAnimation("idle", true)
-	inst:SetStateGraph("SGbuling_car")
+	inst.Transform:SetScale(3.2, 3.2, 3.2)
+	inst:AddTag("buling_carrier")
+	inst:AddTag("flying")
 
+	inst.entity:SetPristine()
+
+	if not TheWorld.ismastersim then
+		return inst
+	end
+
+	inst:SetStateGraph("SGbuling_car")
 	inst:AddComponent("locomotor")
 	inst.components.locomotor:SetSlowMultiplier(0.6)
 	inst.components.locomotor.walkspeed = 14
