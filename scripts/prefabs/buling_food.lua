@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local function SendBulingRPC(rpc_name, ...)
 	local rpc = (TheSim and TheSim.GetModRPC and TheSim:GetModRPC("bulingbuling", rpc_name))
 		or (GLOBAL and GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name))
@@ -174,31 +175,31 @@ local function cooktable(inst, doer)
 			end
 			peifang = peifang..item..","
 		end
-		for k,v in pairs(cookhechengbiao) do
-			if v[1] == peifang then
-				--[[local item = inst.components.container:GetItemInSlot(8)
-				if item and item:HasTag("buling_cook_tool") then
-					item = inst.components.container:GetItemInSlot(8).prefab
+		local matched_recipe = nil
+		for recipe_name, recipe_data in pairs(cookhechengbiao) do
+			if recipe_data[1] == peifang then
+				matched_recipe = recipe_name
+				break
+			end
+		end
+		if matched_recipe then
+			local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
+			local _crafted = SpawnPrefab(matched_recipe)
+			if _crafted then
+				local player_doer = (doer and doer.components and doer.components.inventory and doer) or (opener and opener.components and opener.components.inventory and opener)
+				if player_doer then
+					player_doer.components.inventory:GiveItem(_crafted, nil, inst:GetPosition())
 				else
-					item = nil
-				end]]
-				local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
-				local _crafted = SpawnPrefab(k)
-				if _crafted then
-					if opener and opener.components and opener.components.inventory then
-						opener.components.inventory:GiveItem(_crafted, nil, inst:GetPosition())
-					else
-						_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
-					end
+					_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
 				end
-				for k=1,9 do
-					local item = inst.components.container:GetItemInSlot(k)
-					if item ~= nil then
-						if item.components.stackable and item.components.stackable.stacksize > 1  then
-							item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
-						elseif  not item:HasTag("buling_cook_tool") then
-							item:Remove()
-						end
+			end
+			for slot_i=1,9 do
+				local item = inst.components.container:GetItemInSlot(slot_i)
+				if item ~= nil then
+					if item.components.stackable and item.components.stackable.stacksize > 1  then
+						item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
+					elseif not item:HasTag("buling_cook_tool") then
+						item:Remove()
 					end
 				end
 			end
@@ -247,23 +248,22 @@ local function cooktable(inst, doer)
 	inst.beeritem = "buling_cooktable_item"
 	return inst
 end
----通用
-local function commonfn()
+---通用食物基础实体
+local function food_setup(anim, imagename, atlasname)
     local inst = CreateEntity()
     inst.entity:AddTransform()
-	inst.entity:AddSoundEmitter()
+    inst.entity:AddSoundEmitter()
     inst.entity:AddAnimState()
     inst.entity:AddNetwork()
 
     MakeInventoryPhysics(inst)
 
-	inst.AnimState:SetBank("buling_food")
+    inst.AnimState:SetBank("buling_food")
     inst.AnimState:SetBuild("buling_food")
+    if anim then
+        inst.AnimState:PlayAnimation(anim)
+    end
 
-    return inst
-end
-
-local function food_finish(inst)
     inst.entity:SetPristine()
 
     if not TheWorld.ismastersim then
@@ -272,93 +272,84 @@ local function food_finish(inst)
 
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
-	inst:AddComponent("stackable")
-	inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
-	inst:AddComponent("edible")
-	inst.components.edible.foodtype = "VEGGIE"
-	inst:DoTaskInTime(0,function()
-		inst.components.edible.healthvalue = inst.bl_hea or 0
-		inst.components.edible.hungervalue = inst.bl_hun or 0
-		inst.components.edible.sanityvalue = inst.bl_san or 0
-	end) 
+    if imagename then
+        inst.components.inventoryitem.imagename = imagename
+    end
+    if atlasname then
+        inst.components.inventoryitem.atlasname = atlasname
+    end
+
+    inst:AddComponent("stackable")
+    inst.components.stackable.maxsize = TUNING.STACK_SIZE_SMALLITEM
+
+    inst:AddComponent("edible")
+    inst.components.edible.foodtype = FOODTYPE.VEGGIE
+    inst:DoTaskInTime(0, function()
+        if inst.components.edible then
+            inst.components.edible.healthvalue = inst.bl_hea or 0
+            inst.components.edible.hungervalue = inst.bl_hun or 0
+            inst.components.edible.sanityvalue = inst.bl_san or 0
+        end
+    end)
+
     return inst
 end
---食材
-local function buling_food_mianfen(inst, doer)--面粉
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_flour"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_flour.xml"
-	inst.AnimState:PlayAnimation("flour")
-	inst.entity:SetPristine()
+
+local function commonfn(anim, imagename, atlasname)
+    return food_setup(anim, imagename, atlasname)
+end
+
+local function buling_food_mianfen(inst, doer)
+	local inst = food_setup("flour", "buling_flour", "images/inventoryimages/buling_flour.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_ady = 40
-    return inst
+	return inst
 end
-local function buling_bread(inst, doer)--面包
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_bread"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bread.xml"
-	inst.AnimState:PlayAnimation("buling_bread")
-	inst.entity:SetPristine()
+local function buling_bread(inst, doer)
+	local inst = food_setup("buling_bread", "buling_bread", "images/inventoryimages/buling_bread.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 0
 	inst.bl_hun = 10
 	inst.bl_san = 0
-    return inst
+	return inst
 end
-local function buling_cream(inst, doer)--奶油
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_cream"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_cream.xml"
-	inst.AnimState:PlayAnimation("buling_cream")
-	inst.entity:SetPristine()
+local function buling_cream(inst, doer)
+	local inst = food_setup("buling_cream", "buling_cream", "images/inventoryimages/buling_cream.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 0
 	inst.bl_hun = 0
 	inst.bl_san = 10
-    return inst
+	return inst
 end
-local function buling_xifan(inst, doer)--稀饭
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_xifan"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_xifan.xml"
-	inst.AnimState:PlayAnimation("buling_xifan")
-	inst.entity:SetPristine()
+local function buling_xifan(inst, doer)
+	local inst = food_setup("buling_xifan", "buling_xifan", "images/inventoryimages/buling_xifan.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 0
 	inst.bl_hun = 10
 	inst.bl_san = 0
-    return inst
+	return inst
 end
-local function buling_shucaisui(inst, doer)--蔬菜碎
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_shucaizahui"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_shucaizahui.xml"
-	inst.AnimState:PlayAnimation("buling_shucaizahui")
-	inst.entity:SetPristine()
+local function buling_shucaisui(inst, doer)
+	local inst = food_setup("buling_shucaizahui", "buling_shucaizahui", "images/inventoryimages/buling_shucaizahui.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 0
 	inst.bl_hun = 5
 	inst.bl_san = 0
-    return inst
-end
 --料理
-local function buling_food_aoliao(inst, doer)--奥利奥
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_aoliao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_aoliao.xml"
-	inst.AnimState:PlayAnimation("aoliao")
-	inst.entity:SetPristine()
+	return inst
+end
+local function buling_food_aoliao(inst, doer)
+	local inst = food_setup("aoliao", "buling_aoliao", "images/inventoryimages/buling_aoliao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -369,16 +360,11 @@ local function buling_food_aoliao(inst, doer)--奥利奥
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.locomotor then
 			eater.components.locomotor:AddSpeedModifier_Additive("CAFFEINE",5, total_day_time/2)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_food_baojiangdangao(inst, doer)--爆浆蛋糕
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_baojiangdangao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_baojiangdangao.xml"
-	inst.AnimState:PlayAnimation("buling_baojiangdangao")
-	inst.entity:SetPristine()
+local function buling_food_baojiangdangao(inst, doer)
+	local inst = food_setup("buling_baojiangdangao", "buling_baojiangdangao", "images/inventoryimages/buling_baojiangdangao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -388,76 +374,53 @@ local function buling_food_baojiangdangao(inst, doer)--爆浆蛋糕
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_kaiwei', 250)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_bingkaxianbing(inst, doer)--宾卡馅饼
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_bingkaxianbing"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bingkaxianbing.xml"
-	inst.AnimState:PlayAnimation("buling_bingkaxianbing")
-	inst.entity:SetPristine()
+local function buling_bingkaxianbing(inst, doer)
+	local inst = food_setup("buling_bingkaxianbing", "buling_bingkaxianbing", "images/inventoryimages/buling_bingkaxianbing.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_tishen', 100)
-		end
 	end)
 	inst.bl_hea = 40
 	inst.bl_hun = 20
 	inst.bl_san = 15
-
-    return inst
+	return inst
 end
-local function buling_sanmingzhi(inst, doer)--三明治
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_sanmingzhi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_sanmingzhi.xml"
-	inst.AnimState:PlayAnimation("buling_sanmingzhi")
-	inst.entity:SetPristine()
+local function buling_sanmingzhi(inst, doer)
+	local inst = food_setup("buling_sanmingzhi", "buling_sanmingzhi", "images/inventoryimages/buling_sanmingzhi.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaotishen', 30)
-		end
 	end)
 	inst.bl_hea = 0
 	inst.bl_hun = 30
 	inst.bl_san = 0
-
-    return inst
+	return inst
 end
-local function buling_kaolengmian(inst, doer)--烤冷面
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_kaolengmian"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_kaolengmian.xml"
-	inst.AnimState:PlayAnimation("buling_kaolengmian")
-	inst.entity:SetPristine()
+local function buling_kaolengmian(inst, doer)
+	local inst = food_setup("buling_kaolengmian", "buling_kaolengmian", "images/inventoryimages/buling_kaolengmian.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_kaiwei', 60)
-		end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 30
 	inst.bl_san = 5
-
-    return inst
+	return inst
 end
-local function buling_hongguzhou(inst, doer)--红菇煲
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_hongguzhou"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_hongguzhou.xml"
-	inst.AnimState:PlayAnimation("buling_hongguzhou")
-	inst.entity:SetPristine()
+local function buling_hongguzhou(inst, doer)
+	local inst = food_setup("buling_hongguzhou", "buling_hongguzhou", "images/inventoryimages/buling_hongguzhou.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -467,132 +430,92 @@ local function buling_hongguzhou(inst, doer)--红菇煲
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.poisonable:Cure(eater)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_jianbingguozi(inst, doer)--煎饼果子
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_jianbingguozi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_jianbingguozi.xml"
-	inst.AnimState:PlayAnimation("buling_jianbingguozi")
-	inst.entity:SetPristine()
+local function buling_jianbingguozi(inst, doer)
+	local inst = food_setup("buling_jianbingguozi", "buling_jianbingguozi", "images/inventoryimages/buling_jianbingguozi.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 90)
-		end
 	end)
 	inst.bl_hea = 50
 	inst.bl_hun = 10
 	inst.bl_san = 20
-
-    return inst
+	return inst
 end
-local function buling_jiangguomusi(inst, doer)--浆果慕斯
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_jiangguomusi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_jiangguomusi.xml"
-	inst.AnimState:PlayAnimation("buling_jiangguomusi")
-	inst.entity:SetPristine()
+local function buling_jiangguomusi(inst, doer)
+	local inst = food_setup("buling_jiangguomusi", "buling_jiangguomusi", "images/inventoryimages/buling_jiangguomusi.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 60)
-		end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 20
 	inst.bl_san = 15
-
-    return inst
+	return inst
 end
-local function buling_languzhou(inst, doer)--蓝菇煲
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_languzhou"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_languzhou.xml"
-	inst.AnimState:PlayAnimation("buling_languzhou")
-	inst.entity:SetPristine()
+local function buling_languzhou(inst, doer)
+	local inst = food_setup("buling_languzhou", "buling_languzhou", "images/inventoryimages/buling_languzhou.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 90)
-		end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 15
 	inst.bl_san = 5
-
-    return inst
+	return inst
 end
-local function buling_luobubao(inst, doer)--萝卜煲
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_luobubao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_luobubao.xml"
-	inst.AnimState:PlayAnimation("buling_luobubao")
-	inst.entity:SetPristine()
+local function buling_luobubao(inst, doer)
+	local inst = food_setup("buling_luobubao", "buling_luobubao", "images/inventoryimages/buling_luobubao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 120)
-		end
 	end)
 	inst.Transform:SetScale(2, 2,2)
 	inst.bl_hea = 5
 	inst.bl_hun = 40
 	inst.bl_san = 5
-
-    return inst
+	return inst
 end
-local function buling_lvguzhou(inst, doer)--绿菇煲
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_lvguzhou"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_lvguzhou.xml"
-	inst.AnimState:PlayAnimation("buling_lvguzhou")
-	inst.entity:SetPristine()
+local function buling_lvguzhou(inst, doer)
+	local inst = food_setup("buling_lvguzhou", "buling_lvguzhou", "images/inventoryimages/buling_lvguzhou.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 90)
-		end
 	end)
 	inst.bl_hea = 1
 	inst.bl_hun = 15
 	inst.bl_san = 20
-
-    return inst
+	return inst
 end
-local function buling_mapodoufu(inst, doer)--麻婆豆腐
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_mapodoufu"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_mapodoufu.xml"
-	inst.AnimState:PlayAnimation("buling_mapodoufu")
-	inst.entity:SetPristine()
+local function buling_mapodoufu(inst, doer)
+	local inst = food_setup("buling_mapodoufu", "buling_mapodoufu", "images/inventoryimages/buling_mapodoufu.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 50
 	inst.bl_hun = 10
 	inst.bl_san = 20
-
-    return inst
+	return inst
 end
-local function buling_sangubao(inst, doer)--三菇煲
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_sangubao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_sangubao.xml"
-	inst.AnimState:PlayAnimation("buling_sangubao")
-	inst.entity:SetPristine()
+local function buling_sangubao(inst, doer)
+	local inst = food_setup("buling_sangubao", "buling_sangubao", "images/inventoryimages/buling_sangubao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -602,150 +525,105 @@ local function buling_sangubao(inst, doer)--三菇煲
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 120)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_qiancengbing(inst, doer)--千层饼
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_qiancengbing"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_qiancengbing.xml"
-	inst.AnimState:PlayAnimation("buling_qiancengbing")
-	inst.entity:SetPristine()
+local function buling_qiancengbing(inst, doer)
+	local inst = food_setup("buling_qiancengbing", "buling_qiancengbing", "images/inventoryimages/buling_qiancengbing.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaobaofu', 30)
-		end
 	end)
 	inst.bl_hea = 50
 	inst.bl_hun = 20
 	inst.bl_san = 20
-
-    return inst
+	return inst
 end
-local function buling_xiangcaobuding(inst, doer)--香草布丁
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_xiangcaobuding"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_xiangcaobuding.xml"
-	inst.AnimState:PlayAnimation("buling_xiangcaobuding")
-	inst.entity:SetPristine()
+local function buling_xiangcaobuding(inst, doer)
+	local inst = food_setup("buling_xiangcaobuding", "buling_xiangcaobuding", "images/inventoryimages/buling_xiangcaobuding.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaomeiwei', 30)
-		end
 	end)
 	inst.bl_hea = 50
 	inst.bl_hun = 10
 	inst.bl_san = 20
-
-    return inst
+	return inst
 end
-local function buling_tianmishala(inst, doer)--甜蜜沙拉
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_tianmishala"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_tianmishala.xml"
-	inst.AnimState:PlayAnimation("buling_tianmishala")
-	inst.entity:SetPristine()
+local function buling_tianmishala(inst, doer)
+	local inst = food_setup("buling_tianmishala", "buling_tianmishala", "images/inventoryimages/buling_tianmishala.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huaxiang', 60)
-		end
 	end)
 	inst.bl_hea = 15
 	inst.bl_hun = 10
 	inst.bl_san = 20
-
-    return inst
+	return inst
 end
-local function buling_xiangjiaoxianbing(inst, doer)--香蕉煎饼
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_xiangjiaoxianbing"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_xiangjiaoxianbing.xml"
-	inst.AnimState:PlayAnimation("buling_xiangjiaoxianbing")
-	inst.entity:SetPristine()
+local function buling_xiangjiaoxianbing(inst, doer)
+	local inst = food_setup("buling_xiangjiaoxianbing", "buling_xiangjiaoxianbing", "images/inventoryimages/buling_xiangjiaoxianbing.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_xiangjiaowei', 60)
-		end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 24
 	inst.bl_san = 5
-
-    return inst
+	return inst
 end
-local function buling_xiguazhi(inst, doer)--西瓜汁
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_xiguazhi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_xiguazhi.xml"
-	inst.AnimState:PlayAnimation("buling_xiguazhi")
-	inst.entity:SetPristine()
+local function buling_xiguazhi(inst, doer)
+	local inst = food_setup("buling_xiguazhi", "buling_xiguazhi", "images/inventoryimages/buling_xiguazhi.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 30)
-		end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 18
 	inst.bl_san = 5
-
-    return inst
+	return inst
 end
-local function buling_suroudacan(inst, doer)--素肉大餐
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_suroudacan"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_suroudacan.xml"
-	inst.AnimState:PlayAnimation("buling_suroudacan")
-	inst.entity:SetPristine()
+local function buling_suroudacan(inst, doer)
+	local inst = food_setup("buling_suroudacan", "buling_suroudacan", "images/inventoryimages/buling_suroudacan.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 60)
-		end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 50
 	inst.bl_san = 15
-
-    return inst
+	return inst
 end
-local function buling_kaodigua(inst, doer)--炸地瓜
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_kaodigua"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_kaodigua.xml"
-	inst.AnimState:PlayAnimation("buling_kaodigua")
-	inst.entity:SetPristine()
+local function buling_kaodigua(inst, doer)
+	local inst = food_setup("buling_kaodigua", "buling_kaodigua", "images/inventoryimages/buling_kaodigua.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 0
 	inst.bl_hun = 30
 	inst.bl_san = 5
-    return inst
+	return inst
 end
-local function buling_fangxingjiaotang(inst, doer)--方形焦糖
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_fangxingjiaotang"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fangxingjiaotang.xml"
-	inst.AnimState:PlayAnimation("buling_fangxiangjiaotang")
-	inst.entity:SetPristine()
+local function buling_fangxingjiaotang(inst, doer)
+	local inst = food_setup("buling_fangxiangjiaotang", "buling_fangxingjiaotang", "images/inventoryimages/buling_fangxingjiaotang.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -756,70 +634,51 @@ local function buling_fangxingjiaotang(inst, doer)--方形焦糖
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 240)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_fanshujianbing(inst, doer)--番薯煎饼
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_fanshujianbing"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fanshujianbing.xml"
-	inst.AnimState:PlayAnimation("buling_fanshujianbing")
-	inst.entity:SetPristine()
+local function buling_fanshujianbing(inst, doer)
+	local inst = food_setup("buling_fanshujianbing", "buling_fanshujianbing", "images/inventoryimages/buling_fanshujianbing.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 30)
-		end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 30
 	inst.bl_san = 5
-    return inst
+	return inst
 end
-local function buling_fanshuni(inst, doer)--番薯泥
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_fanshuni"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fanshuni.xml"
-	inst.AnimState:PlayAnimation("buling_fanshuni")
-	inst.entity:SetPristine()
+local function buling_fanshuni(inst, doer)
+	local inst = food_setup("buling_fanshuni", "buling_fanshuni", "images/inventoryimages/buling_fanshuni.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 5
 	inst.bl_hun = 30
 	inst.bl_san = 0
-    return inst
-end
 --
-local function buling_fanshuzhou(inst, doer)--番薯粥
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_fanshuzhou"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fanshuzhou.xml"
-	inst.AnimState:PlayAnimation("buling_fanshuzhou")
-	inst.entity:SetPristine()
+	return inst
+end
+local function buling_fanshuzhou(inst, doer)
+	local inst = food_setup("buling_fanshuzhou", "buling_fanshuzhou", "images/inventoryimages/buling_fanshuzhou.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_kaiwei', 45)
-		end
 	end)
 	inst.bl_hun = 25
 	inst.bl_hea = 5
 	inst.bl_san = 5
 	inst.bl_ady = 10
-    return inst
+	return inst
 end
-local function buling_fengmibuding(inst, doer)--蜂蜜布丁
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_fengmibuding"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fengmibuding.xml"
-	inst.AnimState:PlayAnimation("buling_fengmibuding")
-	inst.entity:SetPristine()
+local function buling_fengmibuding(inst, doer)
+	local inst = food_setup("buling_fengmibuding", "buling_fengmibuding", "images/inventoryimages/buling_fengmibuding.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -830,16 +689,11 @@ local function buling_fengmibuding(inst, doer)--蜂蜜布丁
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_guwuxiang', 180)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_fengmimianbao(inst, doer)--蜂蜜面包
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_fengmimianbao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fengmimianbao.xml"
-	inst.AnimState:PlayAnimation("buling_fengmimianbao")
-	inst.entity:SetPristine()
+local function buling_fengmimianbao(inst, doer)
+	local inst = food_setup("buling_fengmimianbao", "buling_fengmimianbao", "images/inventoryimages/buling_fengmimianbao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -850,16 +704,11 @@ local function buling_fengmimianbao(inst, doer)--蜂蜜面包
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huaxiang', 60)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_guodongjuan(inst, doer)--果冻卷
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_guodongjuan"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_guodongjuan.xml"
-	inst.AnimState:PlayAnimation("buling_guodongjuan")
-	inst.entity:SetPristine()
+local function buling_guodongjuan(inst, doer)
+	local inst = food_setup("buling_guodongjuan", "buling_guodongjuan", "images/inventoryimages/buling_guodongjuan.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -870,16 +719,11 @@ local function buling_guodongjuan(inst, doer)--果冻卷
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yangsheng', 60)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_guojiangtongxinfen(inst, doer)--果酱通心粉
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_guojiangtongxinfen"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_guojiangtongxinfen.xml"
-	inst.AnimState:PlayAnimation("buling_guojiangtongxinfen")
-	inst.entity:SetPristine()
+local function buling_guojiangtongxinfen(inst, doer)
+	local inst = food_setup("buling_guojiangtongxinfen", "buling_guojiangtongxinfen", "images/inventoryimages/buling_guojiangtongxinfen.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -890,30 +734,21 @@ local function buling_guojiangtongxinfen(inst, doer)--果酱通心粉
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 180)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_honggumianbao(inst, doer)--红菇面包
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_honggumianbao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_honggumianbao.xml"
-	inst.AnimState:PlayAnimation("buling_honggumianbao")
-	inst.entity:SetPristine()
+local function buling_honggumianbao(inst, doer)
+	local inst = food_setup("buling_honggumianbao", "buling_honggumianbao", "images/inventoryimages/buling_honggumianbao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 10
 	inst.bl_hun = 20
 	inst.bl_san = 12.5
-    return inst
+	return inst
 end
-local function buling_huluobotang(inst, doer)--胡萝卜汤
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_huluobotang"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_huluobotang.xml"
-	inst.AnimState:PlayAnimation("buling_huluobotang")
-	inst.entity:SetPristine()
+local function buling_huluobotang(inst, doer)
+	local inst = food_setup("buling_huluobotang", "buling_huluobotang", "images/inventoryimages/buling_huluobotang.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -924,16 +759,11 @@ local function buling_huluobotang(inst, doer)--胡萝卜汤
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 180)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_jiangguodangao(inst, doer)--浆果蛋糕
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_jiangguodangao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_jiangguodangao.xml"
-	inst.AnimState:PlayAnimation("buling_jiangguodangao")
-	inst.entity:SetPristine()
+local function buling_jiangguodangao(inst, doer)
+	local inst = food_setup("buling_jiangguodangao", "buling_jiangguodangao", "images/inventoryimages/buling_jiangguodangao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -944,16 +774,11 @@ local function buling_jiangguodangao(inst, doer)--浆果蛋糕
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_tishen', 120)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_jiangguosanmingzhi(inst, doer)--浆果三明治
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_jiangguosanmingzhi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_jiangguosanmingzhi.xml"
-	inst.AnimState:PlayAnimation("buling_jiangguosanmingzhi")
-	inst.entity:SetPristine()
+local function buling_jiangguosanmingzhi(inst, doer)
+	local inst = food_setup("buling_jiangguosanmingzhi", "buling_jiangguosanmingzhi", "images/inventoryimages/buling_jiangguosanmingzhi.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -964,16 +789,11 @@ local function buling_jiangguosanmingzhi(inst, doer)--浆果三明治
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 120)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_kafeitang(inst, doer)--咖啡糖
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_kafeitang"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_kafeitang.xml"
-	inst.AnimState:PlayAnimation("buling_kafeitang")
-	inst.entity:SetPristine()
+local function buling_kafeitang(inst, doer)
+	local inst = food_setup("buling_kafeitang", "buling_kafeitang", "images/inventoryimages/buling_kafeitang.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -984,16 +804,11 @@ local function buling_kafeitang(inst, doer)--咖啡糖
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.locomotor then
 			eater.components.locomotor:AddSpeedModifier_Additive("CAFFEINE",5, total_day_time)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_luobodangao(inst, doer)--萝卜蛋糕
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_luobodangao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_luobodangao.xml"
-	inst.AnimState:PlayAnimation("buling_luobodangao")
-	inst.entity:SetPristine()
+local function buling_luobodangao(inst, doer)
+	local inst = food_setup("buling_luobodangao", "buling_luobodangao", "images/inventoryimages/buling_luobodangao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1003,16 +818,11 @@ local function buling_luobodangao(inst, doer)--萝卜蛋糕
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huluobosu', 120)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_luobogao(inst, doer)--萝卜糕
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_luobogao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_luobogao.xml"
-	inst.AnimState:PlayAnimation("buling_luobogao")
-	inst.entity:SetPristine()
+local function buling_luobogao(inst, doer)
+	local inst = food_setup("buling_luobogao", "buling_luobogao", "images/inventoryimages/buling_luobogao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1023,16 +833,11 @@ local function buling_luobogao(inst, doer)--萝卜糕
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 120)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_mianbaopian(inst, doer)--面包片
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_mianbaopian"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_mianbaopian.xml"
-	inst.AnimState:PlayAnimation("buling_mianbaopian")
-	inst.entity:SetPristine()
+local function buling_mianbaopian(inst, doer)
+	local inst = food_setup("buling_mianbaopian", "buling_mianbaopian", "images/inventoryimages/buling_mianbaopian.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1043,16 +848,11 @@ local function buling_mianbaopian(inst, doer)--面包片
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 60)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_moguhanbao(inst, doer)--蘑菇汉堡
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_moguhanbao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_moguhanbao.xml"
-	inst.AnimState:PlayAnimation("buling_moguhanbao")
-	inst.entity:SetPristine()
+local function buling_moguhanbao(inst, doer)
+	local inst = food_setup("buling_moguhanbao", "buling_moguhanbao", "images/inventoryimages/buling_moguhanbao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1063,16 +863,11 @@ local function buling_moguhanbao(inst, doer)--蘑菇汉堡
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 150)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_mogutang(inst, doer)--蘑菇汤
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_mogutang"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_mogutang.xml"
-	inst.AnimState:PlayAnimation("buling_mogutang")
-	inst.entity:SetPristine()
+local function buling_mogutang(inst, doer)
+	local inst = food_setup("buling_mogutang", "buling_mogutang", "images/inventoryimages/buling_mogutang.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1083,35 +878,25 @@ local function buling_mogutang(inst, doer)--蘑菇汤
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 240)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_nailaotongxinfen(inst, doer)--奶酪通心粉
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_nailaotongxinfen"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_nailaotongxinfen.xml"
-	inst.AnimState:PlayAnimation("buling_nailaotongxinfen")
-	inst.entity:SetPristine()
+local function buling_nailaotongxinfen(inst, doer)
+	local inst = food_setup("buling_nailaotongxinfen", "buling_nailaotongxinfen", "images/inventoryimages/buling_nailaotongxinfen.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yangsheng', 100)
-		end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 20
 	inst.bl_san = 12.5
-    return inst
+	return inst
 end
-local function buling_pisa(inst, doer)--披萨
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_pisa"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_pisa.xml"
-	inst.AnimState:PlayAnimation("buling_pisa")
-	inst.entity:SetPristine()
+local function buling_pisa(inst, doer)
+	local inst = food_setup("buling_pisa", "buling_pisa", "images/inventoryimages/buling_pisa.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1122,16 +907,11 @@ local function buling_pisa(inst, doer)--披萨
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huangshi', 100)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_qiaokelipai(inst, doer)--巧克力派
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_qiaokelipai"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_qiaokelipai.xml"
-	inst.AnimState:PlayAnimation("buling_qiaokelipai")
-	inst.entity:SetPristine()
+local function buling_qiaokelipai(inst, doer)
+	local inst = food_setup("buling_qiaokelipai", "buling_qiaokelipai", "images/inventoryimages/buling_qiaokelipai.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1142,16 +922,11 @@ local function buling_qiaokelipai(inst, doer)--巧克力派
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaotishen', 100)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_qiaokelixianbing(inst, doer)--巧克力馅饼
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_qiaokelixianbing"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_qiaokelixianbing.xml"
-	inst.AnimState:PlayAnimation("buling_qiaokelixianbing")
-	inst.entity:SetPristine()
+local function buling_qiaokelixianbing(inst, doer)
+	local inst = food_setup("buling_qiaokelixianbing", "buling_qiaokelixianbing", "images/inventoryimages/buling_qiaokelixianbing.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1162,16 +937,11 @@ local function buling_qiaokelixianbing(inst, doer)--巧克力馅饼
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_guwuxiang', 240)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_qieheshutiao(inst, doer)--茄盒薯条
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_qieheshutiao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_qieheshutiao.xml"
-	inst.AnimState:PlayAnimation("buling_qieheshutiao")
-	inst.entity:SetPristine()
+local function buling_qieheshutiao(inst, doer)
+	local inst = food_setup("buling_qieheshutiao", "buling_qieheshutiao", "images/inventoryimages/buling_qieheshutiao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1182,30 +952,21 @@ local function buling_qieheshutiao(inst, doer)--茄盒薯条
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaomeiwei', 80)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_shucaizahui(inst, doer)--蔬菜杂烩
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_shucaizahui"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_shucaizahui.xml"
-	inst.AnimState:PlayAnimation("buling_shucaizahui")
-	inst.entity:SetPristine()
+local function buling_shucaizahui(inst, doer)
+	local inst = food_setup("buling_shucaizahui", "buling_shucaizahui", "images/inventoryimages/buling_shucaizahui.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = 10
 	inst.bl_hun = 20
 	inst.bl_san = 12.5
-    return inst
+	return inst
 end
-local function buling_suanrongguhe(inst, doer)--蒜蓉菇盒
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_suanrongguhe"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_suanrongguhe.xml"
-	inst.AnimState:PlayAnimation("buling_suanrongguhe")
-	inst.entity:SetPristine()
+local function buling_suanrongguhe(inst, doer)
+	local inst = food_setup("buling_suanrongguhe", "buling_suanrongguhe", "images/inventoryimages/buling_suanrongguhe.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1216,16 +977,11 @@ local function buling_suanrongguhe(inst, doer)--蒜蓉菇盒
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 90)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_suanrongmianbao(inst, doer)--蔬菜面包
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_suanrongmianbao"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_suanrongmianbao.xml"
-	inst.AnimState:PlayAnimation("buling_suanrongmianbao")
-	inst.entity:SetPristine()
+local function buling_suanrongmianbao(inst, doer)
+	local inst = food_setup("buling_suanrongmianbao", "buling_suanrongmianbao", "images/inventoryimages/buling_suanrongmianbao.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1236,16 +992,11 @@ local function buling_suanrongmianbao(inst, doer)--蔬菜面包
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 120)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_tianshuni(inst, doer)--甜薯泥
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_tianshuni"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_tianshuni.xml"
-	inst.AnimState:PlayAnimation("buling_tianshuni")
-	inst.entity:SetPristine()
+local function buling_tianshuni(inst, doer)
+	local inst = food_setup("buling_tianshuni", "buling_tianshuni", "images/inventoryimages/buling_tianshuni.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1256,16 +1007,11 @@ local function buling_tianshuni(inst, doer)--甜薯泥
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 120)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_zhaluobowanzi(inst, doer)--炸萝卜丸子
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_zhaluobowanzi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhaluobowanzi.xml"
-	inst.AnimState:PlayAnimation("buling_zhaluobowanzi")
-	inst.entity:SetPristine()
+local function buling_zhaluobowanzi(inst, doer)
+	local inst = food_setup("buling_zhaluobowanzi", "buling_zhaluobowanzi", "images/inventoryimages/buling_zhaluobowanzi.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1276,16 +1022,11 @@ local function buling_zhaluobowanzi(inst, doer)--炸萝卜丸子
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 45)
-		end
 	end)
-    return inst
+	return inst
 end
-local function buling_zhawanzi(inst, doer)--炸丸子
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_zhawanzi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhawanzi.xml"
-	inst.AnimState:PlayAnimation("buling_zhawanzi")
-	inst.entity:SetPristine()
+local function buling_zhawanzi(inst, doer)
+	local inst = food_setup("buling_zhawanzi", "buling_zhawanzi", "images/inventoryimages/buling_zhawanzi.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1293,14 +1034,10 @@ local function buling_zhawanzi(inst, doer)--炸丸子
 	inst.bl_hea = 15
 	inst.bl_san = 33
 	inst.bl_ady = 15
-    return inst
+	return inst
 end
-local function buling_shucaishala(inst, doer)--蔬菜沙拉
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "buling_shucaishala"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_shucaishala.xml"
-	inst.AnimState:PlayAnimation("buling_shucaishala")
-	inst.entity:SetPristine()
+local function buling_shucaishala(inst, doer)
+	local inst = food_setup("buling_shucaishala", "buling_shucaishala", "images/inventoryimages/buling_shucaishala.xml")
 	if not TheWorld.ismastersim then
 		return inst
 	end
@@ -1311,28 +1048,22 @@ local function buling_shucaishala(inst, doer)--蔬菜沙拉
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaotishen', 4)
-		end
 	end)
-    return inst
-end
-
 --
 AddIngredientValues({"buling_goatmilk"}, {dairy=1})
-local function buling_goatmilk(inst, doer)--羊奶
-    local inst = commonfn(inst)
-	inst.components.inventoryitem.imagename = "goatmilk"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
+	return inst
+end
+local function buling_goatmilk(inst, doer)
+	local inst = food_setup("idle", "goatmilk", "images/inventoryimages.xml")
 	inst.AnimState:SetBank("goatmilk")
-    inst.AnimState:SetBuild("goatmilk")
-    inst.AnimState:PlayAnimation("idle")
-	inst.entity:SetPristine()
+	inst.AnimState:SetBuild("goatmilk")
 	if not TheWorld.ismastersim then
 		return inst
 	end
 	inst.bl_hea = TUNING.HEALING_SMALL
 	inst.bl_hun = TUNING.CALORIES_SMALL
 	inst.bl_san = TUNING.SANITY_SMALL
-    return inst
+	return inst
 end
 return Prefab("buling_cooktable", cooktable, assets),--料理台
 Prefab("buling_flour", buling_food_mianfen, assets),--面粉

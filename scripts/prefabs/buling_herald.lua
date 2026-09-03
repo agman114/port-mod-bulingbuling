@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local assets ={}
 local function KeepTargetFn(inst, doer, target)
     return inst.components.combat:CanTarget(target)

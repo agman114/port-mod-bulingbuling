@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local function candestroy(staff, caster, target)
 	if not target then return false end
 	if caster and caster.components and caster.components.combat then

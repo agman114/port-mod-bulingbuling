@@ -1,3 +1,4 @@
+local GLOBAL = _G
 require("brains/abigailbrain")
 require "stategraphs/SGbuling_hunk"
 

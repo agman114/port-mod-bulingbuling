@@ -1,3 +1,4 @@
+local GLOBAL = _G
 require "brains/mermbrain"
 require "stategraphs/SGmerm"
 

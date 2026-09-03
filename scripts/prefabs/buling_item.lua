@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local function SendBulingRPC(rpc_name, ...)
 	local rpc = (TheSim and TheSim.GetModRPC and TheSim:GetModRPC("bulingbuling", rpc_name))
 		or (GLOBAL and GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name))

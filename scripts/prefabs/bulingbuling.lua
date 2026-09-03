@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local RECIPETABS = (rawget and rawget(_G, 'RECIPETABS')) or (GLOBAL and GLOBAL.RECIPETABS)
 local MakePlayerCharacter = require "prefabs/player_common"
 

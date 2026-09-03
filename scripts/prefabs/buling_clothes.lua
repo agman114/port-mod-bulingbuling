@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local assets=
 {
 	Asset("ATLAS", "images/inventoryimages/buling_body_buttons_black_jet.xml"),

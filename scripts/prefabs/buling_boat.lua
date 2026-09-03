@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local assets =
 {
 	Asset("ANIM", "anim/boat_buling_build.zip"),

@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local function SendBulingRPC(rpc_name, ...)
 	local rpc = (TheSim and TheSim.GetModRPC and TheSim:GetModRPC("bulingbuling", rpc_name))
 		or (GLOBAL and GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", rpc_name))
@@ -393,7 +394,7 @@ local function ronglufn()
 		end
 	end
 	local widgetbuttoninfo = {
-	text = "BBQ",
+	text = "Extract",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
 		local item = inst.components.container:GetItemInSlot(1)
@@ -1385,24 +1386,30 @@ local function buling_fengrenji(inst, doer)
 			end
 			peifang = peifang..item..","
 		end
-		for k,v in pairs(hechengbiao_clothes) do
-			if v[1] == peifang then
-				local _crafted = SpawnPrefab(k)
-				if _crafted then
-					if opener and opener.components and opener.components.inventory then
-						opener.components.inventory:GiveItem(_crafted, nil, inst:GetPosition())
-					else
-						_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
-					end
+		local matched_recipe = nil
+		for recipe_name, recipe_data in pairs(hechengbiao_clothes) do
+			if recipe_data[1] == peifang then
+				matched_recipe = recipe_name
+				break
+			end
+		end
+		if matched_recipe then
+			local _crafted = SpawnPrefab(matched_recipe)
+			if _crafted then
+				local player_doer = (doer and doer.components and doer.components.inventory and doer) or (opener and opener.components and opener.components.inventory and opener)
+				if player_doer then
+					player_doer.components.inventory:GiveItem(_crafted, nil, inst:GetPosition())
+				else
+					_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
 				end
-				for k=1,9 do
-					local item = inst.components.container:GetItemInSlot(k)
-					if item ~= nil then
-						if item.components.stackable and item.components.stackable.stacksize > 1 then
-							item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
-						else
-							item:Remove()
-						end
+			end
+			for slot_i=1,9 do
+				local item = inst.components.container:GetItemInSlot(slot_i)
+				if item ~= nil then
+					if item.components.stackable and item.components.stackable.stacksize > 1 then
+						item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
+					else
+						item:Remove()
 					end
 				end
 			end

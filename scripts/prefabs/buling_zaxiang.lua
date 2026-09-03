@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local success_deco, DecoCreator = pcall(require, "prefabs/deco_util")
 if not success_deco or not DecoCreator then
     DecoCreator = {

@@ -1,3 +1,4 @@
+local GLOBAL = _G
 local assets =
 {
 }
