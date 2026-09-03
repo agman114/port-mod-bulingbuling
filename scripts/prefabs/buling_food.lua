@@ -360,6 +360,7 @@ local function buling_food_aoliao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.locomotor then
 			eater.components.locomotor:AddSpeedModifier_Additive("CAFFEINE",5, total_day_time/2)
+			end
 	end)
 	return inst
 end
@@ -374,6 +375,7 @@ local function buling_food_baojiangdangao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_kaiwei', 250)
+			end
 	end)
 	return inst
 end
@@ -385,6 +387,7 @@ local function buling_bingkaxianbing(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_tishen', 100)
+			end
 	end)
 	inst.bl_hea = 40
 	inst.bl_hun = 20
@@ -399,6 +402,7 @@ local function buling_sanmingzhi(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaotishen', 30)
+			end
 	end)
 	inst.bl_hea = 0
 	inst.bl_hun = 30
@@ -413,6 +417,7 @@ local function buling_kaolengmian(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_kaiwei', 60)
+			end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 30
@@ -430,6 +435,7 @@ local function buling_hongguzhou(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.poisonable:Cure(eater)
+			end
 	end)
 	return inst
 end
@@ -441,6 +447,7 @@ local function buling_jianbingguozi(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 90)
+			end
 	end)
 	inst.bl_hea = 50
 	inst.bl_hun = 10
@@ -455,6 +462,7 @@ local function buling_jiangguomusi(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 60)
+			end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 20
@@ -469,6 +477,7 @@ local function buling_languzhou(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 90)
+			end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 15
@@ -483,6 +492,7 @@ local function buling_luobubao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 120)
+			end
 	end)
 	inst.Transform:SetScale(2, 2,2)
 	inst.bl_hea = 5
@@ -498,6 +508,7 @@ local function buling_lvguzhou(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 90)
+			end
 	end)
 	inst.bl_hea = 1
 	inst.bl_hun = 15
@@ -525,6 +536,7 @@ local function buling_sangubao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 120)
+			end
 	end)
 	return inst
 end
@@ -536,6 +548,7 @@ local function buling_qiancengbing(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaobaofu', 30)
+			end
 	end)
 	inst.bl_hea = 50
 	inst.bl_hun = 20
@@ -550,6 +563,7 @@ local function buling_xiangcaobuding(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaomeiwei', 30)
+			end
 	end)
 	inst.bl_hea = 50
 	inst.bl_hun = 10
@@ -564,6 +578,7 @@ local function buling_tianmishala(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huaxiang', 60)
+			end
 	end)
 	inst.bl_hea = 15
 	inst.bl_hun = 10
@@ -578,6 +593,7 @@ local function buling_xiangjiaoxianbing(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_xiangjiaowei', 60)
+			end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 24
@@ -592,6 +608,7 @@ local function buling_xiguazhi(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 30)
+			end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 18
@@ -606,6 +623,7 @@ local function buling_suroudacan(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 60)
+			end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 50
@@ -634,6 +652,7 @@ local function buling_fangxingjiaotang(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 240)
+			end
 	end)
 	return inst
 end
@@ -645,6 +664,7 @@ local function buling_fanshujianbing(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 30)
+			end
 	end)
 	inst.bl_hea = 5
 	inst.bl_hun = 30
@@ -670,6 +690,7 @@ local function buling_fanshuzhou(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_kaiwei', 45)
+			end
 	end)
 	inst.bl_hun = 25
 	inst.bl_hea = 5
@@ -689,6 +710,7 @@ local function buling_fengmibuding(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_guwuxiang', 180)
+			end
 	end)
 	return inst
 end
@@ -704,6 +726,7 @@ local function buling_fengmimianbao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huaxiang', 60)
+			end
 	end)
 	return inst
 end
@@ -719,6 +742,7 @@ local function buling_guodongjuan(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yangsheng', 60)
+			end
 	end)
 	return inst
 end
@@ -734,6 +758,7 @@ local function buling_guojiangtongxinfen(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_meiwei', 180)
+			end
 	end)
 	return inst
 end
@@ -759,6 +784,7 @@ local function buling_huluobotang(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 180)
+			end
 	end)
 	return inst
 end
@@ -774,6 +800,7 @@ local function buling_jiangguodangao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_tishen', 120)
+			end
 	end)
 	return inst
 end
@@ -789,6 +816,7 @@ local function buling_jiangguosanmingzhi(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 120)
+			end
 	end)
 	return inst
 end
@@ -804,6 +832,7 @@ local function buling_kafeitang(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.locomotor then
 			eater.components.locomotor:AddSpeedModifier_Additive("CAFFEINE",5, total_day_time)
+			end
 	end)
 	return inst
 end
@@ -818,6 +847,7 @@ local function buling_luobodangao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huluobosu', 120)
+			end
 	end)
 	return inst
 end
@@ -833,6 +863,7 @@ local function buling_luobogao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 120)
+			end
 	end)
 	return inst
 end
@@ -848,6 +879,7 @@ local function buling_mianbaopian(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_baofu', 60)
+			end
 	end)
 	return inst
 end
@@ -863,6 +895,7 @@ local function buling_moguhanbao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 150)
+			end
 	end)
 	return inst
 end
@@ -878,6 +911,7 @@ local function buling_mogutang(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 240)
+			end
 	end)
 	return inst
 end
@@ -889,6 +923,7 @@ local function buling_nailaotongxinfen(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yangsheng', 100)
+			end
 	end)
 	inst.bl_hea = 10
 	inst.bl_hun = 20
@@ -907,6 +942,7 @@ local function buling_pisa(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_huangshi', 100)
+			end
 	end)
 	return inst
 end
@@ -922,6 +958,7 @@ local function buling_qiaokelipai(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaotishen', 100)
+			end
 	end)
 	return inst
 end
@@ -937,6 +974,7 @@ local function buling_qiaokelixianbing(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_guwuxiang', 240)
+			end
 	end)
 	return inst
 end
@@ -952,6 +990,7 @@ local function buling_qieheshutiao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaomeiwei', 80)
+			end
 	end)
 	return inst
 end
@@ -977,6 +1016,7 @@ local function buling_suanrongguhe(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('fulanke', 90)
+			end
 	end)
 	return inst
 end
@@ -992,6 +1032,7 @@ local function buling_suanrongmianbao(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 120)
+			end
 	end)
 	return inst
 end
@@ -1007,6 +1048,7 @@ local function buling_tianshuni(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_jiankang', 120)
+			end
 	end)
 	return inst
 end
@@ -1022,6 +1064,7 @@ local function buling_zhaluobowanzi(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_yeshi', 45)
+			end
 	end)
 	return inst
 end
@@ -1048,6 +1091,7 @@ local function buling_shucaishala(inst, doer)
 	inst.components.edible:SetOnEatenFn(function(inst,eater)
 		if eater.components.buling_buff then
 			eater.components.buling_buff:Addbulingbuff_Additive('buling_chaotishen', 4)
+			end
 	end)
 --
 AddIngredientValues({"buling_goatmilk"}, {dairy=1})

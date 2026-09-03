@@ -21,7 +21,7 @@ local _raw_actionhandlers = {
 	(ACTIONS.GIVE and ActionHandler(ACTIONS.GIVE, "give")),
 	(ACTIONS.HAMMER and ActionHandler(ACTIONS.HAMMER, "hammer")),
     (ACTIONS.CHOP and ActionHandler(ACTIONS.CHOP, 
-        function(inst))
+        function(inst)
             if not inst.sg:HasStateTag("prechop") then 
                 if inst.sg:HasStateTag("chopping") then
                     return "chop"
@@ -29,9 +29,9 @@ local _raw_actionhandlers = {
                     return "chop_start"
                 end
             end 
-        end),
+        end)),
 	(ACTIONS.DIG and ActionHandler(ACTIONS.DIG, 
-        function(inst))
+        function(inst)
             if not inst.sg:HasStateTag("predig") then 
                 if inst.sg:HasStateTag("digging") then
                     return "dig"
@@ -39,9 +39,9 @@ local _raw_actionhandlers = {
                     return "dig_start"
                 end
             end 
-        end),
+        end)),
     (ACTIONS.MINE and ActionHandler(ACTIONS.MINE, 
-        function(inst)) 
+        function(inst) 
             if not inst.sg:HasStateTag("premine") then 
                 if inst.sg:HasStateTag("mining") then
                     return "mine"
@@ -49,9 +49,9 @@ local _raw_actionhandlers = {
                     return "mine_start"
                 end
             end 
-        end),
+        end)),
 	(ACTIONS.HACK and ActionHandler(ACTIONS.HACK, 
-        function(inst)) 
+        function(inst) 
             if not inst.sg:HasStateTag("prehack") then
                 if inst.sg:HasStateTag("hacking") then
                     return "hack"
@@ -59,9 +59,9 @@ local _raw_actionhandlers = {
                     return "hack_start"
                 end
             end
-        end),
+        end)),
 	(ACTIONS.EAT and ActionHandler(ACTIONS.EAT, 
-        function(inst, action))
+        function(inst, action)
             if inst.sg:HasStateTag("busy") then
                 return nil
             end
@@ -75,7 +75,7 @@ local _raw_actionhandlers = {
             else
                 return "eat"
             end
-        end),
+        end)),
 	 (ACTIONS.GOHOME and ActionHandler(ACTIONS.GOHOME, "action")),
 	 
 }

@@ -15,7 +15,7 @@ local CommonHandlers = rawget(_G, "CommonHandlers")
 
 local _raw_actionhandlers = {    
     (ACTIONS.CHOP and ActionHandler(ACTIONS.CHOP, 
-        function(inst))
+        function(inst)
             if not inst.sg:HasStateTag("prechop") then 
                 if inst.sg:HasStateTag("chopping") then
                     return "chop"
@@ -23,9 +23,9 @@ local _raw_actionhandlers = {
                     return "chop_start"
                 end
             end 
-        end),
+        end)),
     (ACTIONS.MINE and ActionHandler(ACTIONS.MINE, 
-        function(inst)) 
+        function(inst) 
             if not inst.sg:HasStateTag("premine") then 
                 if inst.sg:HasStateTag("mining") then
                     return "mine"
@@ -33,7 +33,7 @@ local _raw_actionhandlers = {
                     return "mine_start"
                 end
             end 
-        end),
+        end)),
 
     (ACTIONS.MOUNT and ActionHandler(ACTIONS.MOUNT, "mount")),
     (ACTIONS.DISMOUNT and ActionHandler(ACTIONS.DISMOUNT, "dismount")),
