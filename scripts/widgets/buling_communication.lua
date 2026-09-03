@@ -64,10 +64,7 @@ buling_communication = Class(Widget, function(self, owner)
 		self.textgf:nyarlathotep()
 		if num < 16 then
 			local task_msg = STRINGS['TASK'..num] or ("Задание #" .. num)
-			self.textgf.custom_text = "Связь с базой активна!
-Текущая директива: " .. task_msg .. "
-
-(Передача дальнего сигнала откроется на задании 16+)"
+			self.textgf.custom_text = "Связь с базой активна!\nТекущая директива: " .. task_msg .. "\n\n(Передача дальнего сигнала откроется на задании 16+)"
 		end
 	end)
 
@@ -85,14 +82,9 @@ buling_communication = Class(Widget, function(self, owner)
 		self.textgf = self:AddChild(buling_ui_method(self))
 		self.textgf.master = self
 		if num < 30 then
-			self.textgf.custom_text = "[Торговый корабль: Нет сигнала]
-Поиск коммерческих частот...
-В этом квадранте суда не обнаружены.
-(Требуется задание 30+)"
+			self.textgf.custom_text = "[Торговый корабль: Нет сигнала]\nПоиск коммерческих частот...\nВ этом квадранте суда не обнаружены.\n(Требуется задание 30+)"
 		else
-			self.textgf.custom_text = "[Торговый корабль]
-Орбитальный челнок на связи!
-Следите за входящими поставками."
+			self.textgf.custom_text = "[Торговый корабль]\nОрбитальный челнок на связи!\nСледите за входящими поставками."
 		end
 	end)
 
@@ -110,13 +102,9 @@ buling_communication = Class(Widget, function(self, owner)
 		self.textgf = self:AddChild(buling_ui_method(self))
 		self.textgf.master = self
 		if num < 30 then
-			self.textgf.custom_text = "[Чёрный рынок: Зашифровано]
-Частота контрабандистов заблокирована.
-(Требуется задание 30+)"
+			self.textgf.custom_text = "[Чёрный рынок: Зашифровано]\nЧастота контрабандистов заблокирована.\n(Требуется задание 30+)"
 		else
-			self.textgf.custom_text = "[Чёрный рынок]
-Зашифрованный сигнал принят.
-Контрабандисты ведут слежку за сектором."
+			self.textgf.custom_text = "[Чёрный рынок]\nЗашифрованный сигнал принят.\nКонтрабандисты ведут слежку за сектором."
 		end
 	end)
 
@@ -134,12 +122,9 @@ buling_communication = Class(Widget, function(self, owner)
 		self.textgf = self:AddChild(buling_ui_method(self))
 		self.textgf.master = self
 		if num < 30 then
-			self.textgf.custom_text = "[Колонии: Нет ответа]
-Радиомаяк колоний не отвечает на запросы.
-(Требуется задание 30+)"
+			self.textgf.custom_text = "[Колонии: Нет ответа]\nРадиомаяк колоний не отвечает на запросы.\n(Требуется задание 30+)"
 		else
-			self.textgf.custom_text = "[Колонии: Связь установлена]
-Получены телеметрические данные от исследователей."
+			self.textgf.custom_text = "[Колонии: Связь установлена]\nПолучены телеметрические данные от исследователей."
 		end
 	end)
 end)
