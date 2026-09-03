@@ -28,14 +28,8 @@ local assets ={
 	Asset("ANIM", "anim/wakuangji.zip"),
 	Asset("ANIM", "anim/ui_buling_chest_3x5.zip"),
 }
-local _buling_recipes_box_done = false
 local function buling_recipes()
-	if _buling_recipes_box_done then return end
-	_buling_recipes_box_done = true
-	local buling_book_tongxuntai = Recipe("buling_yanjiudian", {Ingredient("boards",10)}, RECIPETABS.BLTAB,{SCIENCE = 20},nil,nil,nil,nil,"bulingbuling")
-	if buling_book_tongxuntai then
-		buling_book_tongxuntai.builder_tag = "bulingbuling"
-	end
+	-- Pre-registered in modmain.lua at startup to prevent network desync
 end
 local hechengbiao = {
 --塞德锭

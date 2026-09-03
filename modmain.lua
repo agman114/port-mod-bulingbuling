@@ -495,6 +495,182 @@ if AddRecipeFilter then
     })
 end
 
+-- Character Stats Tuning (Registered at startup for perfect client/server replication)
+GLOBAL.TUNING.BULINGBULING_HEALTH = 75
+GLOBAL.TUNING.BULINGBULING_HUNGER = 100
+GLOBAL.TUNING.BULINGBULING_SANITY = 300
+
+-- Register all Buling recipes once at startup to guarantee AllRecipes matches across server and clients
+local function RegisterBulingStartupRecipes()
+    local Ingredient = GLOBAL.Ingredient
+    local RECIPETABS = GLOBAL.RECIPETABS
+    local TECH = GLOBAL.TECH
+    local Recipe = GLOBAL.Recipe
+
+    if not RECIPETABS or not RECIPETABS.BLTAB or not RECIPETABS.YJTAB then return end
+
+    local buling_manual = Recipe("buling_manual", {Ingredient("log", 4), Ingredient("boards", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, "buling_manual_placer", 2, nil, "bulingbuling")
+    if buling_manual then
+        buling_manual.atlas = "images/inventoryimages/buling_manual.xml"
+        buling_manual.image = "buling_manual.tex"
+        buling_manual.builder_tag = "bulingbuling"
+    end
+
+    local buling_weaponchest = Recipe("buling_weaponchest_item", {Ingredient("buling_zhongziding", 8, "images/inventoryimages/buling_zhongziding.xml", "buling_zhongziding.tex"), Ingredient("buling_glass", 4, "images/inventoryimages/buling_glass.xml", "buling_glass.tex"), Ingredient("buling_manual_item", 1, "images/inventoryimages/buling_manual_item.xml", "buling_manual_item.tex")}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_weaponchest then
+        buling_weaponchest.atlas = "images/inventoryimages/buling_seedchest.xml"
+        buling_weaponchest.image = "buling_seedchest.tex"
+        buling_weaponchest.builder_tag = "bulingbuling"
+    end
+
+    local buling_wakuang = Recipe("buling_wakuang_item", {Ingredient("boards", 8), Ingredient("goldenpickaxe", 1), Ingredient("gears", 4)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_wakuang then
+        buling_wakuang.atlas = "images/inventoryimages/buling_wakuang.xml"
+        buling_wakuang.image = "buling_wakuang.tex"
+        buling_wakuang.builder_tag = "bulingbuling"
+    end
+
+    local buling_cave_tool = Recipe("buling_cave_tool", {Ingredient("goldenpickaxe", 4), Ingredient("rocks", 20), Ingredient("log", 10)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_cave_tool then
+        buling_cave_tool.atlas = "images/inventoryimages/buling_cave_tool.xml"
+        buling_cave_tool.image = "buling_cave_tool.tex"
+        buling_cave_tool.builder_tag = "bulingbuling"
+    end
+
+    local buling_cooktable_item = Recipe("buling_cooktable_item", {Ingredient("boards", 4), Ingredient("rocks", 2), Ingredient("flint", 2)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_cooktable_item then
+        buling_cooktable_item.atlas = "images/inventoryimages/buling_cooktable.xml"
+        buling_cooktable_item.image = "buling_cooktable.tex"
+        buling_cooktable_item.builder_tag = "bulingbuling"
+    end
+
+    local buling_fengrenji = Recipe("buling_fengrenji_item", {Ingredient("goldnugget", 8), Ingredient("cutstone", 2), Ingredient("sewing_kit", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_fengrenji then
+        buling_fengrenji.atlas = "images/inventoryimages/buling_fengrenji.xml"
+        buling_fengrenji.image = "buling_fengrenji.tex"
+        buling_fengrenji.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_box = Recipe("buling_bee_box", {Ingredient("boards", 4), Ingredient("honeycomb", 1), Ingredient("bee", 4)}, RECIPETABS.BLTAB, TECH.NONE, "buling_bee_box_placer", 2, nil, "bulingbuling")
+    if buling_bee_box then
+        buling_bee_box.atlas = "images/inventoryimages.xml"
+        buling_bee_box.image = "beebox.tex"
+        buling_bee_box.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_mine = Recipe("buling_bee_mine", {Ingredient("bee", 1), Ingredient("flint", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_mine then
+        buling_bee_mine.atlas = "images/inventoryimages.xml"
+        buling_bee_mine.image = "bee.tex"
+        buling_bee_mine.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_queen = Recipe("buling_bee_queen", {Ingredient("bee", 1), Ingredient("honeycomb", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_queen then
+        buling_bee_queen.atlas = "images/inventoryimages.xml"
+        buling_bee_queen.image = "bee.tex"
+        buling_bee_queen.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_smith = Recipe("buling_bee_smith", {Ingredient("bee", 1), Ingredient("rocks", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_smith then
+        buling_bee_smith.atlas = "images/inventoryimages.xml"
+        buling_bee_smith.image = "bee.tex"
+        buling_bee_smith.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_pirate = Recipe("buling_bee_pirate", {Ingredient("bee", 1), Ingredient("goldnugget", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_pirate then
+        buling_bee_pirate.atlas = "images/inventoryimages.xml"
+        buling_bee_pirate.image = "bee.tex"
+        buling_bee_pirate.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_police = Recipe("buling_bee_police", {Ingredient("bee", 1), Ingredient("stinger", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_police then
+        buling_bee_police.atlas = "images/inventoryimages.xml"
+        buling_bee_police.image = "bee.tex"
+        buling_bee_police.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_stonecutters = Recipe("buling_bee_stonecutters", {Ingredient("bee", 1), Ingredient("cutstone", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_stonecutters then
+        buling_bee_stonecutters.atlas = "images/inventoryimages.xml"
+        buling_bee_stonecutters.image = "bee.tex"
+        buling_bee_stonecutters.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_gardener = Recipe("buling_bee_gardener", {Ingredient("bee", 1), Ingredient("seeds", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_gardener then
+        buling_bee_gardener.atlas = "images/inventoryimages.xml"
+        buling_bee_gardener.image = "bee.tex"
+        buling_bee_gardener.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_cai = Recipe("buling_bee_cai", {Ingredient("bee", 1), Ingredient("cutgrass", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_cai then
+        buling_bee_cai.atlas = "images/inventoryimages.xml"
+        buling_bee_cai.image = "bee.tex"
+        buling_bee_cai.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_fish = Recipe("buling_bee_fish", {Ingredient("bee", 1), Ingredient("fish", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_fish then
+        buling_bee_fish.atlas = "images/inventoryimages.xml"
+        buling_bee_fish.image = "bee.tex"
+        buling_bee_fish.builder_tag = "bulingbuling"
+    end
+
+    local buling_bee_governor = Recipe("buling_bee_governor", {Ingredient("bee", 1), Ingredient("purplegem", 1)}, RECIPETABS.BLTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_bee_governor then
+        buling_bee_governor.atlas = "images/inventoryimages.xml"
+        buling_bee_governor.image = "bee.tex"
+        buling_bee_governor.builder_tag = "bulingbuling"
+    end
+
+    local buling_yanjiutai = Recipe("buling_yanjiutai", {Ingredient("buling_zhongziding", 8, "images/inventoryimages/buling_zhongziding.xml", "buling_zhongziding.tex"), Ingredient("buling_core", 1, "images/inventoryimages/buling_core.xml", "buling_core.tex"), Ingredient("buling_puleidi_plank", 8, "images/inventoryimages/buling_puleidi_plank.xml", "buling_puleidi_plank.tex")}, RECIPETABS.BLTAB, TECH.NONE, nil, "firesuppressor_placer", 2, nil, "bulingbuling")
+    if buling_yanjiutai then
+        buling_yanjiutai.atlas = "images/inventoryimages/buling_yanjiutai.xml"
+        buling_yanjiutai.image = "buling_yanjiutai.tex"
+        buling_yanjiutai.builder_tag = "bulingbuling"
+    end
+
+    local buling_book_tongxuntai = Recipe("buling_book_tongxuntai", {Ingredient("buling_yanjiudian", 10, "images/inventoryimages/buling_yanjiudian.xml", "buling_yanjiudian.tex")}, RECIPETABS.YJTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_book_tongxuntai then
+        buling_book_tongxuntai.atlas = "images/inventoryimages.xml"
+        buling_book_tongxuntai.image = "blueprint.tex"
+        buling_book_tongxuntai.builder_tag = "bulingbuling"
+    end
+
+    local buling_tongxuntai_item = Recipe("buling_tongxuntai_item", {Ingredient("buling_system", 1, "images/inventoryimages/buling_system.xml", "buling_system.tex"), Ingredient("buling_core", 1, "images/inventoryimages/buling_core.xml", "buling_core.tex"), Ingredient("buling_zhongziding", 40, "images/inventoryimages/buling_zhongziding.xml", "buling_zhongziding.tex")}, RECIPETABS.BLTAB, {SCIENCE = 10}, nil, nil, "bulingbuling")
+    if buling_tongxuntai_item then
+        buling_tongxuntai_item.atlas = "images/inventoryimages/buling_leida.xml"
+        buling_tongxuntai_item.image = "buling_leida.tex"
+        buling_tongxuntai_item.builder_tag = "bulingbuling"
+    end
+
+    local buling_book_yajin = Recipe("buling_book_yajin", {Ingredient("buling_yanjiudian", 40, "images/inventoryimages/buling_yanjiudian.xml", "buling_yanjiudian.tex")}, RECIPETABS.YJTAB, TECH.NONE, nil, nil, "bulingbuling")
+    if buling_book_yajin then
+        buling_book_yajin.atlas = "images/inventoryimages.xml"
+        buling_book_yajin.image = "blueprint.tex"
+        buling_book_yajin.builder_tag = "bulingbuling"
+    end
+
+    local buling_yajin = Recipe("buling_yajin", {Ingredient("flint", 40)}, RECIPETABS.BLTAB, {SCIENCE = 10}, nil, nil, "bulingbuling")
+    if buling_yajin then
+        buling_yajin.atlas = "images/inventoryimages/buling_yajin.xml"
+        buling_yajin.image = "buling_yajin.tex"
+        buling_yajin.builder_tag = "bulingbuling"
+    end
+
+    local buling_yanjiudian = Recipe("buling_yanjiudian", {Ingredient("boards", 10)}, RECIPETABS.BLTAB, {SCIENCE = 20}, nil, nil, nil, nil, "bulingbuling")
+    if buling_yanjiudian then
+        buling_yanjiudian.builder_tag = "bulingbuling"
+    end
+end
+
+RegisterBulingStartupRecipes()
+
 modimport "scripts/string_bulingbuling.lua"
 modimport "scripts/hamletislandconnector.lua"
 modimport("scripts/buling_gengxin.lua")
@@ -1004,7 +1180,7 @@ AddClassPostConstruct("components/playercontroller", function(self)
 			end
 
 			local driver_comp = self.inst.components.driver
-			local vehicle = (self.inst.net_vehicle and self.inst.net_vehicle:value()) or (driver_comp and driver_comp.vehicle) or self.inst
+			local vehicle = (driver_comp and driver_comp.vehicle) or GLOBAL.FindEntity(self.inst, 4, nil, {"buling_carrier"}) or self.inst
 			local is_special = vehicle and ((vehicle:HasTag("def") or vehicle:HasTag("rocky_shield")) and not vehicle:HasTag("atk"))
 
 			local entity_under_mouse = GLOBAL.TheInput:GetWorldEntityUnderMouse()
@@ -1045,8 +1221,13 @@ AddClassPostConstruct("components/playercontroller", function(self)
 		end
 
 		local driver_comp = self.inst.components.driver
-		local vehicle = (self.inst.net_vehicle and self.inst.net_vehicle:value()) or (driver_comp and driver_comp.vehicle) or self.inst
+		local vehicle = (driver_comp and driver_comp.vehicle) or GLOBAL.FindEntity(self.inst, 4, nil, {"buling_carrier"}) or self.inst
 		if not vehicle or not vehicle:IsValid() then return end
+
+		if GLOBAL.TheCamera and vehicle ~= self.inst and GLOBAL.TheCamera.target ~= vehicle then
+			GLOBAL.TheCamera:SetTarget(vehicle)
+			GLOBAL.TheCamera:SetHeadingTarget(45)
+		end
 
 		local vx, vy, vz = vehicle.Transform:GetWorldPosition()
 		self.inst.Transform:SetPosition(vx, vy, vz)

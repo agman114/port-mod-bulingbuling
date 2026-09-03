@@ -3,55 +3,12 @@ local mixtime = 30
 local maxtime = 360
 local attack = 4800
 
-local _buling_yjt_done = false
 local function buling_recipes_yanjiutai()
-	if _buling_yjt_done then return end
-	_buling_yjt_done = true
-
-	local Ingredient = GLOBAL.Ingredient
-	local RECIPETABS = GLOBAL.RECIPETABS
-	local Recipe = GLOBAL.Recipe
-	local TECH = GLOBAL.TECH
-	
-	if RECIPETABS and RECIPETABS.BLTAB and RECIPETABS.YJTAB then
-		local buling_yanjiutai = Recipe("buling_yanjiutai", {Ingredient("buling_zhongziding", 8,"images/inventoryimages/buling_zhongziding.xml", "buling_zhongziding.tex"),Ingredient("buling_core", 1,"images/inventoryimages/buling_core.xml", "buling_core.tex"),Ingredient("buling_puleidi_plank", 8,"images/inventoryimages/buling_puleidi_plank.xml", "buling_puleidi_plank.tex")}, RECIPETABS.BLTAB,TECH.NONE,nil,"firesuppressor_placer",2,nil,"bulingbuling")
-		buling_yanjiutai.atlas = "images/inventoryimages/buling_yanjiutai.xml"
-		buling_yanjiutai.image = "buling_yanjiutai.tex"
-		buling_yanjiutai.builder_tag = "bulingbuling"
-		
-		local buling_book_tongxuntai = Recipe("buling_book_tongxuntai", {Ingredient("buling_yanjiudian", 10,"images/inventoryimages/buling_yanjiudian.xml", "buling_yanjiudian.tex")}, RECIPETABS.YJTAB,TECH.NONE,nil,nil,"bulingbuling")
-		buling_book_tongxuntai.atlas = "images/inventoryimages.xml"
-		buling_book_tongxuntai.image = "blueprint.tex"
-		buling_book_tongxuntai.builder_tag = "bulingbuling"
-		
-		local buling_tongxuntai_item = Recipe("buling_tongxuntai_item", {Ingredient("buling_system", 1,"images/inventoryimages/buling_system.xml", "buling_system.tex"),Ingredient("buling_core", 1,"images/inventoryimages/buling_core.xml", "buling_core.tex"),Ingredient("buling_zhongziding",40,"images/inventoryimages/buling_zhongziding.xml", "buling_zhongziding.tex")}, RECIPETABS.BLTAB,{SCIENCE = 10},nil,nil,"bulingbuling")
-		buling_tongxuntai_item.atlas = "images/inventoryimages/buling_leida.xml"
-		buling_tongxuntai_item.image = "buling_leida.tex"
-		buling_tongxuntai_item.builder_tag = "bulingbuling"
-	end
+	-- Pre-registered in modmain.lua at startup to prevent network desync
 end
 
-local _buling_yjt2_done = false
 local function buling_recipes_yanjiutai2()
-	if _buling_yjt2_done then return end
-	_buling_yjt2_done = true
-
-	local Ingredient = GLOBAL.Ingredient
-	local RECIPETABS = GLOBAL.RECIPETABS
-	local Recipe = GLOBAL.Recipe
-	local TECH = GLOBAL.TECH
-	
-	if RECIPETABS and RECIPETABS.BLTAB and RECIPETABS.YJTAB then
-		local buling_book_yajin = Recipe("buling_book_yajin", {Ingredient("buling_yanjiudian",40,"images/inventoryimages/buling_yanjiudian.xml", "buling_yanjiudian.tex")}, RECIPETABS.YJTAB,TECH.NONE,nil,nil,"bulingbuling")
-		buling_book_yajin.atlas = "images/inventoryimages.xml"
-		buling_book_yajin.image = "blueprint.tex"
-		buling_book_yajin.builder_tag = "bulingbuling"
-		
-		local buling_yajin = Recipe("buling_yajin", {Ingredient("flint",40)}, RECIPETABS.BLTAB,{SCIENCE = 10},nil,nil,"bulingbuling")
-		buling_yajin.atlas = "images/inventoryimages/buling_yajin.xml"
-		buling_yajin.image = "buling_yajin.tex"
-		buling_yajin.builder_tag = "bulingbuling"
-	end
+	-- Pre-registered in modmain.lua at startup to prevent network desync
 end
 
 local taskitemlist = {

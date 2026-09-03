@@ -69,9 +69,6 @@ local function upcar(doer,inst)
 			doer.components.driver.vehicle = inst
 			doer.components.driver.driving = true
 			doer:AddTag("buling_driving")
-			if doer.net_vehicle then
-				doer.net_vehicle:set(inst)
-			end
 			if TheCamera then
 				TheCamera:SetTarget(inst)
 				TheCamera:SetHeadingTarget(45)
@@ -150,9 +147,6 @@ local function drop(inst, doer, viewer)
 	if viewer.HUD and viewer.HUD.controls then
 		if viewer.HUD.controls.crafttabs then viewer.HUD.controls.crafttabs:Show() end
 		if viewer.HUD.controls.status then viewer.HUD.controls.status:Show() end
-	end
-	if viewer.net_vehicle then
-		viewer.net_vehicle:set(nil)
 	end
 	if not viewer.components.driver then
 		viewer:AddComponent("driver")
