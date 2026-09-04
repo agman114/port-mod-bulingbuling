@@ -1210,157 +1210,15 @@ AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name
 
 	print("[BULING CRAFT RPC] Server received craft request for:", prefab_name, "from player:", player, "is_free:", is_free)
 
+	-- In normal survival mode, clicking on a recipe in the side panel ONLY shows the recipe on the right.
+	-- Players must place the items in the workbench slots and press the workbench button to craft!
+	if not is_free then
+		return
+	end
+
 	local spawn_name = prefab_name
 	if not GLOBAL.Prefabs[spawn_name] and GLOBAL.Prefabs[spawn_name .. "_item"] then
 		spawn_name = spawn_name .. "_item"
-	end
-
-	if is_free then
-		local _crafted = GLOBAL.SpawnPrefab(spawn_name) or GLOBAL.SpawnPrefab(prefab_name)
-		if _crafted then
-			if player.components.inventory and _crafted.components and _crafted.components.inventoryitem then
-				player.components.inventory:GiveItem(_crafted, nil, player:GetPosition())
-			else
-				_crafted.Transform:SetPosition(player.Transform:GetWorldPosition())
-			end
-			if player.components.talker then
-				local item_name = GLOBAL.STRINGS.NAMES[string.upper(spawn_name)] or GLOBAL.STRINGS.NAMES[string.upper(prefab_name)] or prefab_name
-				player.components.talker:Say("Бесплатный крафт: " .. tostring(item_name))
-			end
-		end
-		return
-	end
-
-	-- Normal survival crafting with ingredients check!
-	local function FindRecipePattern(pname)
-		local tables = {
-			GLOBAL.BULING_COOKHECHENGBIAO,
-			GLOBAL.BULING_HECHENGBIAO,
-			GLOBAL.BULING_SEEDHECHENGBIAO,
-			GLOBAL.BULING_HECHENGBIAO_CLOTHES,
-			GLOBAL.BULING_HECHENGBIAO_JIXIE,
-		}
-		for _, t in ipairs(tables) do
-			if t and t[pname] and t[pname][1] then
-				return t[pname][1]
-			end
-			local alt = string.gsub(pname, "_item$", "")
-			if t and t[alt] and t[alt][1] then
-				return t[alt][1]
-			end
-		end
-		return nil
-	end
-
-	local pattern = FindRecipePattern(prefab_name)
-	if not pattern then
-		print("[BULING CRAFT RPC] No recipe pattern found for:", prefab_name)
-		return
-	end
-
-	local function GetOpenContainers()
-		local list = {}
-		if player.components.inventory and player.components.inventory.opencontainers then
-			for open_c, _ in pairs(player.components.inventory.opencontainers) do
-				if open_c and open_c:IsValid() and open_c.components and open_c.components.container then
-					table.insert(list, open_c)
-				end
-			end
-		end
-		return list
-	end
-
-	local open_conts = GetOpenContainers()
-	local has_workbench = false
-	for _, c in ipairs(open_conts) do
-		if c:HasTag("structure") or (c.prefab and string.find(c.prefab, "buling_")) then
-			has_workbench = true
-			break
-		end
-	end
-	if not has_workbench then
-		print("[BULING CRAFT RPC] Player does not have a workbench open for survival crafting:", prefab_name)
-		return
-	end
-
-	local required_items = {}
-	for item in string.gmatch(pattern, "([^,]+)") do
-		if item ~= "nil" and item ~= "" then
-			required_items[item] = (required_items[item] or 0) + 1
-		end
-	end
-
-	local function CountItem(item_prefab)
-		local count = 0
-		for _, c in ipairs(open_conts) do
-			local num = c.components.container.numslots or 9
-			for k=1, num do
-				local it = c.components.container:GetItemInSlot(k)
-				if it and it.prefab == item_prefab then
-					count = count + (it.components.stackable and it.components.stackable.stacksize or 1)
-				end
-			end
-		end
-		if player.components.inventory then
-			for k, it in pairs(player.components.inventory.itemslots) do
-				if it and it.prefab == item_prefab then
-					count = count + (it.components.stackable and it.components.stackable.stacksize or 1)
-				end
-			end
-			local overflow = player.components.inventory:GetOverflowContainer()
-			if overflow and overflow.slots then
-				for k, it in pairs(overflow.slots) do
-					if it and it.prefab == item_prefab then
-						count = count + (it.components.stackable and it.components.stackable.stacksize or 1)
-					end
-				end
-			end
-		end
-		return count
-	end
-
-	local missing_item = nil
-	for item_prefab, needed in pairs(required_items) do
-		local have = CountItem(item_prefab)
-		if have < needed then
-			missing_item = item_prefab
-			break
-		end
-	end
-
-	if missing_item then
-		if player.components.talker then
-			local mname = GLOBAL.STRINGS.NAMES[string.upper(missing_item)] or missing_item
-			player.components.talker:Say("Не хватает ингредиентов: " .. tostring(mname))
-		end
-		return
-	end
-
-	-- Consume non-tool ingredients from workbench containers and player inventory
-	for item_prefab, needed in pairs(required_items) do
-		local is_tool = (item_prefab == "buling_cook_kaopan" or item_prefab == "buling_cook_guo" or item_prefab == "buling_cook_caidao" or item_prefab == "buling_cave_tool")
-		if not is_tool then
-			local to_consume = needed
-			for _, c in ipairs(open_conts) do
-				local num = c.components.container.numslots or 9
-				for k=1, num do
-					local it = c.components.container:GetItemInSlot(k)
-					if it and it.prefab == item_prefab and to_consume > 0 then
-						local cur_size = it.components.stackable and it.components.stackable.stacksize or 1
-						if cur_size > to_consume then
-							it.components.stackable:SetStackSize(cur_size - to_consume)
-							to_consume = 0
-						else
-							to_consume = to_consume - cur_size
-							it:Remove()
-						end
-					end
-				end
-			end
-			if to_consume > 0 and player.components.inventory then
-				player.components.inventory:ConsumeByName(item_prefab, to_consume)
-			end
-		end
 	end
 
 	local _crafted = GLOBAL.SpawnPrefab(spawn_name) or GLOBAL.SpawnPrefab(prefab_name)
@@ -1371,8 +1229,8 @@ AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name
 			_crafted.Transform:SetPosition(player.Transform:GetWorldPosition())
 		end
 		if player.components.talker then
-			local iname = GLOBAL.STRINGS.NAMES[string.upper(spawn_name)] or GLOBAL.STRINGS.NAMES[string.upper(prefab_name)] or prefab_name
-			player.components.talker:Say("Приготовлено: " .. tostring(iname))
+			local item_name = GLOBAL.STRINGS.NAMES[string.upper(spawn_name)] or GLOBAL.STRINGS.NAMES[string.upper(prefab_name)] or prefab_name
+			player.components.talker:Say("Бесплатный крафт: " .. tostring(item_name))
 		end
 	end
 end)
