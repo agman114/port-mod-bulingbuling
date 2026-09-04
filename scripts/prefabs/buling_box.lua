@@ -211,6 +211,7 @@ local weaponhechengbiao ={
 --粉碎机
 ["buling_fensui_item"]={"buling_glass,buling_glass,buling_glass,buling_glass,nil,buling_glass,buling_glass,buling_glass,buling_glass,"},
 }
+GLOBAL.BULING_HECHENGBIAO_JIXIE = weaponhechengbiao
 local seedhechengbiao ={
 --注射器
 ["buling_zhusheqi"]={"nil,buling_glass,nil,nil,buling_glass,nil,buling_glass,buling_zhongziding,buling_glass,"},
@@ -308,7 +309,7 @@ local function buling_manual(inst, doer)
 						_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
 					end
 				end
-				local is_free = GLOBAL.BULING_FREE_CRAFT or (opener and opener.components and opener.components.builder and opener.components.builder.freebuildmode)
+				local is_free = (GLOBAL.BULING_FREE_CRAFT == true) or (opener and opener.components and opener.components.builder and (opener.components.builder.freebuildmode or (opener.components.builder.IsFreeBuildMode and opener.components.builder:IsFreeBuildMode())))
 				if not is_free then
 					for slot_i=1,9 do
 						local item = inst.components.container:GetItemInSlot(slot_i)
@@ -399,6 +400,10 @@ local function ronglufn()
 	text = "Extract",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button", inst)
+			return
+		end
 		local item = inst.components.container:GetItemInSlot(1)
 		if  item then
 			if shaozhibiao[item.prefab] ~= nil then
@@ -646,6 +651,10 @@ local function buling_weaponchest(inst, doer)
 	text = "Do",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button", inst)
+			return
+		end
 		if inst.components.beerpower.power >= 50 then 
 			local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
 			local peifang = ""
@@ -1245,6 +1254,10 @@ local function chongdian(inst, doer)
     text = "Charge",
     position = Vector3(0, -140, 0),
     fn = function(inst, doer)
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button", inst)
+			return
+		end
 		local item = inst.components.container:GetItemInSlot(1)
 		if item and item:HasTag("beerpowertool") and item.components.finiteuses then
 			local beer = item.components.finiteuses.total - item.components.finiteuses.current
@@ -1377,6 +1390,10 @@ local function buling_fengrenji(inst, doer)
 	text = "Do",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
+		if not TheWorld.ismastersim then
+			SendBulingRPC("do_widget_button", inst)
+			return
+		end
 		local peifang = ""
 		local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
 		local slots = inst.components.container.slots
@@ -2225,7 +2242,7 @@ local function buling_yanjiutai(inst, doer)
 						_crafted.Transform:SetPosition(inst.Transform:GetWorldPosition())
 					end
 				end
-				local is_free = GLOBAL.BULING_FREE_CRAFT or (opener and opener.components and opener.components.builder and opener.components.builder.freebuildmode)
+				local is_free = (GLOBAL.BULING_FREE_CRAFT == true) or (opener and opener.components and opener.components.builder and (opener.components.builder.freebuildmode or (opener.components.builder.IsFreeBuildMode and opener.components.builder:IsFreeBuildMode())))
 				if not is_free then
 					for slot_i=1,9 do
 						local item = inst.components.container:GetItemInSlot(slot_i)

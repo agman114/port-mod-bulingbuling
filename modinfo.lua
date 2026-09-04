@@ -1,7 +1,7 @@
 
 description = "Miss Buling seems to be having a wonderful disaster in this strange world."
 author = "贝尔LRB4 (DST Port & Fixes)"
-version = "1.59"
+version = "1.60"
 name = "[Bulingbuling] v"..version
 forumthread=""
 

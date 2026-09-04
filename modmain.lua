@@ -176,6 +176,27 @@ local table_configs = {
         rpc_name = "do_widget_button",
         slots = 9,
     },
+    ["buling_weaponchest"] = {
+        button_text = "Craft",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+    ["buling_yanjiutai"] = {
+        button_text = "Craft",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+    ["buling_fensui"] = {
+        button_text = "Grind",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+    ["buling_chongdianqi"] = {
+        button_text = "Charge",
+        rpc_name = "do_widget_button",
+        slots = 1,
+        slotpos = { GLOBAL.Vector3(0, 0, 0) },
+    },
 }
 
 local function make_table_widget(cfg)
@@ -1164,7 +1185,7 @@ AddModRPCHandler("bulingbuling", "attack_car", function(player, vehicle_guid, ta
 		end
 	end
 end)
-GLOBAL.BULING_FREE_CRAFT = true
+GLOBAL.BULING_FREE_CRAFT = false
 GLOBAL.c_bulingfreecraft = function(enable)
 	if enable == nil then
 		enable = not GLOBAL.BULING_FREE_CRAFT
@@ -1237,6 +1258,31 @@ AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name
 		return
 	end
 
+	local function GetOpenContainers()
+		local list = {}
+		if player.components.inventory and player.components.inventory.opencontainers then
+			for open_c, _ in pairs(player.components.inventory.opencontainers) do
+				if open_c and open_c:IsValid() and open_c.components and open_c.components.container then
+					table.insert(list, open_c)
+				end
+			end
+		end
+		return list
+	end
+
+	local open_conts = GetOpenContainers()
+	local has_workbench = false
+	for _, c in ipairs(open_conts) do
+		if c:HasTag("structure") or (c.prefab and string.find(c.prefab, "buling_")) then
+			has_workbench = true
+			break
+		end
+	end
+	if not has_workbench then
+		print("[BULING CRAFT RPC] Player does not have a workbench open for survival crafting:", prefab_name)
+		return
+	end
+
 	local required_items = {}
 	for item in string.gmatch(pattern, "([^,]+)") do
 		if item ~= "nil" and item ~= "" then
@@ -1244,22 +1290,12 @@ AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name
 		end
 	end
 
-	local open_container = nil
-	if player.components.inventory and player.components.inventory.opencontainers then
-		for open_c, _ in pairs(player.components.inventory.opencontainers) do
-			if open_c and open_c:IsValid() and open_c.components and open_c.components.container then
-				open_container = open_c
-				break
-			end
-		end
-	end
-
 	local function CountItem(item_prefab)
 		local count = 0
-		if open_container and open_container.components and open_container.components.container then
-			local num = open_container.components.container.numslots or 9
+		for _, c in ipairs(open_conts) do
+			local num = c.components.container.numslots or 9
 			for k=1, num do
-				local it = open_container.components.container:GetItemInSlot(k)
+				local it = c.components.container:GetItemInSlot(k)
 				if it and it.prefab == item_prefab then
 					count = count + (it.components.stackable and it.components.stackable.stacksize or 1)
 				end
@@ -1300,15 +1336,15 @@ AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name
 		return
 	end
 
-	-- Consume non-tool ingredients
+	-- Consume non-tool ingredients from workbench containers and player inventory
 	for item_prefab, needed in pairs(required_items) do
 		local is_tool = (item_prefab == "buling_cook_kaopan" or item_prefab == "buling_cook_guo" or item_prefab == "buling_cook_caidao" or item_prefab == "buling_cave_tool")
 		if not is_tool then
 			local to_consume = needed
-			if open_container and open_container.components and open_container.components.container then
-				local num = open_container.components.container.numslots or 9
+			for _, c in ipairs(open_conts) do
+				local num = c.components.container.numslots or 9
 				for k=1, num do
-					local it = open_container.components.container:GetItemInSlot(k)
+					local it = c.components.container:GetItemInSlot(k)
 					if it and it.prefab == item_prefab and to_consume > 0 then
 						local cur_size = it.components.stackable and it.components.stackable.stacksize or 1
 						if cur_size > to_consume then

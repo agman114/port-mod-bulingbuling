@@ -331,7 +331,7 @@ carfn_onclose = OnClose
 
 		print("[BULING CARRIER] Current peifang string:", peifang)
 
-		local is_free = BULING_FREE_CRAFT 
+		local is_free = (GLOBAL.BULING_FREE_CRAFT == true) 
 			or (doer and doer.components and doer.components.builder and (doer.components.builder.freebuildmode or (doer.components.builder.IsFreeBuildMode and doer.components.builder:IsFreeBuildMode())))
 
 		local matched_target = nil
@@ -718,7 +718,7 @@ DoTransform = function(inst, doer)
 
 	print("[BULING CARRIER] Current peifang string:", peifang)
 
-	local is_free = BULING_FREE_CRAFT 
+	local is_free = (GLOBAL.BULING_FREE_CRAFT == true) 
 		or (doer and doer.components and doer.components.builder and (doer.components.builder.freebuildmode or (doer.components.builder.IsFreeBuildMode and doer.components.builder:IsFreeBuildMode())))
 
 	local hechengbiao = {
