@@ -905,10 +905,10 @@ local function jiandao(Sim)
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_diandongjian.xml"
     return inst
 end
-local function boxitem(Sim)
+local function boxitem(boxname, placer, imagename, atlasname, testfn)
 	local function ondeploy(inst, pt, deployer)
 		inst:Remove()
-		SpawnPrefab(inst.boxname).Transform:SetPosition(pt.x, pt.y, pt.z)      
+		SpawnPrefab(inst.boxname or boxname).Transform:SetPosition(pt.x, pt.y, pt.z)      
 	end
     local inst = CreateEntity()
     inst.entity:AddTransform()
@@ -931,22 +931,32 @@ local function boxitem(Sim)
 
     inst:AddComponent("inspectable")
     inst:AddComponent("inventoryitem")
-    inst.components.inventoryitem.imagename = "buling_zhuangzhi"
-	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhuangzhi.xml"
+    inst.components.inventoryitem.imagename = imagename or "buling_zhuangzhi"
+	inst.components.inventoryitem.atlasname = atlasname or "images/inventoryimages/buling_zhuangzhi.xml"
 	inst:AddComponent("stackable")
     inst:AddComponent("deployable")
     inst.components.deployable.ondeploy = ondeploy
+    if placer then
+        inst.components.deployable.placer = placer
+    end
+    if testfn then
+        inst.components.deployable.test = testfn
+    end
     if DEPLOYMODE and DEPLOYMODE.ANY then
         inst.components.deployable:SetDeployMode(DEPLOYMODE.ANY)
     end
     if DEPLOYSPACING and DEPLOYSPACING.LESS then
         inst.components.deployable:SetDeploySpacing(DEPLOYSPACING.LESS)
     end
+	inst.boxname = boxname
 	inst.Transform:SetScale(.5, .5, .5)
     return inst
 end
 local function rongluitemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_ronglu"
 	inst.components.deployable.placer = "buling_ronglu_placer"
 	inst.components.inventoryitem.imagename = "buling_ronglu"
@@ -955,6 +965,9 @@ local function rongluitemfn(inst, doer)
 end
 local function buling_diandengitemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_diandeng"
 	inst.components.inventoryitem.imagename = "buling_diandeng"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_diandeng.xml"
@@ -962,6 +975,9 @@ local function buling_diandengitemfn(inst, doer)
 end
 local function buling_boat_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_boat"
 	inst.components.inventoryitem.imagename = "rowboat"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
@@ -969,6 +985,9 @@ local function buling_boat_itemfn(inst, doer)
 end
 local function bulingboat_tiexue_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_boat_tiexue"
 	inst.components.inventoryitem.imagename = "rowboat"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages.xml"
@@ -976,6 +995,9 @@ local function bulingboat_tiexue_itemfn(inst, doer)
 end
 local function buling_car_logitemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_car_log"
 	inst.AnimState:SetBank("buling_car")
 	inst.AnimState:SetBuild("buling_car")
@@ -986,6 +1008,9 @@ local function buling_car_logitemfn(inst, doer)
 end
 local function buling_shengcun_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_shengcun"
 	inst.components.inventoryitem.imagename = "buling_shengcun"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_shengcun.xml"
@@ -993,6 +1018,9 @@ local function buling_shengcun_itemfn(inst, doer)
 end
 local function buling_zhongjiqi_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_zhongjiqi"
 	inst.components.inventoryitem.imagename = "buling_zhongjiqi"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhongjiqi.xml"
@@ -1000,6 +1028,9 @@ local function buling_zhongjiqi_itemfn(inst, doer)
 end
 local function buling_dianxiangan_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_dianxiangan"
 	inst.components.inventoryitem.imagename = "buling_dianxiangan"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_dianxiangan.xml"
@@ -1007,6 +1038,9 @@ local function buling_dianxiangan_itemfn(inst, doer)
 end
 local function buling_seedbox_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_seedbox"
 	inst.components.inventoryitem.imagename = "buling_seedbox"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seedbox.xml"
@@ -1014,6 +1048,9 @@ local function buling_seedbox_itemfn(inst, doer)
 end
 local function buling_weaponchest_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_seedchest"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seedchest.xml"
 	inst.boxname = "buling_weaponchest"
@@ -1021,6 +1058,9 @@ local function buling_weaponchest_itemfn(inst, doer)
 end
 local function buling_solarenergy_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_solarenergy"
 	inst.components.inventoryitem.imagename = "buling_taiyangneng"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_taiyangneng.xml"
@@ -1028,6 +1068,9 @@ local function buling_solarenergy_itemfn(inst, doer)
 end
 local function buling_paotai_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_paotai"
 	inst.components.inventoryitem.imagename = "buling_paotai"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_paotai.xml"
@@ -1035,6 +1078,9 @@ local function buling_paotai_itemfn(inst, doer)
 end
 local function buling_cropbox_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_cropbox"
 	inst.components.inventoryitem.imagename = "buling_shouge"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_shouge.xml"
@@ -1042,6 +1088,9 @@ local function buling_cropbox_itemfn(inst, doer)
 end
 local function buling_chongdianqi_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_chongdianqi"
 	inst.components.inventoryitem.imagename = "buling_chongdian"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_chongdian.xml"
@@ -1049,6 +1098,9 @@ local function buling_chongdianqi_itemfn(inst, doer)
 end
 local function buling_chest_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.placer = "buling_chest_placer"
 	inst.components.inventoryitem.imagename = "buling_chest"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_chest.xml"
@@ -1057,6 +1109,9 @@ local function buling_chest_itemfn(inst, doer)
 end
 local function buling_planttablet_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.placer = "buling_planttable_placer"
 	inst.components.inventoryitem.imagename = "buling_planttable"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_planttable.xml"
@@ -1065,6 +1120,9 @@ local function buling_planttablet_itemfn(inst, doer)
 end
 local function buling_cooktable_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.placer = "buling_cooktable_placer"
 	inst.components.inventoryitem.imagename = "buling_cooktable"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_cooktable.xml"
@@ -1073,6 +1131,9 @@ local function buling_cooktable_itemfn(inst, doer)
 end
 local function buling_huosai_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_huosai"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_huosai.xml"
 	inst.boxname = "buling_huosai"
@@ -1080,6 +1141,9 @@ local function buling_huosai_itemfn(inst, doer)
 end
 local function buling_tongxuntai_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_leida"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_leida.xml"
 	inst.boxname = "buling_tongxuntai"
@@ -1087,6 +1151,9 @@ local function buling_tongxuntai_itemfn(inst, doer)
 end
 local function buling_wakuang_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.placer = "buling_wakuang_placer"
 	inst.components.deployable.test = test_deploy
 	inst.components.inventoryitem.imagename = "buling_wakuang"
@@ -1096,6 +1163,9 @@ local function buling_wakuang_itemfn(inst, doer)
 end
 local function buling_zhongjiqi_gaoya_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_zhongjiqi_gaoya"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhongjiqi_gaoya.xml"
 	inst.boxname = "buling_zhongjiqi_gaoya"
@@ -1103,6 +1173,9 @@ local function buling_zhongjiqi_gaoya_itemfn(inst, doer)
 end
 local function buling_bileizhen_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_bileizhen"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_bileizhen.xml"
 	inst.boxname = "buling_bileizhen"
@@ -1110,6 +1183,9 @@ local function buling_bileizhen_itemfn(inst, doer)
 end
 local function buling_lamp_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_lamp"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_lamp.xml"
 	inst.boxname = "buling_lamp"
@@ -1117,6 +1193,9 @@ local function buling_lamp_itemfn(inst, doer)
 end
 local function buling_fensui_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_fensui"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fensui.xml"
 	inst.boxname = "buling_fensui"
@@ -1124,6 +1203,9 @@ local function buling_fensui_itemfn(inst, doer)
 end
 local function buling_repair_box_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_paotai_up"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_paotai_up.xml"
 	inst.boxname = "buling_repair_box"
@@ -1131,6 +1213,9 @@ local function buling_repair_box_itemfn(inst, doer)
 end
 local function buling_chemistrytable_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_chemistrytable"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_chemistrytable.xml"
 	inst.boxname = "buling_chemistrytable"
@@ -1139,6 +1224,9 @@ end
 
 local function buling_fengrenji_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_fengrenji"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_fengrenji.xml"
 	inst.boxname = "buling_fengrenji"
@@ -1147,6 +1235,9 @@ local function buling_fengrenji_itemfn(inst, doer)
 end
 local function buling_infinitebox_itemfn(inst, doer)
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_infinitebox"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_infinitebox.xml"
 	inst.boxname = "buling_infinitebox"
@@ -1159,6 +1250,9 @@ local function buling_chuansongdai_itemfn(inst, doer)
 		return retval
 	end 
     local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	--inst:AddTag("wallbuilder")
 	inst.components.deployable.min_spacing = 0
 	inst.components.deployable.deploydistance = 2
@@ -1173,6 +1267,10 @@ local function buling_chuansongdai_itemfn(inst, doer)
 end
 local function buling_chuansongdai_8(inst, doer)
 	local inst=commonfn(inst)
+	inst.entity:SetPristine()
+	if not TheWorld.ismastersim then
+		return inst
+	end
     inst:AddComponent("inventoryitem")
 	inst.components.inventoryitem.imagename = "buling_chuansongdai_item"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_chuansongdai_item.xml"
@@ -1188,7 +1286,10 @@ local function buling_chuansongdai_8(inst, doer)
 	return inst
 end
 local function buling_jixiebi_itemfn(inst, doer)
-	local inst = buling_chuansongdai_itemfn(inst)
+    local inst = buling_chuansongdai_itemfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_jixiebi_item"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_jixiebi_item.xml"
 	inst.boxname = "buling_jixiebi"
@@ -1196,6 +1297,9 @@ local function buling_jixiebi_itemfn(inst, doer)
 end
 local function ronglu2itemfn(inst, doer)
     local inst = buling_chuansongdai_itemfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.boxname = "buling_ronglu2"
 	inst.components.deployable.placer = "buling_shuipei_placer"
 	inst.components.inventoryitem.imagename = "buling_ronglu2"
@@ -1203,7 +1307,10 @@ local function ronglu2itemfn(inst, doer)
     return inst
 end
 local function buling_shuipei_itemfn(inst, doer)
-	local inst = buling_chuansongdai_itemfn(inst)
+    local inst = buling_chuansongdai_itemfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.placer = "buling_shuipei_placer"
 	inst.components.inventoryitem.imagename = "buling_shuipei_item"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_shuipei_item.xml"
@@ -1211,7 +1318,10 @@ local function buling_shuipei_itemfn(inst, doer)
 	return inst
 end
 local function buling_zidonghecheng_itemfn(inst, doer)
-	local inst = buling_chuansongdai_itemfn(inst)
+    local inst = buling_chuansongdai_itemfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_zidonghecheng_item"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zidonghecheng_item.xml"
 	inst.components.deployable.placer = "buling_shuipei_placer"
@@ -1219,7 +1329,10 @@ local function buling_zidonghecheng_itemfn(inst, doer)
 	return inst
 end
 local function buling_chest_mini_itemfn(inst, doer)
-	local inst = buling_chuansongdai_itemfn(inst)
+    local inst = buling_chuansongdai_itemfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_chest_mini_item"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_chest_mini_item.xml"
 	inst.components.deployable.placer = "buling_shuipei_placer"
@@ -1227,14 +1340,20 @@ local function buling_chest_mini_itemfn(inst, doer)
 	return inst
 end
 local function buling_pilianghecheng_itemfn(inst, doer)
-	local inst = boxitem(inst)
+    local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_pilianghecheng_item"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_pilianghecheng_item.xml"
 	inst.boxname = "buling_pilianghecheng"
 	return inst
 end
 local function buling_yanjiutai_itemfn(inst, doer)
-	local inst = boxitem(inst)
+    local inst = boxitem(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_yanjiutai"
 	inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_yanjiutai.xml"
 	inst.boxname = "buling_yanjiutai"
@@ -1376,7 +1495,10 @@ local function common_gunfn()
 end
 --手柄
 local function buling_gun_shoubing(inst, doer)
-	local inst=common_gunfn(inst)
+    local inst=common_gunfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_shoubing_nil"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_shoubing_nil.xml"
 	inst.range = 15
@@ -1385,7 +1507,10 @@ local function buling_gun_shoubing(inst, doer)
 	return inst
 end
 local function buling_gun_shoubing_biaoqiang(inst, doer)
-	local inst=buling_gun_shoubing(inst)
+    local inst=buling_gun_shoubing(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_shoubing_biaoqiang"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_shoubing_biaoqiang.xml"
 	inst.range = 10
@@ -1393,7 +1518,10 @@ local function buling_gun_shoubing_biaoqiang(inst, doer)
 	return inst
 end
 local function buling_gun_shoubing_juji(inst, doer)
-	local inst=buling_gun_shoubing(inst)
+    local inst=buling_gun_shoubing(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_shoubing_juji"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_shoubing_juji.xml"
 	inst.range = 24
@@ -1402,7 +1530,10 @@ local function buling_gun_shoubing_juji(inst, doer)
 end
 --枪管
 local function buling_gun_qiangguan(inst, doer)
-	local inst=common_gunfn(inst)
+    local inst=common_gunfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_qiangguan_nil"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_qiangguan_nil.xml"
 	inst:AddTag("buling_gun_qiangguan")
@@ -1411,7 +1542,10 @@ local function buling_gun_qiangguan(inst, doer)
 	return inst
 end
 local function buling_gun_qiangguan_ying(inst, doer)
-	local inst=common_gunfn(inst)
+    local inst=common_gunfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_qiangguan_ying"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_qiangguan_ying.xml"
 	inst:AddTag("buling_gun_qiangguan")
@@ -1420,7 +1554,10 @@ local function buling_gun_qiangguan_ying(inst, doer)
 	return inst
 end
 local function buling_gun_qiangguan_yang(inst, doer)
-	local inst=buling_gun_qiangguan(inst)
+    local inst=buling_gun_qiangguan(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_qiangguan_yang"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_qiangguan_yang.xml"
 	inst.cost = 30
@@ -1429,7 +1566,10 @@ local function buling_gun_qiangguan_yang(inst, doer)
 end
 --激光引导器
 local function buling_gun_jiguang(inst, doer)
-	local inst=common_gunfn(inst)
+    local inst=common_gunfn(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_jiguang_nil"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_jiguang_nil.xml"
 	inst:AddTag("buling_gun_jiguang")
@@ -1452,7 +1592,10 @@ local function buling_gun_jiguang_yaoshou(inst, doer)
 	return inst
 end
 local function buling_gun_jiguang_boli(inst, doer)
-	local inst=buling_gun_jiguang(inst)
+    local inst=buling_gun_jiguang(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_jiguang_boli"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_jiguang_boli.xml"
 	inst.gunfn = function(inst,gun,target)
@@ -1484,14 +1627,20 @@ local function buling_gun_dianchi(inst, doer)
 	return inst
 end
 local function buling_gun_dianchi_tongliang(inst, doer)
-	local inst=buling_gun_dianchi(inst)
+    local inst=buling_gun_dianchi(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_dianchi_tongliang"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_dianchi_tongliang.xml"
 	inst.components.beerpower:SetNumber(300)
 	return inst
 end
 local function buling_gun_dianchi_taiyang(inst, doer)
-	local inst=buling_gun_dianchi(inst)
+    local inst=buling_gun_dianchi(inst)
+	if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.inventoryitem.imagename = "buling_gun_dianchi_taiyang"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_gun_dianchi_taiyang.xml"
 	inst.components.beerpower:SetNumber(200)

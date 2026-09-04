@@ -404,10 +404,13 @@ local function zhongzidingseedfn(inst, doer)
 		SpawnPrefab("buling_plant_zhongziding").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
 	inst.AnimState:SetBank("buling_zhongziding")
     inst.AnimState:SetBuild("buling_zhongziding")
     inst.AnimState:PlayAnimation("anim")
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_zhongziding"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_zhongziding.xml"
@@ -422,7 +425,10 @@ local function rockseedfn(inst, doer)
 		SpawnPrefab("buling_plant_rock").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_rock"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_rock.xml"
@@ -435,7 +441,10 @@ local function flintseedfn(inst, doer)
 		SpawnPrefab("buling_plant_flint").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_flint"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_flint.xml"
@@ -448,7 +457,10 @@ local function nitreseedfn(inst, doer)
 		SpawnPrefab("buling_plant_nitre").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_nitre"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_nitre.xml"
@@ -461,7 +473,10 @@ local function goldseedfn(inst, doer)
 		SpawnPrefab("buling_plant_gold").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_gold"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_gold.xml"
@@ -474,7 +489,10 @@ local function obsidianseedfn(inst, doer)
 		SpawnPrefab("buling_plant_obsidian").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_obsidian"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_obsidian.xml"
@@ -487,7 +505,10 @@ local function thuleciteseedfn(inst, doer)
 		SpawnPrefab("buling_plant_thulecite").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_thulecite"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_thulecite.xml"
@@ -500,7 +521,10 @@ local function ironseedfn(inst, doer)
 		SpawnPrefab("buling_plant_iron").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_iron"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_iron.xml"
@@ -513,7 +537,10 @@ local function marbleseedfn(inst, doer)
 		SpawnPrefab("buling_plant_marble").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_marble"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_marble.xml"
@@ -526,7 +553,10 @@ local function ceshiseedfn(inst, doer)--测试
 		SpawnPrefab("buling_plant_rock").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_wheat"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_wheat.xml"
@@ -539,10 +569,13 @@ local function wheatseedfn(inst, doer)--小麦
 		SpawnPrefab("buling_plant_wheat").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
 	inst.AnimState:SetBank("buling_wheat")
     inst.AnimState:SetBuild("buling_wheat")
     inst.AnimState:PlayAnimation("idle")
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_wheat"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_wheat.xml"
@@ -564,7 +597,10 @@ local function buling_seed_duofeng(inst, doer)
 		SpawnPrefab("buling_caiyuan_duofeng").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_duofeng"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_duofeng.xml"
@@ -577,7 +613,10 @@ local function buling_seed_redai(inst, doer)
 		SpawnPrefab("buling_caiyuan_redai").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_redai"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_redai.xml"
@@ -590,7 +629,10 @@ local function buling_seed_shirun(inst, doer)
 		SpawnPrefab("buling_caiyuan_shirun").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_shirun"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_shirun.xml"
@@ -603,7 +645,10 @@ local function buling_seed_yinbi(inst, doer)
 		SpawnPrefab("buling_caiyuan_yinbi").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_yinbi"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_yinbi.xml"
@@ -616,7 +661,10 @@ local function buling_seed_pinji(inst, doer)
 		SpawnPrefab("buling_caiyuan_pinji").Transform:SetPosition(pt.x, pt.y, pt.z)
 		inst.components.stackable:Get():Remove()
 	end
-	local inst = seedsfn(inst)
+    local inst = seedsfn(inst)
+		if not TheWorld.ismastersim then
+		return inst
+	end
 	inst.components.deployable.ondeploy = OnDeploy
 	inst.components.inventoryitem.imagename = "buling_seed_pinji"
     inst.components.inventoryitem.atlasname = "images/inventoryimages/buling_seed_pinji.xml"
