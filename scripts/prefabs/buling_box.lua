@@ -33,6 +33,7 @@ local function buling_recipes()
 	-- Pre-registered in modmain.lua at startup to prevent network desync
 end
 local hechengbiao = {
+
 --塞德锭
 ["buling_zhongziding"]={"seeds,nil,seeds,nil,goldnugget,nil,seeds,nil,seeds,"}, 
 --植物改良桌
@@ -78,6 +79,7 @@ local hechengbiao = {
 --太阳能路灯
 ["buling_lamp_item"]={"buling_glass,buling_solarenergy_item,buling_glass,nil,buling_diandeng_item,nil,nil,nil,nil,"},
 }
+GLOBAL.BULING_HECHENGBIAO = hechengbiao
 local shaozhibiao = {
 	["buling_seed_wheat"] = "buling_flour",
 	["buling_zhongziding"] = "buling_glass",
@@ -277,7 +279,7 @@ local function buling_manual(inst, doer)
 		print("[BULING DEBUG] fn called on inst:", inst, "GUID:", inst and inst.GUID, "ismastersim:", TheWorld and TheWorld.ismastersim)
 		if not TheWorld.ismastersim then
 			print("[BULING DEBUG CLIENT] Sending SendModRPCToServer to server for GUID:", inst and inst.GUID)
-			SendBulingRPC("do_widget_button", inst and inst.GUID)
+			SendBulingRPC("do_widget_button", inst)
 			return
 		end
 		local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
@@ -1361,6 +1363,7 @@ local function bulingchemistrytable(inst, doer)
 	return inst
 end
 --缝纫机
+GLOBAL.BULING_HECHENGBIAO_CLOTHES = hechengbiao_clothes
 local function buling_fengrenji(inst, doer)
 	local function OnOpen(inst, doer)
 		local _target = doer or inst
@@ -1467,13 +1470,14 @@ local function buling_fengrenji(inst, doer)
 	--inst.components.container.acceptsstacks = false
 	return inst
 end
+GLOBAL.BULING_SEEDHECHENGBIAO = seedhechengbiao
 local function planttable(inst, doer)
 	local widgetbuttoninfo = {
 	text = "Do",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
 		if not TheWorld.ismastersim then
-			SendBulingRPC("do_widget_button", inst.GUID)
+			SendBulingRPC("do_widget_button", inst)
 			return
 		end
 		local peifang = ""
@@ -2194,7 +2198,7 @@ local function buling_yanjiutai(inst, doer)
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
 		if not TheWorld.ismastersim then
-			SendBulingRPC("do_widget_button", inst.GUID)
+			SendBulingRPC("do_widget_button", inst)
 			return
 		end
 		local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
@@ -2350,7 +2354,7 @@ local function buling_fensui(inst, doer)
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
 		if not TheWorld.ismastersim then
-			SendBulingRPC("do_widget_button", inst.GUID)
+			SendBulingRPC("do_widget_button", inst)
 			return
 		end
 		if inst.components.beerpower and inst.components.beerpower.power >= 50 then 

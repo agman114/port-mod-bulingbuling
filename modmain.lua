@@ -140,6 +140,77 @@ local mod_container_prefabs = {
     "buling_shuipei_item",
 }
 
+local table_configs = {
+    ["buling_cooktable"] = {
+        button_text = "Cook",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+    ["buling_manual"] = {
+        button_text = "Craft",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+    ["buling_planttable"] = {
+        button_text = "Grow",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+    ["buling_fengrenji"] = {
+        button_text = "Sew",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+    ["buling_ronglu"] = {
+        button_text = "Extract",
+        rpc_name = "do_widget_button",
+        slots = 2,
+        slotpos = { GLOBAL.Vector3(-80, 0, 0), GLOBAL.Vector3(80, 0, 0) },
+    },
+    ["buling_ronglu2"] = {
+        slots = 2,
+        slotpos = { GLOBAL.Vector3(-80, 0, 0), GLOBAL.Vector3(80, 0, 0) },
+    },
+    ["buling_alcoholtable"] = {
+        button_text = "Brew",
+        rpc_name = "do_widget_button",
+        slots = 9,
+    },
+}
+
+local function make_table_widget(cfg)
+    local slots = cfg.slotpos or default_mod_widget.slotpos
+    local w = {
+        slotpos = slots,
+        animbank = "ui_chest_3x3",
+        animbuild = "ui_chest_3x3",
+        pos = GLOBAL.Vector3(0, 200, 0),
+        side_align_tip = 100,
+        type = "chest",
+    }
+    if cfg.button_text then
+        w.buttoninfo = {
+            text = cfg.button_text,
+            position = GLOBAL.Vector3(0, -140, 0),
+            fn = function(inst, doer)
+                if not GLOBAL.TheWorld.ismastersim then
+                    local rpc = (GLOBAL.TheSim and GLOBAL.TheSim.GetModRPC and GLOBAL.TheSim:GetModRPC("bulingbuling", cfg.rpc_name or "do_widget_button"))
+                        or (GLOBAL.GetModRPC and GLOBAL.GetModRPC("bulingbuling", cfg.rpc_name or "do_widget_button"))
+                    if rpc then
+                        GLOBAL.SendModRPCToServer(rpc, inst)
+                    end
+                else
+                    local binfo = inst and inst.components and inst.components.container and (inst.components.container.widgetbuttoninfo or (inst.components.container.widget and inst.components.container.widget.buttoninfo))
+                    if binfo and binfo.fn then
+                        binfo.fn(inst, doer)
+                    end
+                end
+            end,
+        }
+    end
+    return w
+end
+
 local containers = GLOBAL.require("containers")
 if containers then
     local orig_widgetsetup = containers.widgetsetup
@@ -170,8 +241,10 @@ if containers then
         local params = containers.params
 
         for _, name in ipairs(mod_container_prefabs) do
-            params[name] = params[name] or {
-                widget = default_mod_widget,
+            local cfg = table_configs[name]
+            local wid = cfg and make_table_widget(cfg) or default_mod_widget
+            params[name] = {
+                widget = wid,
                 acceptsstacks = true,
                 type = "chest",
             }
@@ -223,6 +296,15 @@ if ContainerReplica then
     local orig_Replica_GetWidget = ContainerReplica.GetWidget
     ContainerReplica.GetWidget = function(self, ...)
         local w = orig_Replica_GetWidget and orig_Replica_GetWidget(self, ...)
+        local inst = self.inst
+        local p = (inst and inst.prefab) or "chest"
+        if table_configs[p] and table_configs[p].button_text then
+            if w == nil or w.buttoninfo == nil then
+                local tw = make_table_widget(table_configs[p])
+                self.widget = tw
+                return tw
+            end
+        end
         if w ~= nil then
             return w
         end
@@ -705,32 +787,62 @@ AddModRPCHandler("bulingbuling", "task_next", function(player)
 end)
 
 
-AddModRPCHandler("bulingbuling", "do_widget_button2", function(player, container_guid)
-	print("[BULING DEBUG SERVER] Received do_widget_button2 RPC from player:", player, "guid:", container_guid)
-	if container_guid then
-		local container = GLOBAL.Ents[container_guid]
-		if container and container.components and container.components.container then
-			local buttoninfo2 = container.components.container.widgetbuttoninfo2 or (container.components.container.widget and container.components.container.widget.buttoninfo2)
-			print("[BULING DEBUG SERVER] Found buttoninfo2:", buttoninfo2)
-			if buttoninfo2 and buttoninfo2.fn then
-				buttoninfo2.fn(container, player)
+local function ResolveContainerForPlayer(player, target)
+	local container = nil
+	if type(target) == "table" and target.IsValid and target:IsValid() then
+		container = target
+	elseif type(target) == "number" then
+		container = GLOBAL.Ents[target]
+	end
+
+	-- Reliable fallback in multiplayer: find the container the player currently has open!
+	if (container == nil or not container:IsValid() or not (container.components and container.components.container)) and player and player.components and player.components.inventory then
+		if player.components.inventory.opencontainers then
+			for open_c, _ in pairs(player.components.inventory.opencontainers) do
+				if open_c and open_c:IsValid() and open_c.components and open_c.components.container then
+					container = open_c
+					break
+				end
 			end
+		end
+	end
+
+	if (container == nil or not container:IsValid() or not (container.components and container.components.container)) and player then
+		local pos = player:GetPosition()
+		local ents = GLOBAL.TheSim:FindEntities(pos.x, pos.y, pos.z, 6, {"structure", "_container"})
+		for _, e in ipairs(ents) do
+			if e and e:IsValid() and e.components and e.components.container and (e.components.container.widgetbuttoninfo or (e.components.container.widget and e.components.container.widget.buttoninfo)) then
+				container = e
+				break
+			end
+		end
+	end
+	return container
+end
+
+AddModRPCHandler("bulingbuling", "do_widget_button2", function(player, target)
+	print("[BULING DEBUG SERVER] Received do_widget_button2 RPC from player:", player, "target:", target)
+	local container = ResolveContainerForPlayer(player, target)
+	if container and container.components and container.components.container then
+		local buttoninfo2 = container.components.container.widgetbuttoninfo2 or (container.components.container.widget and container.components.container.widget.buttoninfo2)
+		print("[BULING DEBUG SERVER] Found buttoninfo2 on container:", container, buttoninfo2)
+		if buttoninfo2 and buttoninfo2.fn then
+			buttoninfo2.fn(container, player)
 		end
 	end
 end)
 
-AddModRPCHandler("bulingbuling", "do_widget_button", function(player, container_guid)
-	print("[BULING DEBUG SERVER] Received do_widget_button RPC from player:", player, "guid:", container_guid)
-	if container_guid then
-		local container = GLOBAL.Ents[container_guid]
-		print("[BULING DEBUG SERVER] Found container entity:", container)
-		if container and container.components and container.components.container then
-			local buttoninfo = container.components.container.widgetbuttoninfo or (container.components.container.widget and container.components.container.widget.buttoninfo)
-			print("[BULING DEBUG SERVER] Found buttoninfo:", buttoninfo)
-			if buttoninfo and buttoninfo.fn then
-				buttoninfo.fn(container, player)
-			end
+AddModRPCHandler("bulingbuling", "do_widget_button", function(player, target)
+	print("[BULING DEBUG SERVER] Received do_widget_button RPC from player:", player, "target:", target)
+	local container = ResolveContainerForPlayer(player, target)
+	if container and container.components and container.components.container then
+		local buttoninfo = container.components.container.widgetbuttoninfo or (container.components.container.widget and container.components.container.widget.buttoninfo)
+		print("[BULING DEBUG SERVER] Found buttoninfo on container:", container, "prefab:", container.prefab, buttoninfo)
+		if buttoninfo and buttoninfo.fn then
+			buttoninfo.fn(container, player)
 		end
+	else
+		print("[BULING DEBUG SERVER] Could not find valid container entity for do_widget_button from player:", player)
 	end
 end)
 
@@ -1067,33 +1179,164 @@ end
 GLOBAL.c_bfree = GLOBAL.c_bulingfreecraft
 
 AddModRPCHandler("bulingbuling", "craft_item_free", function(player, prefab_name)
-	local is_free = (GLOBAL.BULING_FREE_CRAFT ~= false)
-		or (player and player.components.builder and (player.components.builder.freebuildmode or (player.components.builder.IsFreeBuildMode and player.components.builder:IsFreeBuildMode())))
-		or (player and player.replica and player.replica.builder and player.replica.builder.IsFreeBuildMode and player.replica.builder:IsFreeBuildMode())
+	if not player or not prefab_name or prefab_name == "nil" or prefab_name == "closebutton" or prefab_name == "turnarrow_icon" then
+		return
+	end
 
-	print("[BULING FREE CRAFT RPC] Server received craft request for:", prefab_name, "from player:", player, "is_free:", is_free)
-	if is_free and prefab_name and prefab_name ~= "nil" and prefab_name ~= "closebutton" and prefab_name ~= "turnarrow_icon" then
-		local spawn_name = prefab_name
-		if not GLOBAL.Prefabs[spawn_name] and GLOBAL.Prefabs[spawn_name .. "_item"] then
-			spawn_name = spawn_name .. "_item"
-		end
-		local _crafted = GLOBAL.SpawnPrefab(spawn_name)
-		if _crafted == nil then
-			_crafted = GLOBAL.SpawnPrefab(prefab_name)
-		end
+	local is_free = (GLOBAL.BULING_FREE_CRAFT == true)
+		or (player.components.builder and (player.components.builder.freebuildmode or (player.components.builder.IsFreeBuildMode and player.components.builder:IsFreeBuildMode())))
+		or (player.replica and player.replica.builder and player.replica.builder.IsFreeBuildMode and player.replica.builder:IsFreeBuildMode())
 
+	print("[BULING CRAFT RPC] Server received craft request for:", prefab_name, "from player:", player, "is_free:", is_free)
+
+	local spawn_name = prefab_name
+	if not GLOBAL.Prefabs[spawn_name] and GLOBAL.Prefabs[spawn_name .. "_item"] then
+		spawn_name = spawn_name .. "_item"
+	end
+
+	if is_free then
+		local _crafted = GLOBAL.SpawnPrefab(spawn_name) or GLOBAL.SpawnPrefab(prefab_name)
 		if _crafted then
-			if player and player.components.inventory and _crafted.components and _crafted.components.inventoryitem then
+			if player.components.inventory and _crafted.components and _crafted.components.inventoryitem then
 				player.components.inventory:GiveItem(_crafted, nil, player:GetPosition())
 			else
 				_crafted.Transform:SetPosition(player.Transform:GetWorldPosition())
 			end
-			if player and player.components.talker then
+			if player.components.talker then
 				local item_name = GLOBAL.STRINGS.NAMES[string.upper(spawn_name)] or GLOBAL.STRINGS.NAMES[string.upper(prefab_name)] or prefab_name
 				player.components.talker:Say("Бесплатный крафт: " .. tostring(item_name))
 			end
+		end
+		return
+	end
+
+	-- Normal survival crafting with ingredients check!
+	local function FindRecipePattern(pname)
+		local tables = {
+			GLOBAL.BULING_COOKHECHENGBIAO,
+			GLOBAL.BULING_HECHENGBIAO,
+			GLOBAL.BULING_SEEDHECHENGBIAO,
+			GLOBAL.BULING_HECHENGBIAO_CLOTHES,
+			GLOBAL.BULING_HECHENGBIAO_JIXIE,
+		}
+		for _, t in ipairs(tables) do
+			if t and t[pname] and t[pname][1] then
+				return t[pname][1]
+			end
+			local alt = string.gsub(pname, "_item$", "")
+			if t and t[alt] and t[alt][1] then
+				return t[alt][1]
+			end
+		end
+		return nil
+	end
+
+	local pattern = FindRecipePattern(prefab_name)
+	if not pattern then
+		print("[BULING CRAFT RPC] No recipe pattern found for:", prefab_name)
+		return
+	end
+
+	local required_items = {}
+	for item in string.gmatch(pattern, "([^,]+)") do
+		if item ~= "nil" and item ~= "" then
+			required_items[item] = (required_items[item] or 0) + 1
+		end
+	end
+
+	local open_container = nil
+	if player.components.inventory and player.components.inventory.opencontainers then
+		for open_c, _ in pairs(player.components.inventory.opencontainers) do
+			if open_c and open_c:IsValid() and open_c.components and open_c.components.container then
+				open_container = open_c
+				break
+			end
+		end
+	end
+
+	local function CountItem(item_prefab)
+		local count = 0
+		if open_container and open_container.components and open_container.components.container then
+			local num = open_container.components.container.numslots or 9
+			for k=1, num do
+				local it = open_container.components.container:GetItemInSlot(k)
+				if it and it.prefab == item_prefab then
+					count = count + (it.components.stackable and it.components.stackable.stacksize or 1)
+				end
+			end
+		end
+		if player.components.inventory then
+			for k, it in pairs(player.components.inventory.itemslots) do
+				if it and it.prefab == item_prefab then
+					count = count + (it.components.stackable and it.components.stackable.stacksize or 1)
+				end
+			end
+			local overflow = player.components.inventory:GetOverflowContainer()
+			if overflow and overflow.slots then
+				for k, it in pairs(overflow.slots) do
+					if it and it.prefab == item_prefab then
+						count = count + (it.components.stackable and it.components.stackable.stacksize or 1)
+					end
+				end
+			end
+		end
+		return count
+	end
+
+	local missing_item = nil
+	for item_prefab, needed in pairs(required_items) do
+		local have = CountItem(item_prefab)
+		if have < needed then
+			missing_item = item_prefab
+			break
+		end
+	end
+
+	if missing_item then
+		if player.components.talker then
+			local mname = GLOBAL.STRINGS.NAMES[string.upper(missing_item)] or missing_item
+			player.components.talker:Say("Не хватает ингредиентов: " .. tostring(mname))
+		end
+		return
+	end
+
+	-- Consume non-tool ingredients
+	for item_prefab, needed in pairs(required_items) do
+		local is_tool = (item_prefab == "buling_cook_kaopan" or item_prefab == "buling_cook_guo" or item_prefab == "buling_cook_caidao" or item_prefab == "buling_cave_tool")
+		if not is_tool then
+			local to_consume = needed
+			if open_container and open_container.components and open_container.components.container then
+				local num = open_container.components.container.numslots or 9
+				for k=1, num do
+					local it = open_container.components.container:GetItemInSlot(k)
+					if it and it.prefab == item_prefab and to_consume > 0 then
+						local cur_size = it.components.stackable and it.components.stackable.stacksize or 1
+						if cur_size > to_consume then
+							it.components.stackable:SetStackSize(cur_size - to_consume)
+							to_consume = 0
+						else
+							to_consume = to_consume - cur_size
+							it:Remove()
+						end
+					end
+				end
+			end
+			if to_consume > 0 and player.components.inventory then
+				player.components.inventory:ConsumeByName(item_prefab, to_consume)
+			end
+		end
+	end
+
+	local _crafted = GLOBAL.SpawnPrefab(spawn_name) or GLOBAL.SpawnPrefab(prefab_name)
+	if _crafted then
+		if player.components.inventory and _crafted.components and _crafted.components.inventoryitem then
+			player.components.inventory:GiveItem(_crafted, nil, player:GetPosition())
 		else
-			print("[BULING FREE CRAFT RPC] SpawnPrefab failed for:", prefab_name, "spawn_name:", spawn_name)
+			_crafted.Transform:SetPosition(player.Transform:GetWorldPosition())
+		end
+		if player.components.talker then
+			local iname = GLOBAL.STRINGS.NAMES[string.upper(spawn_name)] or GLOBAL.STRINGS.NAMES[string.upper(prefab_name)] or prefab_name
+			player.components.talker:Say("Приготовлено: " .. tostring(iname))
 		end
 	end
 end)

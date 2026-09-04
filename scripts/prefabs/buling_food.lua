@@ -93,6 +93,7 @@ local assets ={
 	["buling_languzhou"]={"nil,blue_cap,nil,nil,buling_xifan,nil,nil,buling_cook_guo,nil,"},
 	["buling_hongguzhou"]={"nil,red_cap,nil,nil,buling_xifan,nil,nil,buling_cook_guo,nil,"},]]
 local cookhechengbiao ={
+
 	["buling_cook_kaopan"]={"nil,nil,nil,goldnugget,goldnugget,goldnugget,nil,nil,nil,"},
 	["buling_cook_guo"]={"nil,nil,nil,rocks,nil,rocks,rocks,rocks,rocks,"},
 	["buling_cook_caidao"]={"nil,nil,nil,flint,flint,twigs,flint,flint,flint,"},
@@ -147,6 +148,7 @@ local cookhechengbiao ={
 	["buling_suanrongmianbao"] = {"nil,buling_shucaisui,nil,nil,buling_bread,nil,nil,buling_cook_caidao,nil,"},
 	["buling_zhawanzi"] = {"buling_shucaisui,buling_flour,buling_shucaisui,buling_flour,buling_shucaisui,buling_flour,nil,buling_cook_kaopan,nil,"},
 }
+GLOBAL.BULING_COOKHECHENGBIAO = cookhechengbiao
 local seg_time = 30
 local total_day_time = seg_time*16
 local slotpos = {}
@@ -157,24 +159,25 @@ for y = 2, 0, -1 do
 end
 local function cooktable(inst, doer)
 	local widgetbuttoninfo = {
-	text = "Do",
+	text = "Cook",
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
 		if not TheWorld.ismastersim then
-			SendBulingRPC("do_widget_button", inst.GUID)
+			SendBulingRPC("do_widget_button", inst)
 			return
 		end
 		local peifang = ""
-		local slots = inst.components.container.slots
+		local slots = inst.components.container and inst.components.container.slots
 		for k=1,9 do
 			local item = inst.components.container:GetItemInSlot(k)
 			if item == nil then
 				item = "nil"
-				else
+			else
 				item = item.prefab
 			end
 			peifang = peifang..item..","
 		end
+		print("[BULING COOKTABLE] Slots pattern: '" .. tostring(peifang) .. "'")
 		local matched_recipe = nil
 		for recipe_name, recipe_data in pairs(cookhechengbiao) do
 			if recipe_data[1] == peifang then
@@ -182,8 +185,10 @@ local function cooktable(inst, doer)
 				break
 			end
 		end
+		local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
+		local player_talker = (doer and doer.components and doer.components.talker and doer) or (opener and opener.components and opener.components.talker and opener)
 		if matched_recipe then
-			local opener = doer or (inst.components.container and inst.components.container.openers and next(inst.components.container.openers)) or inst.components.container.opener or inst
+			print("[BULING COOKTABLE] MATCH FOUND: " .. tostring(matched_recipe))
 			local _crafted = SpawnPrefab(matched_recipe)
 			if _crafted then
 				local player_doer = (doer and doer.components and doer.components.inventory and doer) or (opener and opener.components and opener.components.inventory and opener)
@@ -196,12 +201,20 @@ local function cooktable(inst, doer)
 			for slot_i=1,9 do
 				local item = inst.components.container:GetItemInSlot(slot_i)
 				if item ~= nil then
-					if item.components.stackable and item.components.stackable.stacksize > 1  then
+					if item.components.stackable and item.components.stackable.stacksize > 1 then
 						item.components.stackable:SetStackSize(item.components.stackable.stacksize - 1)
 					elseif not item:HasTag("buling_cook_tool") then
 						item:Remove()
 					end
 				end
+			end
+			if player_talker then
+				player_talker.components.talker:Say("Cooking successful! / Приготовлено!")
+			end
+		else
+			print("[BULING COOKTABLE] NO MATCH FOUND for pattern: '" .. tostring(peifang) .. "'")
+			if player_talker then
+				player_talker.components.talker:Say("No recipe matches these ingredients! / Нет подходящего рецепта!")
 			end
 		end
 	end}

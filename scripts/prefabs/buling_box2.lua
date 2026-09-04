@@ -212,7 +212,7 @@ local function buling_alcoholtable(inst, doer)
 	position = Vector3(0, -140, 0),
 	fn = function(inst, doer)
 		if not TheWorld.ismastersim then
-			SendBulingRPC("do_widget_button", inst.GUID)
+			SendBulingRPC("do_widget_button", inst)
 			return
 		end
 		local peifang = ""
