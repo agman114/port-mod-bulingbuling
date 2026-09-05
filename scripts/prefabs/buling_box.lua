@@ -869,6 +869,12 @@ local function commonfn()
     inst.AnimState:SetBuild("buling_zaxiang")
 	inst:AddTag("structure")
 
+    if not TheWorld or TheWorld.ismastersim then
+        inst:AddComponent("inspectable")
+        inst:AddComponent("beerpower")
+        inst.displaynamefn = get_name
+    end
+
     return inst
 end
 
@@ -879,8 +885,12 @@ local function common_finish(inst)
         return inst
     end
 
-    inst:AddComponent("inspectable")
-    inst:AddComponent("beerpower")
+    if not inst.components.inspectable then
+        inst:AddComponent("inspectable")
+    end
+    if not inst.components.beerpower then
+        inst:AddComponent("beerpower")
+    end
     inst.displaynamefn = get_name
     return inst
 end
@@ -943,6 +953,7 @@ local function paotai(inst, doer)
 		return inst
 	end
 
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(50)
 	inst:AddComponent("inventory")
 	inst:AddTag("buling_box")
@@ -1010,6 +1021,7 @@ local function buling_repair_box(inst, doer)
 	if not TheWorld.ismastersim then
 		return inst
 	end
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(1000)
 	inst:AddComponent("inventory")
 	inst:AddTag("buling_box")
@@ -1095,6 +1107,7 @@ local function zhongjiqi(inst, doer)
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(1000)
 	inst.components.machine.caninteractfn = function() return inst.components.beerpower and inst.components.beerpower.power > 5 end
 	inst:AddTag("zhongjiqi")
@@ -1194,6 +1207,7 @@ local function diandeng(inst, doer)
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(50,2)
 	inst.components.machine.cooldowntime = 0
 	inst.beeritem = "buling_diandeng_item"
@@ -1297,6 +1311,7 @@ local function chongdian(inst, doer)
 	if not TheWorld.ismastersim then
 		return inst
 	end
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(200)
 	inst:AddComponent("container")
     inst.components.container:SetNumSlots(1.1)
@@ -1796,6 +1811,7 @@ local function gaoyazhongjiqi(inst, doer)
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(2000)
 	inst.components.machine.caninteractfn = function() return inst.components.beerpower and inst.components.beerpower.power > 25 end
 	inst:AddTag("zhongjiqi")
@@ -1844,6 +1860,7 @@ local function buling_bileizhen(inst, doer)
 	inst.AnimState:SetBank("buling_box")
     inst.AnimState:SetBuild("buling_box")
 	inst.AnimState:PlayAnimation("bileizhen")
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(2000)
 	inst:AddTag("buling_lingjian")
 	inst.beeritem = "buling_bileizhen_item"
@@ -2037,6 +2054,7 @@ local function buling_icechest(inst, doer)
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(320)
 	inst.components.machine.caninteractfn = function() return inst.components.beerpower and inst.components.beerpower.power > 25 end
 	inst:AddTag("zhongjiqi")
@@ -2106,6 +2124,7 @@ local function buling_bugchest(inst, doer)
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(300)
 	inst.components.machine.caninteractfn = function() return inst.components.beerpower and inst.components.beerpower.power > 25 end
 	inst:AddTag("zhongjiqi")
@@ -2195,6 +2214,7 @@ local function buling_stonechest(inst, doer)
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
     inst.components.machine.turnofffn = turnoff
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(300)
 	inst.components.machine.caninteractfn = function() return inst.components.beerpower and inst.components.beerpower.power > 25 end
 	inst:AddTag("zhongjiqi")
@@ -2306,6 +2326,7 @@ local function buling_yanjiutai_old(inst, doer)
 	if not TheWorld.ismastersim then
 		return inst
 	end
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(300)
 	inst.beeritem = "buling_yanjiutai_item"
 	inst:AddComponent("container")

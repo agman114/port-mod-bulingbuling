@@ -691,7 +691,8 @@ local function wakuang(inst, doer)
 			inst.task:Cancel()
 			inst.task = nil
 		end
-	end	
+	end
+	if not inst.components.beerpower then inst:AddComponent("beerpower") end
 	inst.components.beerpower:SetNumber(150)
 	inst:AddComponent("machine")
     inst.components.machine.turnonfn = turnon
