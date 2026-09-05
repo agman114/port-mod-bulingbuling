@@ -201,8 +201,10 @@ local table_configs = {
 
 local function make_table_widget(cfg)
     local slots = cfg.slotpos or default_mod_widget.slotpos
+    local nslots = cfg.slots or (slots and #slots) or 9
     local w = {
         slotpos = slots,
+        numslots = nslots,
         animbank = "ui_chest_3x3",
         animbuild = "ui_chest_3x3",
         pos = GLOBAL.Vector3(0, 200, 0),
@@ -241,10 +243,13 @@ if containers then
         if container and container.widget == nil then
             local inst = container.inst
             local p_name = prefab or (inst and inst.prefab)
+            local cfg = table_configs[p_name]
             local c_comp = (inst and inst.components and inst.components.container) or container
-            local slots = (c_comp and c_comp.widgetslotpos) or (container.widgetslotpos) or default_mod_widget.slotpos
-            container.widget = {
+            local slots = (cfg and cfg.slotpos) or (c_comp and c_comp.widgetslotpos) or (container.widgetslotpos) or default_mod_widget.slotpos
+            local nslots = (cfg and cfg.slots) or (slots and #slots) or 9
+            container.widget = cfg and make_table_widget(cfg) or {
                 slotpos = slots,
+                numslots = nslots,
                 animbank = (c_comp and c_comp.widgetanimbank) or container.widgetanimbank or "ui_chest_3x3",
                 animbuild = (c_comp and c_comp.widgetanimbuild) or container.widgetanimbuild or "ui_chest_3x3",
                 pos = (c_comp and c_comp.widgetpos) or container.widgetpos or GLOBAL.Vector3(0, 200, 0),
@@ -253,7 +258,13 @@ if containers then
                 type = "chest",
             }
             if container.SetNumSlots then
-                container:SetNumSlots(#slots)
+                container:SetNumSlots(nslots)
+            end
+        end
+        if container and container.widget and container.SetNumSlots then
+            local n = container.widget.numslots or (container.widget.slotpos and #container.widget.slotpos)
+            if n and n > 0 then
+                container:SetNumSlots(n)
             end
         end
     end
@@ -264,10 +275,13 @@ if containers then
         for _, name in ipairs(mod_container_prefabs) do
             local cfg = table_configs[name]
             local wid = cfg and make_table_widget(cfg) or default_mod_widget
+            local nslots = (wid.slotpos and #wid.slotpos) or (cfg and cfg.slots) or 9
             params[name] = {
                 widget = wid,
+                numslots = nslots,
                 acceptsstacks = true,
                 type = "chest",
+                itemtestfn = function(container, item, slot) return true end,
             }
         end
 
@@ -275,6 +289,9 @@ if containers then
             if type(tbl) == "table" then
                 if tbl.widget == nil or type(tbl.widget) ~= "table" then
                     tbl.widget = default_mod_widget
+                end
+                if tbl.numslots == nil then
+                    tbl.numslots = (tbl.widget.slotpos and #tbl.widget.slotpos) or 9
                 end
                 if tbl.acceptsstacks == nil then
                     tbl.acceptsstacks = true
@@ -299,7 +316,10 @@ if containers then
                 res = old_idx[k]
             end
             if res == nil then
-                res = { widget = default_mod_widget, acceptsstacks = true, type = "chest" }
+                local cfg = table_configs[k]
+                local wid = cfg and make_table_widget(cfg) or default_mod_widget
+                local nslots = (wid.slotpos and #wid.slotpos) or (cfg and cfg.slots) or 9
+                res = { widget = wid, numslots = nslots, acceptsstacks = true, type = "chest", itemtestfn = function(container, item, slot) return true end }
                 t[k] = res
             end
             return ensure_widget(res)
@@ -312,8 +332,72 @@ if containers then
     end
 end
 
+local Container = GLOBAL.require("components/container")
+if Container then
+    local orig_Container_SetNumSlots = Container.SetNumSlots
+    Container.SetNumSlots = function(self, numslots, ...)
+        orig_Container_SetNumSlots(self, numslots, ...)
+        local n = math.floor(tonumber(numslots) or 0)
+        if n > 0 and self.inst and self.inst.replica and self.inst.replica.container then
+            self.inst.replica.container:SetNumSlots(n)
+            if self.inst.replica.container.classified ~= nil then
+                pcall(function() self.inst.replica.container.classified:InitializeSlots(n) end)
+            end
+        end
+    end
+
+    local orig_Container_CanTakeItemInSlot = Container.CanTakeItemInSlot
+    Container.CanTakeItemInSlot = function(self, item, slot, ...)
+        if (self.numslots == nil or self.numslots == 0) and slot ~= nil then
+            local slots = self.widgetslotpos or (self.widget and self.widget.slotpos)
+            local n = (slots and #slots) or (self.inst and table_configs[self.inst.prefab] and table_configs[self.inst.prefab].slots) or 9
+            self.numslots = n
+        end
+        return orig_Container_CanTakeItemInSlot(self, item, slot, ...)
+    end
+end
+
 local ContainerReplica = GLOBAL.require("components/container_replica")
 if ContainerReplica then
+    local orig_Replica_GetNumSlots = ContainerReplica.GetNumSlots
+    ContainerReplica.GetNumSlots = function(self, ...)
+        if self._numslots and self._numslots > 0 then
+            return self._numslots
+        end
+        if self.widget and self.widget.slotpos and #self.widget.slotpos > 0 then
+            self._numslots = #self.widget.slotpos
+            return self._numslots
+        end
+        local inst = self.inst
+        if inst then
+            local p = inst.prefab
+            if table_configs[p] and table_configs[p].slots then
+                self._numslots = table_configs[p].slots
+                return self._numslots
+            end
+            if inst.components and inst.components.container and inst.components.container.numslots and inst.components.container.numslots > 0 then
+                self._numslots = inst.components.container.numslots
+                return self._numslots
+            end
+        end
+        if orig_Replica_GetNumSlots then
+            local n = orig_Replica_GetNumSlots(self, ...)
+            if n and n > 0 then return n end
+        end
+        return self._numslots or 0
+    end
+
+    local orig_Replica_CanTakeItemInSlot = ContainerReplica.CanTakeItemInSlot
+    ContainerReplica.CanTakeItemInSlot = function(self, item, slot, ...)
+        if (self._numslots == nil or self._numslots == 0) and slot ~= nil then
+            local n = self:GetNumSlots()
+            if n and n > 0 then
+                self:SetNumSlots(n)
+            end
+        end
+        return orig_Replica_CanTakeItemInSlot(self, item, slot, ...)
+    end
+
     local orig_Replica_GetWidget = ContainerReplica.GetWidget
     ContainerReplica.GetWidget = function(self, ...)
         local w = orig_Replica_GetWidget and orig_Replica_GetWidget(self, ...)
@@ -323,23 +407,37 @@ if ContainerReplica then
             if w == nil or w.buttoninfo == nil then
                 local tw = make_table_widget(table_configs[p])
                 self.widget = tw
+                local nslots = (tw.slotpos and #tw.slotpos) or table_configs[p].slots or 9
+                self:SetNumSlots(nslots)
+                if self.classified ~= nil then
+                    pcall(function() self.classified:InitializeSlots(nslots) end)
+                end
                 return tw
             end
         end
         if w ~= nil then
+            if self._numslots == nil or self._numslots == 0 then
+                local nslots = (w.slotpos and #w.slotpos) or (table_configs[p] and table_configs[p].slots)
+                if nslots and nslots > 0 then
+                    self:SetNumSlots(nslots)
+                    if self.classified ~= nil then
+                        pcall(function() self.classified:InitializeSlots(nslots) end)
+                    end
+                end
+            end
             return w
         end
         if self.widget == nil then
-            local inst = self.inst
-            local p = (inst and inst.prefab) or "chest"
             if containers and containers.widgetsetup then
                 containers.widgetsetup(self, p)
             end
             if self.widget == nil then
                 local c_comp = inst and inst.components and inst.components.container
                 local slots = (c_comp and c_comp.widgetslotpos) or (self.widgetslotpos) or default_mod_widget.slotpos
+                local nslots = (slots and #slots) or 9
                 self.widget = {
                     slotpos = slots,
+                    numslots = nslots,
                     animbank = (c_comp and c_comp.widgetanimbank) or self.widgetanimbank or "ui_chest_3x3",
                     animbuild = (c_comp and c_comp.widgetanimbuild) or self.widgetanimbuild or "ui_chest_3x3",
                     pos = (c_comp and c_comp.widgetpos) or self.widgetpos or GLOBAL.Vector3(0, 200, 0),
@@ -348,6 +446,13 @@ if ContainerReplica then
                     side_align_tip = 100,
                     type = "chest",
                 }
+            end
+        end
+        if self.widget and (self._numslots == nil or self._numslots == 0) then
+            local nslots = self.widget.numslots or (self.widget.slotpos and #self.widget.slotpos) or 9
+            self:SetNumSlots(nslots)
+            if self.classified ~= nil then
+                pcall(function() self.classified:InitializeSlots(nslots) end)
             end
         end
         return self.widget
@@ -400,18 +505,29 @@ if ContainerWidget then
     ContainerWidget.Open = function(self, container, doer, ...)
         if container then
             local c_rep = container.replica and container.replica.container
-            if c_rep and c_rep.widget == nil then
-                c_rep:GetWidget()
+            if c_rep then
+                if c_rep.widget == nil then
+                    c_rep:GetWidget()
+                end
+                if c_rep._numslots == nil or c_rep._numslots == 0 then
+                    local n = c_rep:GetNumSlots()
+                    if n and n > 0 then
+                        c_rep:SetNumSlots(n)
+                    end
+                end
             end
             local prefab = container.prefab or (container.inst and container.inst.prefab)
+            local c_comp = container.components and container.components.container
             if prefab and containers and containers.params then
                 local p = containers.params[prefab]
                 if p == nil or type(p) ~= "table" or p.widget == nil or type(p.widget) ~= "table" then
-                    local c_comp = container.components and container.components.container
-                    local slots = (c_comp and c_comp.widgetslotpos) or default_mod_widget.slotpos
+                    local cfg = table_configs[prefab]
+                    local slots = (cfg and cfg.slotpos) or (c_comp and c_comp.widgetslotpos) or default_mod_widget.slotpos
+                    local nslots = (cfg and cfg.slots) or #slots
                     containers.params[prefab] = {
                         widget = {
                             slotpos = slots,
+                            numslots = nslots,
                             animbank = (c_comp and c_comp.widgetanimbank) or "ui_chest_3x3",
                             animbuild = (c_comp and c_comp.widgetanimbuild) or "ui_chest_3x3",
                             pos = (c_comp and c_comp.widgetpos) or GLOBAL.Vector3(0, 200, 0),
@@ -420,12 +536,14 @@ if ContainerWidget then
                             side_align_tip = 100,
                             type = "chest",
                         },
+                        numslots = nslots,
                         acceptsstacks = true,
                         type = "chest",
+                        itemtestfn = function(c, item, slot) return true end,
                     }
                 end
             end
-                        local ev = prefab and (prefab_open_events[prefab] or (c_comp and c_comp.widgetbuttoninfo and { open = "OpenBuling_manual", close = "CloseBuling_manual" }))
+            local ev = prefab and (prefab_open_events[prefab] or (c_comp and c_comp.widgetbuttoninfo and { open = "OpenBuling_manual", close = "CloseBuling_manual" }))
             if ev and GLOBAL.ThePlayer then
                 GLOBAL.ThePlayer:PushEvent(ev.open, { container = container })
             end
@@ -447,8 +565,27 @@ if ContainerWidget then
 end
 
 AddComponentPostInit("container", function(self, inst)
+    local function sync_slots()
+        local slots = self.widgetslotpos or (self.widget and self.widget.slotpos)
+        local n = (slots and #slots) or self.numslots or (inst and table_configs[inst.prefab] and table_configs[inst.prefab].slots)
+        if n and n > 0 then
+            if self.numslots == nil or self.numslots < n then
+                self.numslots = n
+            end
+            if inst.replica and inst.replica.container then
+                inst.replica.container:SetNumSlots(n)
+                if inst.replica.container.classified ~= nil then
+                    pcall(function() inst.replica.container.classified:InitializeSlots(n) end)
+                end
+            end
+        end
+    end
+
+    inst:DoTaskInTime(0, sync_slots)
+
     local orig_Open = self.Open
     self.Open = function(self, doer, ...)
+        sync_slots()
         if inst and inst.prefab and containers and containers.params then
             local p = containers.params[inst.prefab] or {}
             containers.params[inst.prefab] = p
@@ -459,9 +596,11 @@ AddComponentPostInit("container", function(self, inst)
                     table.insert(slots, GLOBAL.Vector3(0, 0, 0))
                 end
             end
+            local nslots = (slots and #slots) or self.numslots or 9
 
             local widget_tbl = {
                 slotpos = slots,
+                numslots = nslots,
                 animbank = self.widgetanimbank or (p.widget and p.widget.animbank) or "ui_chest_3x3",
                 animbuild = self.widgetanimbuild or (p.widget and p.widget.animbuild) or "ui_chest_3x3",
                 pos = self.widgetpos or (p.widget and p.widget.pos) or GLOBAL.Vector3(0, 200, 0),
@@ -477,6 +616,7 @@ AddComponentPostInit("container", function(self, inst)
                 pcall(function() self.widget = widget_tbl end)
             end
             p.widget = widget_tbl
+            p.numslots = nslots
             p.acceptsstacks = self.acceptsstacks ~= false
             p.type = widget_tbl.type
         end
